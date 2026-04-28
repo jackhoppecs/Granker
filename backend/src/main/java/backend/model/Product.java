@@ -1,0 +1,66 @@
+package backend.model;
+
+import jakarta.persistence.*;
+
+// Entity tells spring that this class should be stored in the DB
+// AKA map this class to a table
+@Entity
+// Table defines the table name otherwise it would default to something else otherwise not required
+@Table(name = "products")
+public class Product {
+    
+    // Id defines the primary key
+    @Id
+    // Generated value tells postgres to autogenerate in this case the ID (auto-increment)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // this variable is a column in the db with nullable = false has to be filled
+    // Column used for manual control like "TEXT" or nullable equals false (customization)
+    // Otherwise it will make a default based on data type
+    @Column(nullable = false)
+    private String name;
+
+    private String brand;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    public Product(){
+
+    }
+
+    public Product(String name, String brand, String description){
+        this.name = name;
+        this.brand = brand;
+        this.description = description;
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getBrand(){
+        return brand;
+    }
+
+    public void setBrand(String brand){
+        this.brand = brand;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
+    }
+}
