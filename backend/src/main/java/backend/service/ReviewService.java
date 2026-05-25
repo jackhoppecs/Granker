@@ -71,8 +71,14 @@ public class ReviewService {
         }).orElse(null);
     }
 
-    public void deleteReview(Long id){
+    public boolean deleteReview(Long id){
+        
+        if(!reviewRepository.existsById(id)){
+            return false;
+        }
+
         reviewRepository.deleteById(id);
+        return true;
     }
 
 }
