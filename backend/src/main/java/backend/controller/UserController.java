@@ -2,6 +2,7 @@ package backend.controller;
 
 import backend.model.User;
 import backend.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,22 +22,38 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id){
-        return userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id){
+        User user = userService.getUserById(id);
+        if (user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user){
-        return userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user){
+        User createdUser =  userService.createUser(user);
+        return ResponseEntity.ok(createdUser);
     }
 
-    @PostMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User updatedUser){
-        return userService.updateUser(id, updatedUser);
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser){
+        User user = userService.updateUser(id, updatedUser);
+
+        if (user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id){
-        userService.deleteUser(id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+        if (userService.deleteUser(id)){
+            return ResponseEntity.noContent().build();
+        }
+        
+        return ResponseEntity.notFound().build();
     }
 }
