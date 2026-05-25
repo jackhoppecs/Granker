@@ -2,6 +2,7 @@ package backend.controller;
 
 import backend.model.Product;
 import backend.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,26 +27,41 @@ public class ProductController {
 
     // This handles GET /api/products/1 etc
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id){
-        return productService.getProductById(id);
+    public ResponseEntity<Product> getProductById(@PathVariable Long id){
+        Product product = productService.getProductById(id);
+        if (product ==  null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(product);
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct){
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct){
         // Find product by Id, if it exists update attributes of the product with updatedProduct data
-        return productService.updateProduct(id, updatedProduct);
+        Product product = productService.updateProduct(id, updatedProduct);
+        if (product == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(product);
         // Want to return the updated version of the resource so we can confirm what was changed and we can avoid using another GET request
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id){
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
         // We don't need a return because we aren't using the data anymore it has been deleted
-        productService.deleteProduct(id);
+        if (productService.deleteProduct(id)){
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     // Spring takes JSON from request body and turns it into a Product object to be saved to DB
-    public Product createProduct(@RequestBody Product product){
-        return productService.createProduct(product);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product){
+        Product newProduct = productService.createProduct(product);
+        return ResponseEntity.ok(newProduct);
     }
 }
