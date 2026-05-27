@@ -1,6 +1,8 @@
 package backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "app_user")
@@ -9,8 +11,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @NotBlank
     private String username;
+
+    @Column(nullable = false, unique = true)
+    @Email
+    @NotBlank
     private String email;
+
+    @Column(nullable = false)
+    @NotBlank
     private String password;
 
     public User(){
@@ -39,7 +50,7 @@ public class User {
         user.setEmail("andrew@example.com");
         user.setPassword("123");
 
-        and from an object back to python with getters.
+        and from an object back to JSON with getters
 
         so we need this even if they're never explicitly called.
     */
