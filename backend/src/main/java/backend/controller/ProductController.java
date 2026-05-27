@@ -4,6 +4,7 @@ import backend.model.Product;
 import backend.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -35,9 +36,15 @@ public class ProductController {
 
         return ResponseEntity.ok(product);
     }
-
+    
+    //@Valid @RequestBody Product updatedProduct
+    // 1. Read JSON body
+    // 2. Convert JSON into Product object
+    // 3. Check validation annotations like @NotBlank
+    // 4. If valid → run your method
+    // 5. If invalid → return 400 Bad Request before your service runs
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct){
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody Product updatedProduct){
         // Find product by Id, if it exists update attributes of the product with updatedProduct data
         Product product = productService.updateProduct(id, updatedProduct);
         if (product == null){
@@ -60,7 +67,7 @@ public class ProductController {
 
     @PostMapping
     // Spring takes JSON from request body and turns it into a Product object to be saved to DB
-    public ResponseEntity<Product> createProduct(@RequestBody Product product){
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
         Product newProduct = productService.createProduct(product);
         return ResponseEntity.ok(newProduct);
     }
