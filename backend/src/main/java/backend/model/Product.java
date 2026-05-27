@@ -1,6 +1,7 @@
 package backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 // Entity tells spring that this class should be stored in the DB
 // AKA map this class to a table
@@ -19,8 +20,15 @@ public class Product {
     // Column used for manual control like "TEXT" or nullable equals false (customization)
     // Otherwise it will make a default based on data type
     @Column(nullable = false)
+    @NotBlank
     private String name;
 
+    // Application-level validation handled by Spring Validation (Before saving to DB)
+    // The @Column(nullabe = false) is a database-level constraint handled by PostgreSQL
+    // NotBlank protects application/API
+    // nullable = false protects Database itself
+    @Column(nullable = false)
+    @NotBlank
     private String brand;
 
     @Column(columnDefinition = "TEXT")
