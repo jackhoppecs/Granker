@@ -2,6 +2,7 @@ package backend.controller;
 
 import backend.model.User;
 import backend.service.UserService;
+import backend.dto.CreateUserRequest;
 import backend.dto.UserResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody User user){
-        User createdUser =  userService.createUser(user);
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody CreateUserRequest request){
+        User newUser = new User(request.getUsername(), request.getEmail(), request.getPassword());
+        User createdUser = userService.createUser(newUser);
         UserResponseDto dto = new UserResponseDto(createdUser.getId(), createdUser.getUsername(), createdUser.getEmail());
         return ResponseEntity.ok(dto);
     }
