@@ -66,6 +66,7 @@ public class Review {
     public Product getProduct(){
         return product;
     }
+    
     public User getUser(){
         return user;
     }
