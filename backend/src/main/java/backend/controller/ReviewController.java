@@ -3,9 +3,9 @@ package backend.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-import org.apache.catalina.Server;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+
 
 import backend.model.Review;
 import backend.service.ReviewService;
@@ -61,7 +61,7 @@ public class ReviewController {
     // In contrast, routes like /reviews are used when accessing a review directly
     // (e.g., get by id, update, delete) where no additional context is needed.
     @PostMapping("/products/{productId}/reviews")
-    public ResponseEntity<Review> createReview(@PathVariable Long productId, @RequestParam Long userId, @RequestBody Review review){
+    public ResponseEntity<Review> createReview(@PathVariable Long productId, @RequestParam Long userId, @Valid @RequestBody Review review){
         Review createdReview = reviewService.createReview(productId, userId, review);
         
         if (createdReview == null){
@@ -84,7 +84,7 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody Review updatedReview){
+    public ResponseEntity<Review> updateReview(@PathVariable Long id, @Valid @RequestBody Review updatedReview){
         Review review = reviewService.updateReview(id, updatedReview);
 
         if (review == null){
