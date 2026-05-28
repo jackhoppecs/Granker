@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
+import backend.dto.CreateReviewRequest;
 import backend.dto.ReviewResponseDTO;
 import backend.model.Review;
 import backend.service.ReviewService;
@@ -67,8 +68,9 @@ public class ReviewController {
     // In contrast, routes like /reviews are used when accessing a review directly
     // (e.g., get by id, update, delete) where no additional context is needed.
     @PostMapping("/products/{productId}/reviews")
-    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @RequestParam Long userId, @Valid @RequestBody Review review){
-        Review createdReview = reviewService.createReview(productId, userId, review);
+    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @RequestParam Long userId, @Valid @RequestBody CreateReviewRequest review){
+        Review addReview = new Review(review.getRating(), review.getText());
+        Review createdReview = reviewService.createReview(productId, userId, addReview);
         
         if (createdReview == null){
             return ResponseEntity.notFound().build();
@@ -105,8 +107,9 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{id}")
-    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody Review updatedReview){
-        Review review = reviewService.updateReview(id, updatedReview);
+    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody CreateReviewRequest updatedReview){
+        Review received = new Review(updatedReview.getRating(), updatedReview.getText());
+        Review review = reviewService.updateReview(id, received);
 
         if (review == null){
             return ResponseEntity.notFound().build();
