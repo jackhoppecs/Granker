@@ -1,12 +1,12 @@
 package backend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
-
-
+import backend.dto.ReviewResponseDTO;
 import backend.model.Review;
 import backend.service.ReviewService;
 
@@ -28,13 +28,19 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews")
-    public List<Review> getAllReviews(){
-        return reviewService.getAllReviews();
+    public List<ReviewResponseDTO> getAllReviews(){
+        List<Review> reviews = reviewService.getAllReviews();
+        List<ReviewResponseDTO> dtos = new ArrayList<>();
+        for (Review review : reviews){
+            ReviewResponseDTO dto = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     @GetMapping("/reviews/{id}")
     // I’m returning an HTTP response that contains a Review
-    public ResponseEntity<Review> getReviewById(@PathVariable Long id){
+    public ResponseEntity<ReviewResponseDTO> getReviewById(@PathVariable Long id){
         Review review = reviewService.getReviewById(id);
 
         if (review == null){
@@ -42,9 +48,9 @@ public class ReviewController {
             // .build() means finished creating response and is needed because no body.
             return ResponseEntity.notFound().build();
         }
-
+        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
         // Status: 200 OK, Body: review
-        return ResponseEntity.ok(review);
+        return ResponseEntity.ok(response);
     }
 
     // These endpoints are nested under /products or /users because a Review
@@ -61,37 +67,53 @@ public class ReviewController {
     // In contrast, routes like /reviews are used when accessing a review directly
     // (e.g., get by id, update, delete) where no additional context is needed.
     @PostMapping("/products/{productId}/reviews")
-    public ResponseEntity<Review> createReview(@PathVariable Long productId, @RequestParam Long userId, @Valid @RequestBody Review review){
+    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @RequestParam Long userId, @Valid @RequestBody Review review){
         Review createdReview = reviewService.createReview(productId, userId, review);
         
         if (createdReview == null){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(createdReview);
+        ReviewResponseDTO response = new ReviewResponseDTO(createdReview.getId(), createdReview.getRating(), createdReview.getText(), createdReview.getUser().getUsername(), createdReview.getProduct().getId());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/products/{productId}/reviews")
     // If nothing is found [] is returned not null, meaning that the product has no reviews
-    public ResponseEntity<List<Review>> getReviewsByProductId(@PathVariable Long productId){
-        return ResponseEntity.ok(reviewService.getReviewsbyProductId(productId));
+    public ResponseEntity<List<ReviewResponseDTO>> getReviewsByProductId(@PathVariable Long productId){
+        List<Review> reviews = reviewService.getReviewsbyProductId(productId);
+        List<ReviewResponseDTO> dtos = new ArrayList<>();
+        
+        for (Review review : reviews){
+            ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+            dtos.add(response);
+        }
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/users/{userId}/reviews")
     // If nothing is found [] is returned not null, meaning that the user has made no reviews
-    public ResponseEntity<List<Review>> getReviewsByUserId(@PathVariable Long userId){
-        return ResponseEntity.ok(reviewService.getReviewsbyUserId(userId));
+    public ResponseEntity<List<ReviewResponseDTO>> getReviewsByUserId(@PathVariable Long userId){
+        List<Review> reviews = reviewService.getReviewsbyUserId(userId);
+        List<ReviewResponseDTO> dtos = new ArrayList<>();
+
+        for (Review review : reviews){
+            ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+            dtos.add(response);
+        }
+        return ResponseEntity.ok(dtos);
     }
 
     @PutMapping("/reviews/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @Valid @RequestBody Review updatedReview){
+    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody Review updatedReview){
         Review review = reviewService.updateReview(id, updatedReview);
 
         if (review == null){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(review);
+        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/reviews/{id}")
