@@ -1,5 +1,6 @@
 package backend.controller;
 
+import backend.dto.CreateProductRequest;
 import backend.dto.ProductResponseDTO;
 import backend.model.Product;
 import backend.service.ProductService;
@@ -79,7 +80,8 @@ public class ProductController {
 
     @PostMapping
     // Spring takes JSON from request body and turns it into a Product object to be saved to DB
-    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody Product product){
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request){
+        Product product = new Product(request.getName(), request.getBrand(), request.getDescription()); 
         Product newProduct = productService.createProduct(product);
         ProductResponseDTO dto = new ProductResponseDTO(newProduct.getId(), newProduct.getName(), newProduct.getBrand(), newProduct.getDescription());
         return ResponseEntity.ok(dto);
