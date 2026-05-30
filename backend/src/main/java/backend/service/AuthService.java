@@ -1,5 +1,7 @@
 package backend.service;
 
+import org.springframework.stereotype.Service;
+
 import backend.dto.UserResponseDTO;
 import backend.dto.auth.LoginRequest;
 import backend.dto.auth.RegisterRequest;
@@ -16,8 +18,9 @@ public class AuthService {
     }
 
     public UserResponseDTO register(RegisterRequest request){
-
-        //TODO: Check duplicate email
+        if (userRepository.findByEmail(request.getEmail()).isPresent()){
+            throw new RuntimeException("Email already in use");
+        }
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -33,8 +36,13 @@ public class AuthService {
 
     public UserResponseDTO login(LoginRequest request){
         // TODO: Find user by email
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!user.getPassword().equals(request.getPassword())){
+            throw new RuntimeException("Invalid email or password");
+        }
         // TODO: Check password
         // TODO: return UserResponseDTO
-        return null;
+        return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
     }
 }
