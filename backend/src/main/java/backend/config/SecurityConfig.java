@@ -17,8 +17,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // /auth/register is public
-    // /auth/login is public
+    // The springboot security dependency we added in pom blocks unathorized requests for now we make:
+    // /auth/register public
+    // /auth/login public
     // everything else is also public for now
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

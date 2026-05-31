@@ -44,4 +44,11 @@ public class AuthService {
 
         return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
     }
+
+    public UserResponseDTO getCurrentUser(Long userId){
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        
+            return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+    }
 }
