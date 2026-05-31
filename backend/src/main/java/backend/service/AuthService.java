@@ -1,6 +1,7 @@
 package backend.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import backend.dto.UserResponseDTO;
 import backend.dto.auth.LoginRequest;
@@ -12,9 +13,11 @@ import backend.repository.UserRepository;
 public class AuthService {
     
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository){
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponseDTO register(RegisterRequest request){
@@ -25,9 +28,7 @@ public class AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-
-        // TODO: Hash password
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User savedUser = userRepository.save(user);
 
@@ -35,14 +36,12 @@ public class AuthService {
     }
 
     public UserResponseDTO login(LoginRequest request){
-        // TODO: Find user by email
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        if (!user.getPassword().equals(request.getPassword())){
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new RuntimeException("Invalid email or password");
         }
-        // TODO: Check password
-        // TODO: return UserResponseDTO
+
         return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
     }
 }
