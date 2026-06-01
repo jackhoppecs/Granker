@@ -1,11 +1,19 @@
 package backend.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 // This class contains configuration code.
 // Look inside it for objects/beans that should be managed by Spring.
@@ -30,5 +38,24 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             )
             .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+
+        // Allows cookies/session IDs to be sent
+        config.setAllowCredentials(true);
+
+        // This creates an object that lets you attach CORS rules to URL patterns
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Use this CORS config for every backend route.
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }
