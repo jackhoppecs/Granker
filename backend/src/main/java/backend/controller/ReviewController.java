@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import backend.dto.CreateReviewRequest;
 import backend.dto.ReviewResponseDTO;
@@ -67,9 +69,15 @@ public class ReviewController {
     //
     // In contrast, routes like /reviews are used when accessing a review directly
     // (e.g., get by id, update, delete) where no additional context is needed.
+
+    // Path variable = identifies the main resource/location
+    // Query parameter = extra option/filter/input
+    // Request body = data used to create/update the resource
+    // Session/auth = identity of the current user
     @PostMapping("/products/{productId}/reviews")
-    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @RequestParam Long userId, @Valid @RequestBody CreateReviewRequest review){
+    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @Valid @RequestBody CreateReviewRequest review, HttpSession session){
         Review addReview = new Review(review.getRating(), review.getText());
+        Long userId = (Long) session.getAttribute("userId");
         Review createdReview = reviewService.createReview(productId, userId, addReview);
         
         if (createdReview == null){
@@ -107,9 +115,15 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{id}")
-    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody CreateReviewRequest updatedReview){
+    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody CreateReviewRequest updatedReview, HttpSession session){
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null){
+            return ResponseEntity.status(401).build();
+        }
+
         Review received = new Review(updatedReview.getRating(), updatedReview.getText());
-        Review review = reviewService.updateReview(id, received);
+        Review review = reviewService.updateReview(id, received, userId);
 
         if (review == null){
             return ResponseEntity.notFound().build();
@@ -120,8 +134,14 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id){
-        if(reviewService.deleteReview(id)){
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id, HttpSession session){
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null){
+            return ResponseEntity.status(401).build();
+        }
+
+        if(reviewService.deleteReview(id, userId)){
             return ResponseEntity.noContent().build();
         }
 
