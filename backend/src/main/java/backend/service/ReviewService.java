@@ -12,6 +12,9 @@ import backend.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.management.RuntimeErrorException;
 
 @Service
 public class ReviewService {
@@ -62,22 +65,37 @@ public class ReviewService {
         return reviewRepository.findByUserId(userId);
     }
 
-    public Review updateReview(Long id, Review updatedReview){
+    public Review updateReview(Long id, Review updatedReview, Long userId){
         return reviewRepository.findById(id)
         .map(review -> {
+
+            if (!review.getUser().getId().equals(userId)){
+                throw new RuntimeException("You are not allowed to update this review");
+            }
             review.setRating(updatedReview.getRating());
             review.setText(updatedReview.getText());
+
             return reviewRepository.save(review);
         }).orElse(null);
     }
 
-    public boolean deleteReview(Long id){
+    public boolean deleteReview(Long id, Long userId){
+        Optional<Review> optionalReview = reviewRepository.findById(id);
         
-        if(!reviewRepository.existsById(id)){
+        // Check if review exists
+        if(optionalReview.isEmpty()){
             return false;
         }
 
-        reviewRepository.deleteById(id);
+        Review review = optionalReview.get();
+
+        // Check if current review belongs to current session
+        if(!review.getUser().getId().equals(userId)){
+            throw new RuntimeException("You are not allowed to update this review");
+        }
+
+        // Delete and return that we succesfully deleted review
+        reviewRepository.delete(review);
         return true;
     }
 
