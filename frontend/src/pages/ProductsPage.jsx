@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { getProducts } from "../api/products";
 import ProductCard from "../components/ProductCard";
 
+// A page is a component that represents a whole screen / route
+// Pages usually connected to react router
 function ProductsPage() {
   // These are react states
   // products starts as an empty array
