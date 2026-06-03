@@ -36,7 +36,7 @@ export async function getProducts() {
 }
 
 export async function getProductById(productId) {
-  const response = await fetch(`${API_BASE_URL}/api/products${productId}`);
+  const response = await fetch(`${API_BASE_URL}/api/products/${productId}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch product");
