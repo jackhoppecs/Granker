@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 // UseEffect = let's code run when the page loads
 import { getProductById } from "../api/products";
 import { getReviewsByProductId } from "../api/reviews";
+import { createReview } from "../api/reviews";
 import { useParams } from "react-router-dom";
 import ReviewCard from "../components/ReviewCard";
+import ReviewForm from "../components/ReviewForm";
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -41,12 +43,26 @@ function ProductDetailsPage() {
     return <p className="error">{error}</p>;
   }
 
+  async function handleSubmitReview(review) {
+    try {
+      const createdReview = await createReview(id, review);
+      setReviews((currentReviews) => [...currentReviews, createdReview]);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   return (
     <main className="container">
       <section className="card">
         <h1>{product.name}</h1>
         <p className="brand">{product.brand}</p>
         <p>{product.description}</p>
+      </section>
+      <section>
+        {/* Give ReviewForm component a PROP called onSubmitReview.
+        The value of that prop is the function handleSubmitReview */}
+        <ReviewForm onSubmitReview={handleSubmitReview}></ReviewForm>
       </section>
       <section>
         <h2>Reviews</h2>
