@@ -11,3 +11,26 @@ export async function getReviewsByProductId(productId) {
 
   return response.json();
 }
+
+export async function createReview(productId, review) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/products/${productId}/reviews`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(review),
+    },
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to create review. Status: ${response.status}. Body: ${errorText}`,
+    );
+  }
+
+  return response.json();
+}
