@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getProductById } from "../api/products";
 import { getReviewsByProductId } from "../api/reviews";
 import { useParams } from "react-router-dom";
+import ReviewCard from "../components/ReviewCard";
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -53,10 +54,7 @@ function ProductDetailsPage() {
         {reviews.length === 0 && <p>No reviews yet.</p>}
 
         {reviews.map((review) => (
-          <article className="card" key={review.id}>
-            <p>Rating: {review.rating}/5</p>
-            <p>{review.text}</p>
-          </article>
+          <ReviewCard key={review.id} review={review}></ReviewCard>
         ))}
       </section>
     </main>
