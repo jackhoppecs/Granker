@@ -78,11 +78,16 @@ public class ReviewController {
     public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @Valid @RequestBody CreateReviewRequest review, HttpSession session){
         Review addReview = new Review(review.getRating(), review.getText());
         Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
         Review createdReview = reviewService.createReview(productId, userId, addReview);
         
         if (createdReview == null){
             return ResponseEntity.notFound().build();
         }
+        
 
         ReviewResponseDTO response = new ReviewResponseDTO(createdReview.getId(), createdReview.getRating(), createdReview.getText(), createdReview.getUser().getUsername(), createdReview.getProduct().getId());
         return ResponseEntity.ok(response);
