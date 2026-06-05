@@ -14,14 +14,26 @@ function ProductsPage() {
   // error starts as an empty string
   // error is the current value, setError is the function used to update error
   const [error, setError] = useState("");
-  // React re-renders the UI when the state changes
 
+  const [search, setSearch] = useState("");
+
+  // React re-renders the UI when the state changes
   // When this page first loads, call getProducts()
   useEffect(() => {
     getProducts()
       .then((data) => setProducts(data))
       .catch((err) => setError(err.message));
+    // Only runs when the component first mounts because of the empty dependency array: []
+    // Without that it would re run each time search changed.
   }, []);
+
+  // After retreiving all products filter based on search
+  // When page re renders products is kept the same but the search filter is changed and this runs
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(search.toLowerCase()) ||
+      product.brand.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <main className="container">
@@ -32,14 +44,27 @@ function ProductsPage() {
         </div>
       </header>
 
+      {/* Input is connect to search state. On a change setSearch changes the search state value.
+        This change in state causes the page to re render */}
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search products..."
+      />
+
       {error && <p className="error">{error}</p>}
 
       <section className="product-list">
-        {products.map((product) => (
-          // key helps react track each item efficiently. each item should have a unique key
-          // product just passes in each product to ProductCard
-          <ProductCard key={product.id} product={product}></ProductCard>
-        ))}
+        {filteredProducts.length === 0 ? (
+          <p>No products found.</p>
+        ) : (
+          filteredProducts.map((product) => (
+            // key helps react track each item efficiently. each item should have a unique key
+            // product just passes in each product to ProductCard
+            <ProductCard key={product.id} product={product}></ProductCard>
+          ))
+        )}
       </section>
     </main>
   );
