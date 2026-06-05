@@ -46,12 +46,14 @@ function ProductsPage() {
 
       {/* Input is connect to search state. On a change setSearch changes the search state value.
         This change in state causes the page to re render */}
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search products..."
-      />
+      <div className="search-bar">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products..."
+        />
+      </div>
 
       {error && <p className="error">{error}</p>}
 

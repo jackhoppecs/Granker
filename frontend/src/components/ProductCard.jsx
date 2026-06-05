@@ -1,17 +1,14 @@
 import { Link } from "react-router-dom";
 
-
 // Components are usually a smaller reusable UI piece.
 // So we reuse this ProductCard in our Products page
 function ProductCard({ product }) {
   return (
-    <article className="card">
+    <Link className="product-card" to={`/products/${product.id}`}>
       <h2>{product.name}</h2>
-      <p className="brand">{product.brand}</p>
-      <p>{product.description}</p>
-
-      <Link to={`/products/${product.id}`}>View Details</Link>
-    </article>
+      <p className="product-brand">{product.brand}</p>
+      <p className="product-description">{product.description}</p>
+    </Link>
   );
 }
 
