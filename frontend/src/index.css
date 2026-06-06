@@ -134,9 +134,44 @@ body {
 }
 
 .review-card {
-  padding: 1rem;
-  border: #222 1px solid;
-  margin-bottom: 1rem;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+
+  background-color: white;
+  border: 1px solid #e2e2e2;
+  border-radius: 14px;
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.review-user {
+  margin: 0;
+  font-weight: 700;
+  color: #222;
+}
+
+.review-rating {
+  margin: 0;
+  padding: 4px 10px;
+
+  background-color: #f1f1f1;
+  border-radius: 999px;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.review-text {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
 }
 
 .review-form {
