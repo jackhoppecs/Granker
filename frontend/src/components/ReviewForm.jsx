@@ -19,12 +19,13 @@ function ReviewForm({ onSubmitReview }) {
   }
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form className="review-form" onSubmit={handleSubmit}>
       <h2>Add a Review</h2>
 
-      <label>
-        Rating
+      <div className="form-group">
+        <label htmlFor="rating">Rating</label>
         <select
+          id="rating"
           value={rating}
           onChange={(event) => setRating(event.target.value)}
         >
@@ -34,17 +35,21 @@ function ReviewForm({ onSubmitReview }) {
           <option value="2">2 - Bad</option>
           <option value="1">1 - Terrible</option>
         </select>
-      </label>
+      </div>
 
-      <label>
-        Review
+      <div className="form-group">
+        <label htmlFor="review-text">Review</label>
         <textarea
+          id="review-text"
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder="What did you think?"
         ></textarea>
-      </label>
-      <button type="submit">Submit Review</button>
+      </div>
+
+      <button className="primary-button" type="submit">
+        Submit Review
+      </button>
     </form>
   );
 }

@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
@@ -127,4 +131,87 @@ body {
   margin: 0;
   color: #555;
   line-height: 1.5;
+}
+
+.review-card {
+  padding: 1rem;
+  border: #222 1px solid;
+  margin-bottom: 1rem;
+}
+
+.review-form {
+  margin-top: 32px;
+  padding: 24px;
+
+  background-color: white;
+  border: 1px solid #e2e2e2;
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.review-form h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+
+  border: 1px solid #d0d0d0;
+  border-radius: 10px;
+
+  font: inherit;
+  background-color: white;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #333;
+}
+
+.form-group option {
+  width: 100%;
+}
+
+.primary-button {
+  align-self: flex-start;
+
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+
+  background-color: #222;
+  color: white;
+
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background-color: #000;
 }
