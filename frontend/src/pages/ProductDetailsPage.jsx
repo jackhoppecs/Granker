@@ -54,10 +54,17 @@ function ProductDetailsPage() {
 
   return (
     <main className="container">
-      <section className="card">
-        <h1>{product.name}</h1>
-        <p className="brand">{product.brand}</p>
-        <p>{product.description}</p>
+      <section className="product-detail-card">
+        <div className="product-detail-header">
+          <div>
+            <p className="product-detail-brand">{product.brand}</p>
+            <h1>{product.name}</h1>
+          </div>
+
+          <span className="product-detail-badge">Frozen Food</span>
+        </div>
+
+        <p className="product-detail-description">{product.description}</p>
       </section>
       <section>
         {/* Give ReviewForm component a PROP called onSubmitReview.
