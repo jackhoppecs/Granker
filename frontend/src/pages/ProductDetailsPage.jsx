@@ -46,7 +46,7 @@ function ProductDetailsPage() {
   async function handleSubmitReview(review) {
     try {
       const createdReview = await createReview(id, review);
-      setReviews((currentReviews) => [...currentReviews, createdReview]);
+      setReviews((currentReviews) => [createdReview, ...currentReviews]);
     } catch (err) {
       setError(err.message);
     }
