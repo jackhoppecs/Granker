@@ -3,24 +3,48 @@ import { useState } from "react";
 function ReviewForm({ onSubmitReview }) {
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+
+    if (!text.trim()) {
+      setFormError("Review text is required.");
+      setSuccessMessage("");
+      return;
+    }
 
     const review = {
       rating: Number(rating),
       text,
     };
 
-    onSubmitReview(review);
+    try {
+      setSubmitting(true);
+      setFormError("");
+      setSuccessMessage("");
 
-    setRating(5);
-    setText("");
+      await onSubmitReview(review);
+      setRating(5);
+      setText("");
+      setSuccessMessage("Review Submitted successfully.");
+    } catch (err) {
+      setFormError(
+        err.message || "Something went wrong submitting your review.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
     <form className="review-form" onSubmit={handleSubmit}>
       <h2>Add a Review</h2>
+
+      {formError && <p className="form-error">{formError}</p>}
+      {successMessage && <p className="form-success">{successMessage}</p>}
 
       <div className="form-group">
         <label htmlFor="rating">Rating</label>
@@ -44,11 +68,12 @@ function ReviewForm({ onSubmitReview }) {
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder="What did you think?"
+          disabled={submitting}
         ></textarea>
       </div>
 
-      <button className="primary-button" type="submit">
-        Submit Review
+      <button className="primary-button" type="submit" disabled={submitting}>
+        {submitting ? "Submitting..." : "Submit Review"}
       </button>
     </form>
   );
