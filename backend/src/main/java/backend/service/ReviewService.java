@@ -99,4 +99,7 @@ public class ReviewService {
         return true;
     }
 
+    public List<Review> getReviewsByProductId(Long productId){
+        return reviewRepository.findByProductId(productId);
+    }
 }
