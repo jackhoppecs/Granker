@@ -34,7 +34,7 @@ public class DataSeeder {
             User demoUser = new User();
             demoUser.setUsername("demo_user");
             demoUser.setEmail("demo@example.com");
-            demoUser.setPassword("password");
+            demoUser.setPassword(passwordEncoder.encode("password"));
 
             User savedUser = userRepository.save(demoUser);
 
