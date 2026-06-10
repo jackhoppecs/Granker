@@ -64,6 +64,22 @@ function ProductDetailsPage({ currentUser }) {
           <span className="product-detail-badge">Frozen Food</span>
         </div>
 
+        <div className="product-rating-summary">
+          {product.reviewCount > 0 ? (
+            <>
+              <p className="product-average-rating">
+                Average Rating: {product.averageRating.toFixed(1)} / 5
+              </p>
+              <p className="product-review-count">
+                {product.reviewCount}{" "}
+                {product.reviewCount === 1 ? "review" : "reviews"}
+              </p>
+            </>
+          ) : (
+            <p className="product-review-count">No ratings yet</p>
+          )}
+        </div>
+
         <p className="product-detail-description">{product.description}</p>
       </section>
 
