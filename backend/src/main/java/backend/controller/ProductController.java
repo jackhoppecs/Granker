@@ -3,7 +3,10 @@ package backend.controller;
 import backend.dto.CreateProductRequest;
 import backend.dto.ProductResponseDTO;
 import backend.model.Product;
+import backend.model.Review;
 import backend.service.ProductService;
+import backend.service.ReviewService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -18,9 +21,11 @@ import java.util.ArrayList;
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
+    private final ReviewService reviewService;
 
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService, ReviewService reviewService){
         this.productService = productService;
+        this.reviewService = reviewService;
     }
 
     // This handles GET /api/products
@@ -30,7 +35,13 @@ public class ProductController {
         List<Product> products = productService.getAllProducts();
         List<ProductResponseDTO> dtos = new ArrayList<>();
         for (Product product : products){
-            ProductResponseDTO addProduct = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription());
+            // Will need to eventually call repository function in service instead
+            // Also a N + 1 pattern for queries, we can optimize later
+            List<Review> reviews = reviewService.getReviewsByProductId(product.getId());
+            double averageRating = reviews.stream()
+            .mapToInt(Review::getRating).average().orElse(0.0);
+            Integer reviewCount = reviews.size();
+            ProductResponseDTO addProduct = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount);
             dtos.add(addProduct);
         }
 
@@ -45,7 +56,11 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
 
-        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription());
+        List<Review> reviews = reviewService.getReviewsByProductId(product.getId());
+        double averageRating = reviews.stream()
+            .mapToInt(Review::getRating).average().orElse(0.0);
+        Integer reviewCount = reviews.size();
+        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount);
         return ResponseEntity.ok(dto);
     }
     
@@ -63,7 +78,11 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
 
-        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription());
+        List<Review> reviews = reviewService.getReviewsByProductId(product.getId());
+        double averageRating = reviews.stream()
+            .mapToInt(Review::getRating).average().orElse(0.0);
+        Integer reviewCount = reviews.size();
+        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount);
         return ResponseEntity.ok(dto);
         // Want to return the updated version of the resource so we can confirm what was changed and we can avoid using another GET request
     }
@@ -83,7 +102,7 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request){
         Product product = new Product(request.getName(), request.getBrand(), request.getDescription()); 
         Product newProduct = productService.createProduct(product);
-        ProductResponseDTO dto = new ProductResponseDTO(newProduct.getId(), newProduct.getName(), newProduct.getBrand(), newProduct.getDescription());
+        ProductResponseDTO dto = new ProductResponseDTO(newProduct.getId(), newProduct.getName(), newProduct.getBrand(), newProduct.getDescription(), 0.0, 0);
         return ResponseEntity.ok(dto);
     }
 }
