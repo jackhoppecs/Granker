@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
 
-function ProductDetailsPage() {
+function ProductDetailsPage({ currentUser }) {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
@@ -66,19 +66,25 @@ function ProductDetailsPage() {
 
         <p className="product-detail-description">{product.description}</p>
       </section>
-      <section>
-        {/* Give ReviewForm component a PROP called onSubmitReview.
-        The value of that prop is the function handleSubmitReview */}
-        <ReviewForm onSubmitReview={handleSubmitReview}></ReviewForm>
-      </section>
-      <section>
+
+      {currentUser ? (
+        <section>
+          <ReviewForm onSubmitReview={handleSubmitReview} />
+        </section>
+      ) : (
+        <p className="empty-state">Log in to write a review.</p>
+      )}
+
+      <section className="reviews-section">
         <h2>Reviews</h2>
 
-        {reviews.length === 0 && <p>No reviews yet.</p>}
-
-        {reviews.map((review) => (
-          <ReviewCard key={review.id} review={review}></ReviewCard>
-        ))}
+        {reviews.length === 0 ? (
+          <p className="empty-state">No reviews yet.</p>
+        ) : (
+          reviews.map((review) => (
+            <ReviewCard key={review.id} review={review} />
+          ))
+        )}
       </section>
     </main>
   );
