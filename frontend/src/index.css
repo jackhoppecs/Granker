@@ -340,3 +340,41 @@ body {
   opacity: 0.65;
   cursor: not-allowed;
 }
+
+.product-rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.product-average-rating {
+  margin: 0;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.product-review-count {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.product-detail-card .product-rating-summary {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.product-detail-card .product-average-rating {
+  font-size: 1rem;
+  padding: 0.45rem 0.8rem;
+}
+
+.product-detail-card .product-review-count {
+  font-size: 0.95rem;
+}
