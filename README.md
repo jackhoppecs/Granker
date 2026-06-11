@@ -1,4 +1,4 @@
-# Granker V
+# Granker
 
 Granker is a full-stack frozen foods review app. Users can browse frozen food products, view product details, read reviews, submit reviews, and add new products.
 
