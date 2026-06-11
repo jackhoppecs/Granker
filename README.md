@@ -81,3 +81,21 @@ The first MVP includes product browsing, product details, review submission, pro
 ### v1.1.0
 
 This version adds average product ratings, review counts, and logout support.
+
+## Screenshots
+
+### Products Page
+
+![Products Page](docs/images/ProductPage.png)
+
+### Product Details Page
+
+![Product Details Page](docs/images/ProductDetails.png)
+
+### Add Product Page
+
+![Add Product Page](docs/images/AddProduct.png)
+
+### Login Page
+
+![Login Page](docs/images/LoginPage.png)
