@@ -378,3 +378,18 @@ body {
 .product-detail-card .product-review-count {
   font-size: 0.95rem;
 }
+
+.navbar-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.navbar-button:hover {
+  text-decoration: underline;
+}
