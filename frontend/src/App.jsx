@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
+import { logout } from "./api/auth";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CreateProductPage from "./pages/CreateProductPage";
@@ -8,6 +9,16 @@ import Navbar from "./components/Navbar";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  async function handleLogout() {
+    try {
+      await logout();
+      // When this prop is changed not all possible pages re-renders
+      // It only renders the page for the current URL plus other components under app outside of routes
+      setCurrentUser(null);
+    } catch (err) {
+      console.error(err);
+    }
+  }
   return (
     // BrowserRouter connects your React app to the Browser's URL bar
     // React router can look at the URL and decide what component to display
@@ -17,7 +28,8 @@ function App() {
     // Rotutes decides which page to show based on url
     // Navbar is everywhere because it's outside of routes
     <BrowserRouter>
-      <Navbar />
+      {/* Passing currentUser and handleLogout function as props to navbar */}
+      <Navbar currentUser={currentUser} handleLogout={handleLogout} />
       <Routes>
         {/* These are just paths to where we have these pages not same as APIs */}
         <Route path="/" element={<ProductsPage />}></Route>
