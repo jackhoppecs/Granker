@@ -1,4 +1,4 @@
-# Granker
+# Granker V
 
 Granker is a full-stack frozen foods review app. Users can browse frozen food products, view product details, read reviews, submit reviews, and add new products.
 
@@ -11,6 +11,8 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Submit a review for a product
 - Add new products from the frontend
 - Basic session-based login flow for submitting review
+- Logout support
+- Average product ratings
 
 ## Tech Stack
 
@@ -65,13 +67,17 @@ The first MVP includes product browsing, product details, review submission, pro
 ## Future Improvements
 
 - Full registration and login UI
-- Logout support
 - Review editing and deletion
 - Product images
 - Product categories
 - Nutrition fields
-- Average product ratings
 - Sorting and filtering
 - Deployment
 - Automated tests
 - Docker setup
+
+## Version Status
+
+### v1.1.0
+
+This version adds average product ratings, review counts, and logout support.
