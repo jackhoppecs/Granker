@@ -1,5 +1,7 @@
 package backend.dto;
 
+import java.time.LocalDateTime;
+
 public class ReviewResponseDTO {
     
     private Long id;
@@ -7,6 +9,8 @@ public class ReviewResponseDTO {
     private String text;
     private String username;
     private Long productId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public ReviewResponseDTO(
             Long id,
@@ -40,5 +44,13 @@ public class ReviewResponseDTO {
 
     public Long getProductId(){
         return productId;
+    }
+
+    public LocalDateTime getCreateAt(){
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt(){
+        return updatedAt;
     }
 }
