@@ -48,7 +48,12 @@ public class ReviewService {
         if(product == null || user == null){
             return null;
         }
-        
+
+        // Check for duplicate reviews on one product
+        if (reviewRepository.existsbyProductIdAndUserId(productId, userId)){
+            throw new RuntimeException("You have already reviewed this product");
+        }
+
         // Set product and user for a review
         review.setProduct(product);
         review.setUser(user);
