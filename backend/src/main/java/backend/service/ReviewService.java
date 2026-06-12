@@ -50,7 +50,7 @@ public class ReviewService {
         }
 
         // Check for duplicate reviews on one product
-        if (reviewRepository.existsbyProductIdAndUserId(productId, userId)){
+        if (reviewRepository.existsByProductIdAndUserId(productId, userId)){
             throw new RuntimeException("You have already reviewed this product");
         }
 
