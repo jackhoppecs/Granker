@@ -34,3 +34,40 @@ export async function createReview(productId, review) {
 
   return response.json();
 }
+
+export async function updateReview(reviewId, updatedReviewData) {
+  const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(updatedReviewData),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to edit review. Status: ${response.status}. Body: ${errorText}`,
+    );
+  }
+
+  return response.json();
+}
+
+export async function deleteReview(reviewId) {
+  const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to delete review. Status: ${response.status}. Body: ${errorText}`,
+    );
+  }
+}
