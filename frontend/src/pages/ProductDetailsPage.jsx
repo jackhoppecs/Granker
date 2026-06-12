@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { getProductById } from "../api/products";
 import { getReviewsByProductId } from "../api/reviews";
 import { createReview } from "../api/reviews";
+import { updateReview } from "../api/reviews";
+import { deleteReview } from "../api/reviews";
 import { useParams } from "react-router-dom";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
@@ -15,6 +17,7 @@ function ProductDetailsPage({ currentUser }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingReviewId, setEditingReviewId] = useState(null);
 
   // useEffect runs code after the component renders
   useEffect(() => {
@@ -47,6 +50,28 @@ function ProductDetailsPage({ currentUser }) {
     try {
       const createdReview = await createReview(id, review);
       setReviews((currentReviews) => [createdReview, ...currentReviews]);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleUpdateReview(reviewId, updatedReviewData) {
+    try {
+      const updatedReview = await updateReview(reviewId, updatedReviewData);
+      setReviews((prevReviews) =>
+        prevReviews.map((r) => (r.id === reviewId ? updatedReview : r)),
+      );
+      // close edit mode
+      setEditingReviewId(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleDeleteReview(reviewId) {
+    try {
+      await deleteReview(reviewId);
+      setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
     } catch (err) {
       setError(err.message);
     }
@@ -98,7 +123,16 @@ function ProductDetailsPage({ currentUser }) {
           <p className="empty-state">No reviews yet.</p>
         ) : (
           reviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
+            // When you pass props down, the left-hand side is the name the child component will see, the right-hand side is the value from the parent.
+            <ReviewCard
+              key={review.id}
+              review={review}
+              currentUser={currentUser}
+              editingReviewId={editingReviewId}
+              setEditingReviewId={setEditingReviewId}
+              onUpdateReview={handleUpdateReview}
+              onDeleteReview={handleDeleteReview}
+            />
           ))
         )}
       </section>
