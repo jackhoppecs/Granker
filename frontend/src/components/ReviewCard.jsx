@@ -65,11 +65,19 @@ function ReviewCard({
         </div>
 
         <div className="review-actions">
-          <button type="button" onClick={handleSaveClick}>
+          <button
+            type="button"
+            className="review-save-button"
+            onClick={handleSaveClick}
+          >
             Save
           </button>
 
-          <button type="button" onClick={handleCancelClick}>
+          <button
+            type="button"
+            className="review-cancel-button"
+            onClick={handleCancelClick}
+          >
             Cancel
           </button>
         </div>
@@ -94,10 +102,18 @@ function ReviewCard({
 
       {isOwner && !isEditing && (
         <div className="review-actions">
-          <button type="button" onClick={handleEditClick}>
+          <button
+            type="button"
+            className="review-edit-button"
+            onClick={handleEditClick}
+          >
             Edit
           </button>
-          <button type="button" onClick={handleDeleteClick}>
+          <button
+            type="button"
+            className="review-delete-button"
+            onClick={handleDeleteClick}
+          >
             Delete
           </button>
         </div>

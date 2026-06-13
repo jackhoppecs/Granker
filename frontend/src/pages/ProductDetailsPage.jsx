@@ -93,7 +93,7 @@ function ProductDetailsPage({ currentUser }) {
           {product.reviewCount > 0 ? (
             <>
               <p className="product-average-rating">
-                Average Rating: {product.averageRating.toFixed(1)} / 5
+                ★ {product.averageRating.toFixed(1)} / 5
               </p>
               <p className="product-review-count">
                 {product.reviewCount}{" "}
