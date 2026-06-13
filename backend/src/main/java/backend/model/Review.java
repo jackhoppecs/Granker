@@ -110,4 +110,20 @@ public class Review {
     public void setUser(User user){
         this.user = user;
     }
+
+    public LocalDateTime getCreatedAt(){
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime created){
+        this.createdAt = created;
+    }
+
+    public LocalDateTime getUpdatedAt(){
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updated){
+        this.updatedAt = updated;
+    }
 }
