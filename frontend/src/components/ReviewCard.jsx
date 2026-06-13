@@ -34,6 +34,15 @@ function ReviewCard({
   }
 
   function handleDeleteClick() {
+    // Built in browser function that opens a single confirmation popup
+    // returns a boolean
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this review?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
     onDeleteReview(review.id);
   }
 
