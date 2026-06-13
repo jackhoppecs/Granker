@@ -17,13 +17,17 @@ public class ReviewResponseDTO {
             int rating,
             String text,
             String username,
-            Long productId
+            Long productId,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
     ){
         this.id = id;
         this.rating = rating;
         this.text = text;
         this.username = username;
         this.productId = productId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId(){
