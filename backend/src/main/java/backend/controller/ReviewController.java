@@ -35,7 +35,7 @@ public class ReviewController {
         List<Review> reviews = reviewService.getAllReviews();
         List<ReviewResponseDTO> dtos = new ArrayList<>();
         for (Review review : reviews){
-            ReviewResponseDTO dto = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+            ReviewResponseDTO dto = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
             dtos.add(dto);
         }
         return dtos;
@@ -51,7 +51,7 @@ public class ReviewController {
             // .build() means finished creating response and is needed because no body.
             return ResponseEntity.notFound().build();
         }
-        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
         // Status: 200 OK, Body: review
         return ResponseEntity.ok(response);
     }
@@ -75,22 +75,35 @@ public class ReviewController {
     // Request body = data used to create/update the resource
     // Session/auth = identity of the current user
     @PostMapping("/products/{productId}/reviews")
-    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long productId, @Valid @RequestBody CreateReviewRequest review, HttpSession session){
+    public ResponseEntity<?> createReview(@PathVariable Long productId, @Valid @RequestBody CreateReviewRequest review, HttpSession session){
         Review addReview = new Review(review.getRating(), review.getText());
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(401).build();
         }
         
+         try {
         Review createdReview = reviewService.createReview(productId, userId, addReview);
-        
-        if (createdReview == null){
+
+        if (createdReview == null) {
             return ResponseEntity.notFound().build();
         }
-        
 
-        ReviewResponseDTO response = new ReviewResponseDTO(createdReview.getId(), createdReview.getRating(), createdReview.getText(), createdReview.getUser().getUsername(), createdReview.getProduct().getId());
+        ReviewResponseDTO response = new ReviewResponseDTO(
+            createdReview.getId(),
+            createdReview.getRating(),
+            createdReview.getText(),
+            createdReview.getUser().getUsername(),
+            createdReview.getProduct().getId(),
+            createdReview.getCreatedAt(), 
+            createdReview.getUpdatedAt()
+        );
+
         return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        }
     }
 
     @GetMapping("/products/{productId}/reviews")
@@ -100,7 +113,7 @@ public class ReviewController {
         List<ReviewResponseDTO> dtos = new ArrayList<>();
         
         for (Review review : reviews){
-            ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+            ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
             dtos.add(response);
         }
         return ResponseEntity.ok(dtos);
@@ -113,7 +126,7 @@ public class ReviewController {
         List<ReviewResponseDTO> dtos = new ArrayList<>();
 
         for (Review review : reviews){
-            ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+            ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
             dtos.add(response);
         }
         return ResponseEntity.ok(dtos);
@@ -134,7 +147,7 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
 
-        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId());
+        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
         return ResponseEntity.ok(response);
     }
 
