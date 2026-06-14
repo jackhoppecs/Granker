@@ -1,5 +1,7 @@
 package backend.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -34,14 +36,22 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Product(){
 
     }
 
-    public Product(String name, String brand, String description){
+    public Product(String name, String brand, String description, LocalDateTime createdAt){
         this.name = name;
         this.brand = brand;
         this.description = description;
+        this.createdAt = createdAt;
     }
 
     public Long getId(){
@@ -70,5 +80,13 @@ public class Product {
 
     public void setDescription(String description){
         this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt(){
+        return createdAt;
+    }
+
+    public LocalDateTime setCreatedAt(LocalDateTime createdAt){
+        this.createdAt = createdAt;
     }
 }
