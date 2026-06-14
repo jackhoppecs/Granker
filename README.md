@@ -10,9 +10,13 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - View reviews for a specific product
 - Submit a review for a product
 - Add new products from the frontend
-- Basic session-based login flow for submitting review
+- Basic session-based login flow for submitting reviews
 - Logout support
 - Average product ratings
+- Edit and delete your own reviews
+- Prevent duplicate reviews from the same user on the same product
+- Review timestamps for created and updated reviews
+- Delete confirmation for reviews
 
 ## Tech Stack
 
@@ -62,12 +66,11 @@ Password: password
 
 ## MVP Status
 
-The first MVP includes product browsing, product details, review submission, product creation, seeded demo data, and basic login flow.
+The app currently includes product browsing, product details, product search, review submission, review editing/deletion for review owners, duplicate review prevention, product creation, seeded demo data, average ratings, review counts, and a basic session-based login/logout flow.
 
 ## Future Improvements
 
 - Full registration and login UI
-- Review editing and deletion
 - Product images
 - Product categories
 - Nutrition fields
@@ -81,6 +84,10 @@ The first MVP includes product browsing, product details, review submission, pro
 ### v1.1.0
 
 This version adds average product ratings, review counts, and logout support.
+
+### v1.2.0
+
+This version adds review management features. Logged-in users can edit and delete their own reviews, while review controls are only shown for reviews owned by the current user. Reviews now include created and updated timestamps, duplicate reviews are prevented so each user can only review a product once, and product rating summaries update after reviews are created, edited, or deleted.
 
 ## Screenshots
 
