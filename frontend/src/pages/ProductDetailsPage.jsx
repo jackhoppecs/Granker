@@ -50,6 +50,8 @@ function ProductDetailsPage({ currentUser }) {
     try {
       const createdReview = await createReview(id, review);
       setReviews((currentReviews) => [createdReview, ...currentReviews]);
+
+      await refreshProductSummary();
     } catch (err) {
       setError(err.message);
     }
@@ -63,6 +65,7 @@ function ProductDetailsPage({ currentUser }) {
       );
       // close edit mode
       setEditingReviewId(null);
+      await refreshProductSummary();
     } catch (err) {
       setError(err.message);
     }
@@ -72,9 +75,16 @@ function ProductDetailsPage({ currentUser }) {
     try {
       await deleteReview(reviewId);
       setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
+      await refreshProductSummary();
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  async function refreshProductSummary() {
+    const updatedProduct = await getProductById(id);
+    // State changes meaning page re renders except useEffect because it depends on id
+    setProduct(updatedProduct);
   }
 
   const currentUserReview = currentUser
