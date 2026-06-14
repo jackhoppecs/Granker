@@ -77,6 +77,10 @@ function ProductDetailsPage({ currentUser }) {
     }
   }
 
+  const currentUserReview = currentUser
+    ? reviews.find((review) => review.username === currentUser.username)
+    : null;
+
   return (
     <main className="container">
       <section className="product-detail-card">
@@ -108,12 +112,17 @@ function ProductDetailsPage({ currentUser }) {
         <p className="product-detail-description">{product.description}</p>
       </section>
 
-      {currentUser ? (
+      {!currentUser ? (
+        <p className="empty-state">Log in to write a review.</p>
+      ) : currentUserReview ? (
+        <p className="empty-state">
+          You already reviewed this product. You can edit or delete your review
+          below.
+        </p>
+      ) : (
         <section>
           <ReviewForm onSubmitReview={handleSubmitReview} />
         </section>
-      ) : (
-        <p className="empty-state">Log in to write a review.</p>
       )}
 
       <section className="reviews-section">
