@@ -30,9 +30,12 @@ public class ProductController {
 
     // This handles GET /api/products
     @GetMapping
-    public List<ProductResponseDTO> getAllProducts(){
+    public List<ProductResponseDTO> getAllProducts(
+        // Accept an optional string that decides how to sort products
+        @RequestParam(required = false, defaultValue = "name") String sort
+    ) {
         
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllProducts(sort);
         List<ProductResponseDTO> dtos = new ArrayList<>();
         for (Product product : products){
             // Will need to eventually call repository function in service instead
