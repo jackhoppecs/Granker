@@ -21,6 +21,10 @@ public class ProductService {
                 return productRepository.findAllByOrderByCreatedAtDesc();
             case "name":
                 return productRepository.findAllByOrderByNameAsc();  
+            case "highest-rating":
+                return productRepository.findAllOrderByAverageRatingDesc();
+            case "most-reviewed":
+                return productRepository.findAllOrderByReviewCountDesc();
             default:
                 return productRepository.findAll();
 
