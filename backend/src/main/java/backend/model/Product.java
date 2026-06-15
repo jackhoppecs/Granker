@@ -47,11 +47,10 @@ public class Product {
 
     }
 
-    public Product(String name, String brand, String description, LocalDateTime createdAt){
+    public Product(String name, String brand, String description){
         this.name = name;
         this.brand = brand;
         this.description = description;
-        this.createdAt = createdAt;
     }
 
     public Long getId(){
@@ -86,7 +85,7 @@ public class Product {
         return createdAt;
     }
 
-    public LocalDateTime setCreatedAt(LocalDateTime createdAt){
+    public void setCreatedAt(LocalDateTime createdAt){
         this.createdAt = createdAt;
     }
 }
