@@ -3,14 +3,14 @@ const API_BASE_URL = "http://localhost:8080";
 // export means to make this function available to other files
 // async means the function does asynchronous work, and will return a "Promise"
 // AKA JS is saying I don't have a value yet but will eventually
-export async function getProducts() {
+export async function getProducts(sort = "name") {
   // await means call the backend and pause the function until there's a response
   // fetch is build into the browser and sentds an HTTP request
   // fetch returns:
   // response.ok -> true
   // response.status -> 200
   // response.json() -> data
-  const response = await fetch(`${API_BASE_URL}/api/products`);
+  const response = await fetch(`${API_BASE_URL}/api/products?sort=${sort}`);
   // Spring Boot controller returns JSON
   //   [
   //   {
