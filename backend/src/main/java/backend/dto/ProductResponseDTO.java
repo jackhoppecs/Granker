@@ -1,5 +1,7 @@
 package backend.dto;
 
+import java.time.LocalDateTime;
+
 public class ProductResponseDTO {
     
     private Long id;
