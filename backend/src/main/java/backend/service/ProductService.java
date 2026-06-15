@@ -15,8 +15,16 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public List<Product> getAllProducts(){
-        return productRepository.findAll();
+    public List<Product> getAllProducts(String sort){
+        switch (sort) {
+            case "newest":
+                return productRepository.findAllByOrderByCreatedAtDesc();
+            case "name":
+                return productRepository.findAllByOrderByNameAsc();  
+            default:
+                return productRepository.findAll();
+
+        }
     }
 
     public Product getProductById(Long id){
