@@ -10,14 +10,16 @@ public class ProductResponseDTO {
     private String description;
     private Double averageRating;
     private Integer reviewCount;
+    LocalDateTime createdAt;
 
-    public ProductResponseDTO(Long id, String name, String brand, String description, Double averageRating, Integer reviewCount){
+    public ProductResponseDTO(Long id, String name, String brand, String description, Double averageRating, Integer reviewCount, LocalDateTime createdAt){
         this.id = id;
         this.name = name;
         this.brand = brand;
         this.description = description;
         this.averageRating = averageRating;
         this.reviewCount = reviewCount;
+        this.createdAt = createdAt;
     }
 
     public Long getId(){
@@ -44,5 +46,9 @@ public class ProductResponseDTO {
 
     public Integer getReviewCount(){
         return reviewCount;
+    }
+
+    public LocalDateTime getCreatedAt(){
+        return createdAt;
     }
 }

@@ -44,7 +44,7 @@ public class ProductController {
             double averageRating = reviews.stream()
             .mapToInt(Review::getRating).average().orElse(0.0);
             Integer reviewCount = reviews.size();
-            ProductResponseDTO addProduct = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount);
+            ProductResponseDTO addProduct = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount, product.getCreatedAt());
             dtos.add(addProduct);
         }
 
@@ -63,7 +63,7 @@ public class ProductController {
         double averageRating = reviews.stream()
             .mapToInt(Review::getRating).average().orElse(0.0);
         Integer reviewCount = reviews.size();
-        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount);
+        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount, product.getCreatedAt());
         return ResponseEntity.ok(dto);
     }
     
@@ -85,7 +85,7 @@ public class ProductController {
         double averageRating = reviews.stream()
             .mapToInt(Review::getRating).average().orElse(0.0);
         Integer reviewCount = reviews.size();
-        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount);
+        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount, product.getCreatedAt());
         return ResponseEntity.ok(dto);
         // Want to return the updated version of the resource so we can confirm what was changed and we can avoid using another GET request
     }
@@ -105,7 +105,7 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request){
         Product product = new Product(request.getName(), request.getBrand(), request.getDescription()); 
         Product newProduct = productService.createProduct(product);
-        ProductResponseDTO dto = new ProductResponseDTO(newProduct.getId(), newProduct.getName(), newProduct.getBrand(), newProduct.getDescription(), 0.0, 0);
+        ProductResponseDTO dto = new ProductResponseDTO(newProduct.getId(), newProduct.getName(), newProduct.getBrand(), newProduct.getDescription(), 0.0, 0, newProduct.getCreatedAt());
         return ResponseEntity.ok(dto);
     }
 }

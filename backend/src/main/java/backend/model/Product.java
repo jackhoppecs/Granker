@@ -36,6 +36,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
