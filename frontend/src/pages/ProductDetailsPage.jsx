@@ -137,15 +137,23 @@ function ProductDetailsPage({ currentUser }) {
       )}
 
       <section className="reviews-section">
-        <h2>Reviews</h2>
-        <label>
-          Sort by:
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="newest">Newest</option>
-            <option value="highest-rating">Highest Rating</option>
-            <option value="lowest-reviewed">Lowest Reviewed</option>
-          </select>
-        </label>
+        <div className="section-header reviews-header">
+          <div>
+            <h2>Reviews</h2>
+          </div>
+          <div className="control-group review-sort-control">
+            <label htmlFor="review-sort">Sort by</label>
+            <select
+              id="review-sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="newest">Newest</option>
+              <option value="highest-rating">Highest Rating</option>
+              <option value="lowest-rating">Lowest Rating</option>
+            </select>
+          </div>
+        </div>
         {reviews.length === 0 ? (
           <div className="empty-state">
             <h2>No reviews yet</h2>
