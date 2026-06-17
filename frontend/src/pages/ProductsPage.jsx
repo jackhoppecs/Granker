@@ -17,17 +17,21 @@ function ProductsPage() {
 
   const [search, setSearch] = useState("");
 
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState("name");
+  const [minRating, setMinRating] = useState("");
 
   // React re-renders the UI when the state changes
   // When this page first loads, call getProducts()
   useEffect(() => {
-    getProducts(sort)
-      .then((data) => setProducts(data))
+    getProducts(sort, minRating)
+      .then((data) => {
+        setProducts(data);
+        setError("");
+      })
       .catch((err) => setError(err.message));
     // Only runs when the component first mounts because of the empty dependency array: []
     // Without that it would re run each time search changed.
-  }, [sort]);
+  }, [sort, minRating]);
 
   // After retreiving all products filter based on search
   // When page re renders products is kept the same but the search filter is changed and this runs
@@ -62,6 +66,20 @@ function ProductsPage() {
             <option value="newest">Newest</option>
             <option value="highest-rating">Highest Rating</option>
             <option value="most-reviewed">Most Reviewed</option>
+          </select>
+        </label>
+        <label>
+          Minimum Rating:
+          <select
+            value={minRating}
+            onChange={(e) => setMinRating(e.target.value)}
+          >
+            <option value="">Any Rating</option>
+            <option value="5">5+</option>
+            <option value="4">4+</option>
+            <option value="3">3+</option>
+            <option value="2">2+</option>
+            <option value="1">1+</option>
           </select>
         </label>
       </div>
