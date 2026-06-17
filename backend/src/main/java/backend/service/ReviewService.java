@@ -62,8 +62,17 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    public List<Review> getReviewsbyProductId(Long productId){
-        return reviewRepository.findByProductId(productId);
+    public List<Review> getReviewsbyProductId(Long productId, String sort){
+        switch (sort) {
+            case "newest":
+                return reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);
+            case "lowest-rating":
+                return reviewRepository.findByProductIdOrderByRatingAsc(productId);  
+            case "highest-rating":
+                return reviewRepository.findByProductIdOrderByRatingDesc(productId);
+            default:
+                return reviewRepository.findByProductId(productId);
+        }
     }
 
     public List<Review> getReviewsbyUserId(Long userId){

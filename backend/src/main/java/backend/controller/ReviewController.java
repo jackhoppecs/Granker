@@ -108,8 +108,8 @@ public class ReviewController {
 
     @GetMapping("/products/{productId}/reviews")
     // If nothing is found [] is returned not null, meaning that the product has no reviews
-    public ResponseEntity<List<ReviewResponseDTO>> getReviewsByProductId(@PathVariable Long productId){
-        List<Review> reviews = reviewService.getReviewsbyProductId(productId);
+    public ResponseEntity<List<ReviewResponseDTO>> getReviewsByProductId(@PathVariable Long productId, @RequestParam(required = false, defaultValue="name") String sort){
+        List<Review> reviews = reviewService.getReviewsbyProductId(productId, sort);
         List<ReviewResponseDTO> dtos = new ArrayList<>();
         
         for (Review review : reviews){
