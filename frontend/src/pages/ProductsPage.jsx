@@ -88,7 +88,10 @@ function ProductsPage() {
 
       <section className="product-list">
         {filteredProducts.length === 0 ? (
-          <p>No products found.</p>
+          <div className="empty-state">
+            <h2>No products found</h2>
+            <p>Try clearing your search or lowering the minimum rating.</p>
+          </div>
         ) : (
           filteredProducts.map((product) => (
             // key helps react track each item efficiently. each item should have a unique key

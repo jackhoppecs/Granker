@@ -147,7 +147,10 @@ function ProductDetailsPage({ currentUser }) {
           </select>
         </label>
         {reviews.length === 0 ? (
-          <p className="empty-state">No reviews yet.</p>
+          <div className="empty-state">
+            <h2>No reviews yet</h2>
+            <p>Be the first to review this product.</p>
+          </div>
         ) : (
           reviews.map((review) => (
             // When you pass props down, the left-hand side is the name the child component will see, the right-hand side is the value from the parent.
