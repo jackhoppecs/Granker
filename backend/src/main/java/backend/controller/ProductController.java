@@ -32,10 +32,13 @@ public class ProductController {
     @GetMapping
     public List<ProductResponseDTO> getAllProducts(
         // Accept an optional string that decides how to sort products
-        @RequestParam(required = false, defaultValue = "name") String sort
+        @RequestParam(required = false, defaultValue = "name") String sort,
+        // Integer is allowed to be null while int is not so using Integer is important
+        // defaultValue must always be a string in Spring even if spring is converting
+        @RequestParam(required = false) Integer minRating
     ) {
         
-        List<Product> products = productService.getAllProducts(sort);
+        List<Product> products = productService.getAllProducts(sort, minRating);
         List<ProductResponseDTO> dtos = new ArrayList<>();
         for (Product product : products){
             // Will need to eventually call repository function in service instead
