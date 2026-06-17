@@ -1,8 +1,13 @@
 const API_BASE_URL = "http://localhost:8080";
 
-export async function getReviewsByProductId(productId) {
+export async function getReviewsByProductId(productId, sort = "newest") {
+  const params = new URLSearchParams();
+
+  if (sort) {
+    params.append("sort", sort);
+  }
   const response = await fetch(
-    `${API_BASE_URL}/api/products/${productId}/reviews`,
+    `${API_BASE_URL}/api/products/${productId}/reviews?${params.toString()}`,
   );
 
   if (!response.ok) {

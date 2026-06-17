@@ -18,13 +18,14 @@ function ProductDetailsPage({ currentUser }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingReviewId, setEditingReviewId] = useState(null);
+  const [sort, setSort] = useState("");
 
   // useEffect runs code after the component renders
   useEffect(() => {
     async function loadProductDetails() {
       try {
         const productData = await getProductById(id);
-        const reviewData = await getReviewsByProductId(id);
+        const reviewData = await getReviewsByProductId(id, sort);
 
         setProduct(productData);
         setReviews(reviewData);
@@ -36,7 +37,7 @@ function ProductDetailsPage({ currentUser }) {
     }
     loadProductDetails();
     // The [id] means run again if the id changes
-  }, [id]);
+  }, [id, sort]);
 
   if (loading) {
     return <p>Loading product...</p>;
@@ -137,7 +138,14 @@ function ProductDetailsPage({ currentUser }) {
 
       <section className="reviews-section">
         <h2>Reviews</h2>
-
+        <label>
+          Sort by:
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="newest">Newest</option>
+            <option value="highest-rating">Highest Rating</option>
+            <option value="lowest-reviewed">Lowest Reviewed</option>
+          </select>
+        </label>
         {reviews.length === 0 ? (
           <p className="empty-state">No reviews yet.</p>
         ) : (
