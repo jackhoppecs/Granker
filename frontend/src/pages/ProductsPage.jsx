@@ -52,25 +52,36 @@ function ProductsPage() {
 
       {/* Input is connect to search state. On a change setSearch changes the search state value.
         This change in state causes the page to re render */}
-      <div className="search-bar">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search products..."
-        />
-        <label>
-          Sort by:
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+      <div className="product-controls">
+        <div className="control-group search-control">
+          <label htmlFor="product-search">Search</label>
+          <input
+            id="product-search"
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by product or brand..."
+          />
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="product-sort">Sort by</label>
+          <select
+            id="product-sort"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
             <option value="name">Name</option>
             <option value="newest">Newest</option>
             <option value="highest-rating">Highest Rating</option>
             <option value="most-reviewed">Most Reviewed</option>
           </select>
-        </label>
-        <label>
-          Minimum Rating:
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="min-rating">Minimum rating</label>
           <select
+            id="min-rating"
             value={minRating}
             onChange={(e) => setMinRating(e.target.value)}
           >
@@ -81,7 +92,7 @@ function ProductsPage() {
             <option value="2">2+</option>
             <option value="1">1+</option>
           </select>
-        </label>
+        </div>
       </div>
 
       {error && <p className="error">{error}</p>}
