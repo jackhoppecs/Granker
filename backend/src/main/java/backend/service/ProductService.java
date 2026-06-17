@@ -15,7 +15,31 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public List<Product> getAllProducts(String sort){
+    public List<Product> getAllProducts(String sort, Integer minRating){
+        if (minRating != null) {
+            return getProductsWithMinRating(sort, minRating);
+        }
+        else {
+            return getProductsWithoutMinRating(sort);
+        }
+    }
+
+    // Get all product filter helper functions:
+
+    public List<Product> getProductsWithMinRating(String sort, Integer minRating){
+        switch (sort) {
+            case "newest":
+                return productRepository.findAllByMinRatingOrderByCreatedAtDesc(minRating);
+            case "highest-rating":
+                return productRepository.findAllByMinRatingOrderByAverageRatingDesc(minRating);
+            case "most-reviewed":
+                return productRepository.findAllByMinRatingOrderByReviewCountDesc(minRating);
+            default:
+                return productRepository.findAllByMinRatingOrderByNameAsc(minRating);
+        }
+    }
+
+    public List<Product> getProductsWithoutMinRating(String sort){
         switch (sort) {
             case "newest":
                 return productRepository.findAllByOrderByCreatedAtDesc();
@@ -27,9 +51,10 @@ public class ProductService {
                 return productRepository.findAllOrderByReviewCountDesc();
             default:
                 return productRepository.findAll();
-
         }
     }
+
+
 
     public Product getProductById(Long id){
         return productRepository.findById(id).orElse(null);

@@ -4,6 +4,7 @@ import backend.model.Product;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 // JPA repostiory basically gives you a bunch of functions for free that are basically all CRUD
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -44,4 +45,47 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         ORDER BY COUNT(r) DESC, COALESCE(AVG(r.rating), 0) DESC, p.name ASC
     """)
     List<Product> findAllOrderByReviewCountDesc();
+
+
+    // With minRating queries
+    
+    @Query("""
+    SELECT p
+    FROM Product p
+    LEFT JOIN Review r ON r.product = p
+    GROUP BY p
+    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
+    ORDER BY p.name ASC
+    """)
+    List<Product> findAllByMinRatingOrderByNameAsc(@Param("minRating") Integer minRating);
+
+    @Query("""
+    SELECT p
+    FROM Product p
+    LEFT JOIN Review r ON r.product = p
+    GROUP BY p
+    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
+    ORDER BY p.createdAt DESC
+    """)
+    List<Product> findAllByMinRatingOrderByCreatedAtDesc(@Param("minRating") Integer minRating);
+
+    @Query("""
+    SELECT p
+    FROM Product p
+    LEFT JOIN Review r ON r.product = p
+    GROUP BY p
+    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
+    ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC, p.name ASC
+    """)
+    List<Product> findAllByMinRatingOrderByAverageRatingDesc(@Param("minRating") Integer minRating);
+
+    @Query("""
+    SELECT p
+    FROM Product p
+    LEFT JOIN Review r ON r.product = p
+    GROUP BY p
+    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
+    ORDER BY COUNT(r) DESC, COALESCE(AVG(r.rating), 0) DESC, p.name ASC
+    """)
+    List<Product> findAllByMinRatingOrderByReviewCountDesc(@Param("minRating") Integer minRating);
 }
