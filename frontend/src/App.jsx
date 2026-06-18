@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
-import { logout } from "./api/auth";
+import { useEffect, useState } from "react";
+import { logout, getCurrentUser } from "./api/auth";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CreateProductPage from "./pages/CreateProductPage";
@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   async function handleLogout() {
     try {
       await logout();
@@ -19,6 +20,28 @@ function App() {
       console.error(err);
     }
   }
+
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+      } catch (err) {
+        setCurrentUser(null);
+      } finally {
+        setAuthLoading(false);
+      }
+    }
+
+    checkSession();
+    // If you put it in App.jsx inside a useEffect with an empty dependency array:
+    // then it runs once when App first mounts, not every re-render.
+  }, []);
+
+  if (authLoading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     // BrowserRouter connects your React app to the Browser's URL bar
     // React router can look at the URL and decide what component to display

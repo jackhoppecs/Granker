@@ -27,3 +27,15 @@ export async function logout() {
     throw new Error("Logout failed");
   }
 }
+
+export async function getCurrentUser() {
+  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return response.json();
+}
