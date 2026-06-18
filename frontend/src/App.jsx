@@ -20,7 +20,8 @@ function App() {
       console.error(err);
     }
   }
-
+  // The browser keeps the session id cookie even when refreshed
+  // and React uses /auth/me after refresh to ask the backend which user that session belongs to.
   useEffect(() => {
     async function checkSession() {
       try {

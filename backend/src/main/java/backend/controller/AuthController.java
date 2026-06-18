@@ -30,15 +30,22 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginRequest request, HttpSession session){
         UserResponseDTO user = authService.login(request);
-
-        //When login succeeds, store this user's id in the browser's session.
+        // Spring provides the HttpSession for the current browser request.
+        // AKA spring creates/uses an HttpSession
+        // A session can exist before login, but it does not represent a logged-in user
+        // until we store a user identifier in it.
+        // When login succeeds, store this user's id in the current HTTP session.
         session.setAttribute("userId", user.getId());
 
+        // The browser stores only the session id cookie, not the user data itself.
+        // On future requests, that cookie lets Spring find this same server-side session.
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> me(HttpSession session){
+        // Spring resolves this session from the request's session cookie, if one exists.
+        // If the session has no userId, this browser is not currently logged in.
         Long userId = (Long) session.getAttribute("userId");
 
         if (userId == null){
@@ -51,6 +58,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpSession session){
+        // Invalidate the server-side session so this session id can no longer be used
+        // to access logged-in user data.
         session.invalidate();
         return ResponseEntity.noContent().build();
     }
