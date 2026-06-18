@@ -5,6 +5,7 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -69,6 +70,10 @@ function App() {
           // Need that function to pass to LoginPage not Route
           // That is why we pass it in there instead of as another attribute of Route
           element={<LoginPage setCurrentUser={setCurrentUser} />}
+        ></Route>
+        <Route
+          path="/register"
+          element={<RegisterPage setCurrentUser={setCurrentUser} />}
         ></Route>
       </Routes>
     </BrowserRouter>

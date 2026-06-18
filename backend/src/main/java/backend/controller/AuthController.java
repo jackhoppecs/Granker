@@ -22,8 +22,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody RegisterRequest request){
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody RegisterRequest request, HttpSession session){
         UserResponseDTO user = authService.register(request);
+        session.setAttribute("userId", user.getId());
         return ResponseEntity.ok(user);
     }
 
