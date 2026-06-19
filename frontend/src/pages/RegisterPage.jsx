@@ -39,45 +39,52 @@ function RegisterPage({ setCurrentUser }) {
   }
 
   return (
-    <main className="page">
-      <h1>Create Account</h1>
+    <main className="container">
+      <header className="page-header">
+        <h1>Create Account</h1>
+      </header>
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="form-error">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="form-card">
-        <label>
-          Username
+      <form onSubmit={handleSubmit} className="review-form">
+        <div className="form-group">
+          <label htmlFor="register-username">Username</label>
           <input
+            id="register-username"
             name="username"
             value={formData.username}
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Email
+        <div className="form-group">
+          <label htmlFor="register-email">Email</label>
           <input
+            id="register-email"
             name="email"
             type="email"
             value={formData.email}
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Password
+        <div className="form-group">
+          <label htmlFor="register-password">Password</label>
           <input
+            id="register-password"
             name="password"
             type="password"
             value={formData.password}
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <button type="submit">Register</button>
+        <button className="primary-button" type="submit">
+          Register
+        </button>
       </form>
     </main>
   );
