@@ -5,13 +5,16 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import backend.dto.CreateReviewRequest;
 import backend.dto.ReviewResponseDTO;
+import backend.dto.MyReviewResponseDTO;
 import backend.model.Review;
 import backend.service.ReviewService;
+
 
 @RestController
 @RequestMapping("/api")
@@ -129,6 +132,32 @@ public class ReviewController {
             ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
             dtos.add(response);
         }
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("reviews/me")
+    public ResponseEntity<List<MyReviewResponseDTO>> getMyReviews(HttpSession session){
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<Review> reviews = reviewService.getReviewsbyUserId(userId);
+
+        List<MyReviewResponseDTO> dtos = reviews.stream()
+                .map(review -> new MyReviewResponseDTO(
+                        review.getId(),
+                        review.getRating(),
+                        review.getText(),
+                        review.getProduct().getId(),
+                        review.getProduct().getName(),
+                        review.getProduct().getBrand(),
+                        review.getCreatedAt(),
+                        review.getUpdatedAt()
+                ))
+                .toList();
+
         return ResponseEntity.ok(dtos);
     }
 
