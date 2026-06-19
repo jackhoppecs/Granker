@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getMyReviews } from "../api/reviews";
+import { getMyReviews, updateReview, deleteReview } from "../api/reviews";
+import MyReviewCard from "../components/MyReviewCard";
 
 function MyReviewsPage({ currentUser }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingReviewId, setEditingReviewId] = useState(null);
 
   useEffect(() => {
     async function loadMyReviews() {
@@ -25,6 +27,41 @@ function MyReviewsPage({ currentUser }) {
       setLoading(false);
     }
   }, [currentUser]);
+
+  async function handleUpdateReview(reviewId, updatedReviewData) {
+    try {
+      const updatedReview = await updateReview(reviewId, updatedReviewData);
+
+      setReviews((prevReviews) =>
+        prevReviews.map((r) =>
+          r.reviewId === reviewId
+            ? {
+                ...r,
+                rating: updatedReview.rating,
+                text: updatedReview.text,
+                updatedAt: updatedReview.updatedAt,
+              }
+            : r,
+        ),
+      );
+
+      setEditingReviewId(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleDeleteReview(reviewId) {
+    try {
+      await deleteReview(reviewId);
+
+      setReviews((prevReviews) =>
+        prevReviews.filter((r) => r.reviewId !== reviewId),
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
   if (!currentUser) {
     return (
@@ -63,26 +100,14 @@ function MyReviewsPage({ currentUser }) {
       ) : (
         <div className="review-list">
           {reviews.map((review) => (
-            <article key={review.reviewId} className="review-card">
-              <h2>{review.productName}</h2>
-              <p>{review.productBrand}</p>
-
-              <p>
-                <strong>Rating:</strong> {review.rating}/5
-              </p>
-
-              <p>{review.text}</p>
-
-              <p className="timestamp">
-                Created: {new Date(review.createdAt).toLocaleString()}
-              </p>
-
-              <p className="timestamp">
-                Updated: {new Date(review.updatedAt).toLocaleString()}
-              </p>
-
-              <Link to={`/products/${review.productId}`}>View product</Link>
-            </article>
+            <MyReviewCard
+              key={review.reviewId}
+              review={review}
+              editingReviewId={editingReviewId}
+              setEditingReviewId={setEditingReviewId}
+              onUpdateReview={handleUpdateReview}
+              onDeleteReview={handleDeleteReview}
+            />
           ))}
         </div>
       )}
