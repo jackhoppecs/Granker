@@ -14,9 +14,12 @@ function Navbar({ currentUser, handleLogout }) {
         {/* State changes cause components to re render so when currentuser changes from logout this conditional statement
         under app.jsx reruns since navbar is inside app.jsx. It's like a nested strucutre */}
         {currentUser ? (
-          <button className="navbar-button" onClick={handleLogout}>
-            Logout
-          </button>
+          <>
+            <Link to="/my-reviews">My Reviews</Link>
+            <button className="navbar-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <Link to="/login">Login</Link>

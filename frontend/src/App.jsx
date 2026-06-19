@@ -6,6 +6,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import MyReviewsPage from "./pages/MyReviewsPage";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -74,6 +75,10 @@ function App() {
         <Route
           path="/register"
           element={<RegisterPage setCurrentUser={setCurrentUser} />}
+        ></Route>
+        <Route
+          path="my-reviews"
+          element={<MyReviewsPage currentUser={currentUser} />}
         ></Route>
       </Routes>
     </BrowserRouter>

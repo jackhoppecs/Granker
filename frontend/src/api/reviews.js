@@ -17,6 +17,18 @@ export async function getReviewsByProductId(productId, sort = "newest") {
   return response.json();
 }
 
+export async function getMyReviews() {
+  const response = await fetch(`${API_BASE_URL}/api/reviews/me`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to load your reviews");
+  }
+
+  return response.json();
+}
+
 export async function createReview(productId, review) {
   const response = await fetch(
     `${API_BASE_URL}/api/products/${productId}/reviews`,
