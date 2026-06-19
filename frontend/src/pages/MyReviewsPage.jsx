@@ -96,7 +96,11 @@ function MyReviewsPage({ currentUser }) {
       <h1>My Reviews</h1>
 
       {reviews.length === 0 ? (
-        <p>You have not written any reviews yet.</p>
+        <>
+          <h2>No reviews yet</h2>
+          <p>Reviews you write will appear here.</p>
+          <Link to="/products">Browse products</Link>
+        </>
       ) : (
         <div className="review-list">
           {reviews.map((review) => (
