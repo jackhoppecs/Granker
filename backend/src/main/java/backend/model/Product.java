@@ -44,6 +44,25 @@ public class Product {
         this.createdAt = LocalDateTime.now();
     }
 
+    @Column(length = 100)
+    private String category;
+    @Column(length = 1000)
+    private String imageUrl;
+
+    @PositiveOrZero
+    private Integer calories;
+    @PositiveOrZero
+    private Integer proteinGrams;
+    @PositiveOrZero
+    private Integer carbGrams;
+    @PositiveOrZero
+    private Integer fatGrams;
+
+    @Column(length = 100)
+    private String sourceName;
+    @Column(length = 1000)
+    private String sourceUrl;
+
     public Product(){
 
     }
@@ -89,4 +108,69 @@ public class Product {
     public void setCreatedAt(LocalDateTime createdAt){
         this.createdAt = createdAt;
     }
+
+    public String getCategory(){
+        return category;
+    }
+
+    public void setCategory(String category){
+        this.category = category;
+    }
+
+    public String getImageUrl(){
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+
+    public Integer getCalories(){
+        return calories;
+    }
+
+    public void setCalories(Integer calories){
+        this.calories = calories;
+    }
+
+    public Integer getProteinGrams() {
+        return proteinGrams;
+    }
+
+    public void setProteinGrams(Integer proteinGrams){
+        this.proteinGrams = proteinGrams;
+    }
+
+    public Integer getCarbGrams(){
+        return carbGrams;
+    }
+
+    public void setCarbGrams(Integer carbGrams){
+        this.carbGrams = carbGrams;
+    }
+
+    public Integer getFatGrams(){
+        return fatGrams;
+    }
+
+    public void setFatGrams(Integer fatGrams){
+        this.fatGrams = fatGrams;
+    }
+
+    public String getSourceName(){
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName){
+        this.sourceName = sourceName;
+    }
+
+    public Stirng getSourceUrl(){
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl){
+        this.sourceUrl = sourceUrl;
+    }
+    
 }
