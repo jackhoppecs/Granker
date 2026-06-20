@@ -121,6 +121,67 @@ function ProductDetailsPage({ currentUser }) {
         </div>
 
         <p className="product-detail-description">{product.description}</p>
+
+        {product.category && (
+          <p className="product-category">Category: {product.category}</p>
+        )}
+        {product.imageUrl ? (
+          <img
+            className="product-detail-image"
+            src={product.imageUrl}
+            alt={`${product.brand} ${product.name}`}
+          />
+        ) : (
+          <div className="product-detail-image-placeholder">
+            No image available
+          </div>
+        )}
+        <div className="nutrition-section">
+          <h3>Nutrition</h3>
+
+          <div className="nutrition-grid">
+            {product.calories != null && (
+              <div>
+                <strong>{product.calories}</strong>
+                <span>Calories</span>
+              </div>
+            )}
+
+            {product.proteinGrams != null && (
+              <div>
+                <strong>{product.proteinGrams}g</strong>
+                <span>Protein</span>
+              </div>
+            )}
+
+            {product.carbGrams != null && (
+              <div>
+                <strong>{product.carbGrams}g</strong>
+                <span>Carbs</span>
+              </div>
+            )}
+
+            {product.fatGrams != null && (
+              <div>
+                <strong>{product.fatGrams}g</strong>
+                <span>Fat</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {product.sourceName && (
+          <p className="source-attribution">
+            Product information source:{" "}
+            {product.sourceUrl ? (
+              <a href={product.sourceUrl} target="_blank" rel="noreferrer">
+                {product.sourceName}
+              </a>
+            ) : (
+              product.sourceName
+            )}
+          </p>
+        )}
       </section>
 
       {!currentUser ? (
