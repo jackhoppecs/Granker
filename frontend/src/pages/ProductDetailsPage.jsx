@@ -122,6 +122,7 @@ function ProductDetailsPage({ currentUser }) {
 
         <p className="product-detail-description">{product.description}</p>
 
+        {/* NEW METADATA */}
         {product.category && (
           <p className="product-category">Category: {product.category}</p>
         )}
