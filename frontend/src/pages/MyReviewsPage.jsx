@@ -92,17 +92,20 @@ function MyReviewsPage({ currentUser }) {
   }
 
   return (
-    <main className="page">
-      <h1>My Reviews</h1>
+    <main className="page my-reviews-page">
+      <header className="page-header">
+        <h1>My Reviews</h1>
+        <p>Manage the reviews you have written across different products.</p>
+      </header>
 
       {reviews.length === 0 ? (
-        <>
+        <div className="empty-state">
           <h2>No reviews yet</h2>
           <p>Reviews you write will appear here.</p>
           <Link to="/products">Browse products</Link>
-        </>
+        </div>
       ) : (
-        <div className="review-list">
+        <div className="my-reviews-list">
           {reviews.map((review) => (
             <MyReviewCard
               key={review.reviewId}

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import MyReviewsPage from "../pages/MyReviewsPage";
 
 function MyReviewCard({
   review,
@@ -94,30 +93,33 @@ function MyReviewCard({
   }
 
   return (
-    <article className="review-card">
-      <div className="review-card-header">
-        <div>
-          <h2>{review.productName}</h2>
-          <p>{review.productBrand}</p>
+    <article className="review-card my-review-card">
+      <div className="my-review-card-header">
+        <div className="my-review-product-info">
+          <p className="my-review-brand">{review.productBrand}</p>
+          <h2 className="my-review-product-name">{review.productName}</h2>
         </div>
 
-        <p className="review-rating">{review.rating}/5</p>
+        <p className="review-rating my-review-rating">{review.rating}/5</p>
       </div>
 
-      <p className="review-text">{review.text}</p>
+      <p className="review-text my-review-text">{review.text}</p>
 
-      <p className="review-date">
-        Created {new Date(review.createdAt).toLocaleDateString()}
-      </p>
+      <div className="my-review-meta">
+        <span>Created {new Date(review.createdAt).toLocaleDateString()}</span>
 
-      {review.updatedAt && (
-        <p className="review-date">
-          Updated {new Date(review.updatedAt).toLocaleDateString()}
-        </p>
-      )}
+        {review.updatedAt && (
+          <span>Updated {new Date(review.updatedAt).toLocaleDateString()}</span>
+        )}
+      </div>
 
-      <div className="review-actions">
-        <Link to={`/products/${review.productId}`}>View product</Link>
+      <div className="review-actions my-review-actions">
+        <Link
+          className="review-link-button"
+          to={`/products/${review.productId}`}
+        >
+          View product
+        </Link>
 
         <button
           type="button"
