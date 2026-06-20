@@ -33,59 +33,123 @@ public class DataSeeder {
             User jordan = createUser(userRepository, passwordEncoder, "jordan", "jordan@example.com", "password");
 
             Product orangeChicken = createProduct(
-                    productRepository,
-                    "Mandarin Orange Chicken",
-                    "Trader Joe's",
-                    "Crispy battered chicken pieces with a sweet and tangy orange sauce."
+                productRepository,
+                "Mandarin Orange Chicken",
+                "Trader Joe's",
+                "Crispy battered chicken pieces with a sweet and tangy orange sauce.",
+                "Chicken",
+                null,
+                320,
+                21,
+                24,
+                16,
+                "Seeded demo data",
+                null
             );
 
             Product frozenPizza = createProduct(
-                    productRepository,
-                    "Frozen Pepperoni Pizza",
-                    "HEB",
-                    "Classic frozen pepperoni pizza with mozzarella cheese and a crispy crust."
+                productRepository,
+                "Frozen Pepperoni Pizza",
+                "HEB",
+                "Classic frozen pepperoni pizza with mozzarella cheese and a crispy crust.",
+                "Pizza",
+                null,
+                380,
+                16,
+                42,
+                18,
+                "Seeded demo data",
+                null
             );
 
             Product waffles = createProduct(
-                    productRepository,
-                    "Homestyle Waffles",
-                    "Eggo",
-                    "Frozen toaster waffles with a light, crisp texture."
+                productRepository,
+                "Homestyle Waffles",
+                "Eggo",
+                "Frozen toaster waffles with a light, crisp texture.",
+                "Breakfast",
+                null,
+                180,
+                4,
+                30,
+                5,
+                "Seeded demo data",
+                null
             );
 
             Product burrito = createProduct(
-                    productRepository,
-                    "Bean and Cheese Burrito",
-                    "Amy's",
-                    "Organic bean and cheese burrito wrapped in a soft flour tortilla."
+                productRepository,
+                "Bean and Cheese Burrito",
+                "Amy's",
+                "Organic bean and cheese burrito wrapped in a soft flour tortilla.",
+                "Meals",
+                null,
+                310,
+                10,
+                48,
+                9,
+                "Seeded demo data",
+                null
             );
 
             Product lasagna = createProduct(
-                    productRepository,
-                    "Meat Lasagna",
-                    "Rao's",
-                    "Frozen meat lasagna with pasta, ricotta, mozzarella, and tomato sauce."
+                productRepository,
+                "Meat Lasagna",
+                "Rao's",
+                "Frozen meat lasagna with pasta, ricotta, mozzarella, and tomato sauce.",
+                "Meals",
+                null,
+                420,
+                24,
+                35,
+                22,
+                "Seeded demo data",
+                null
             );
 
             Product macAndCheese = createProduct(
-                    productRepository,
-                    "Mac and Cheese",
-                    "Stouffer's",
-                    "Classic frozen macaroni and cheese with a creamy cheddar sauce."
+                productRepository,
+                "Mac and Cheese",
+                "Stouffer's",
+                "Classic frozen macaroni and cheese with a creamy cheddar sauce.",
+                "Meals",
+                null,
+                350,
+                14,
+                43,
+                14,
+                "Seeded demo data",
+                null
             );
 
             Product dumplings = createProduct(
-                    productRepository,
-                    "Chicken Soup Dumplings",
-                    "Trader Joe's",
-                    "Frozen soup dumplings filled with chicken and savory broth."
+                productRepository,
+                "Chicken Soup Dumplings",
+                "Trader Joe's",
+                "Frozen soup dumplings filled with chicken and savory broth.",
+                "Dumplings",
+                null,
+                250,
+                16,
+                29,
+                9,
+                "Seeded demo data",
+                null
             );
 
             Product iceCreamBars = createProduct(
-                    productRepository,
-                    "Vanilla Ice Cream Bars",
-                    "Yasso",
-                    "Frozen Greek yogurt bars with vanilla flavor."
+                productRepository,
+                "Vanilla Ice Cream Bars",
+                "Yasso",
+                "Frozen Greek yogurt bars with vanilla flavor.",
+                "Dessert",
+                null,
+                100,
+                5,
+                16,
+                2,
+                "Seeded demo data",
+                null
             );
 
             // Mandarin Orange Chicken: highly reviewed, high rating
@@ -138,15 +202,32 @@ public class DataSeeder {
     }
 
     private Product createProduct(
-            ProductRepository productRepository,
-            String name,
-            String brand,
-            String description
+        ProductRepository productRepository,
+        String name,
+        String brand,
+        String description,
+        String category,
+        String imageUrl,
+        Integer calories,
+        Integer proteinGrams,
+        Integer carbGrams,
+        Integer fatGrams,
+        String sourceName,
+        String sourceUrl
     ) {
         Product product = new Product();
         product.setName(name);
         product.setBrand(brand);
         product.setDescription(description);
+
+        product.setCategory(category);
+        product.setImageUrl(imageUrl);
+        product.setCalories(calories);
+        product.setProteinGrams(proteinGrams);
+        product.setCarbGrams(carbGrams);
+        product.setFatGrams(fatGrams);
+        product.setSourceName(sourceName);
+        product.setSourceUrl(sourceUrl);
 
         return productRepository.save(product);
     }
