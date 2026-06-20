@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 
 // Entity tells spring that this class should be stored in the DB
 // AKA map this class to a table
@@ -165,7 +166,7 @@ public class Product {
         this.sourceName = sourceName;
     }
 
-    public Stirng getSourceUrl(){
+    public String getSourceUrl(){
         return sourceUrl;
     }
 
