@@ -19,6 +19,11 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Basic session-based login/logout flow
 - Seeded demo data for local development
 - Empty states for products and reviews
+- View all reviews written by the current user on a My Reviews page
+- Edit and delete reviews from the My Reviews page
+- Link review history entries back to their product detail pages
+- Restore logged-in user state after browser refresh
+- Register a new user account from the frontend
 
 ## Tech Stack
 
@@ -68,11 +73,10 @@ Password: password
 
 ## MVP Status
 
-The app currently includes product browsing, product details, product search, review submission, review editing/deletion for review owners, duplicate review prevention, product creation, seeded demo data, average ratings, review counts, and a basic session-based login/logout flow.
+The app currently includes product browsing, product details, product search, product sorting/filtering, review submission, review editing/deletion for review owners, duplicate review prevention, product creation, seeded demo data, average ratings, review counts, frontend registration, session-based login/logout, persisted login state after refresh, and a My Reviews page where logged-in users can view, edit, delete, and navigate back to products they have reviewed.
 
 ## Future Improvements
 
-- Full registration and login UI
 - Product images
 - Product categories
 - Nutrition fields
@@ -93,6 +97,10 @@ This version adds review management features. Logged-in users can edit and delet
 ### v1.3.0
 
 Added product discovery features. Users can sort products by name, newest, highest rating, or most reviewed. Products can also be filtered by minimum rating. Product detail pages now support review sorting by newest, highest rating, or lowest rating. Empty states and spacing were improved for a cleaner browsing experience.
+
+### v1.4.0
+
+Added user account and review history features. Users can now register from the frontend, stay logged in after refreshing the browser, and access a My Reviews page showing all reviews they have written. Each review history entry displays product name, brand, rating, review text, timestamps, and a link back to the product detail page. Users can also edit and delete their reviews directly from My Reviews, and navbar links now update based on login state.
 
 ## Screenshots
 
