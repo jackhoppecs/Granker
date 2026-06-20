@@ -47,7 +47,24 @@ public class ProductController {
             double averageRating = reviews.stream()
             .mapToInt(Review::getRating).average().orElse(0.0);
             Integer reviewCount = reviews.size();
-            ProductResponseDTO addProduct = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount, product.getCreatedAt());
+            ProductResponseDTO addProduct = new ProductResponseDTO(
+                product.getId(), 
+                product.getName(), 
+                product.getBrand(), 
+                product.getDescription(), 
+                averageRating, 
+                reviewCount, 
+                product.getCreatedAt(),
+
+                product.getCategory(),
+                product.getImageUrl(),
+                product.getCalories(),
+                product.getProteinGrams(),
+                product.getCarbGrams(),
+                product.getFatGrams(),
+                product.getSourceName(),
+                product.getSourceUrl()
+            );
             dtos.add(addProduct);
         }
 
@@ -66,7 +83,24 @@ public class ProductController {
         double averageRating = reviews.stream()
             .mapToInt(Review::getRating).average().orElse(0.0);
         Integer reviewCount = reviews.size();
-        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount, product.getCreatedAt());
+        ProductResponseDTO dto = new ProductResponseDTO(
+            product.getId(), 
+            product.getName(), 
+            product.getBrand(), 
+            product.getDescription(), 
+            averageRating, 
+            reviewCount, 
+            product.getCreatedAt(),
+
+            product.getCategory(),
+            product.getImageUrl(),
+            product.getCalories(),
+            product.getProteinGrams(),
+            product.getCarbGrams(),
+            product.getFatGrams(),
+            product.getSourceName(),
+            product.getSourceUrl()
+        );
         return ResponseEntity.ok(dto);
     }
     
@@ -88,7 +122,25 @@ public class ProductController {
         double averageRating = reviews.stream()
             .mapToInt(Review::getRating).average().orElse(0.0);
         Integer reviewCount = reviews.size();
-        ProductResponseDTO dto = new ProductResponseDTO(product.getId(), product.getName(), product.getBrand(), product.getDescription(), averageRating, reviewCount, product.getCreatedAt());
+        ProductResponseDTO dto = new ProductResponseDTO(
+            product.getId(), 
+            product.getName(),
+            product.getBrand(), 
+            product.getDescription(), 
+            averageRating, 
+            reviewCount, 
+            product.getCreatedAt(),
+
+            product.getCategory(),
+            product.getImageUrl(),
+            product.getCalories(),
+            product.getProteinGrams(),
+            product.getCarbGrams(),
+            product.getFatGrams(),
+            product.getSourceName(),
+            product.getSourceUrl()
+        
+        );
         return ResponseEntity.ok(dto);
         // Want to return the updated version of the resource so we can confirm what was changed and we can avoid using another GET request
     }
@@ -106,9 +158,46 @@ public class ProductController {
     @PostMapping
     // Spring takes JSON from request body and turns it into a Product object to be saved to DB
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request){
-        Product product = new Product(request.getName(), request.getBrand(), request.getDescription()); 
+        Product product = new Product(
+            request.getName(), 
+            request.getBrand(), 
+            request.getDescription()
+        ); 
+
+        // Set optional fields
+        // If we made the constructor huge we would have to keep everything in order which can become annoying and lead to mistakes
+        product.setCategory(request.getCategory());
+        product.setImageUrl(request.getImageUrl());
+        product.setCalories(request.getCalories());
+        product.setProteinGrams(request.getProteinGrams());
+        product.setCarbGrams(request.getCarbGrams());
+        product.setFatGrams(request.getFatGrams());
+        product.setSourceName(
+            request.getSourceName() == null || request.getSourceName().isBlank()
+                ? "User submitted"
+                : request.getSourceName()
+        );
+        product.setSourceUrl(request.getSourceUrl());
         Product newProduct = productService.createProduct(product);
-        ProductResponseDTO dto = new ProductResponseDTO(newProduct.getId(), newProduct.getName(), newProduct.getBrand(), newProduct.getDescription(), 0.0, 0, newProduct.getCreatedAt());
+
+        ProductResponseDTO dto = new ProductResponseDTO(
+            newProduct.getId(), 
+            newProduct.getName(), 
+            newProduct.getBrand(), 
+            newProduct.getDescription(), 
+            0.0, 
+            0, 
+            newProduct.getCreatedAt(),
+
+            product.getCategory(),
+            product.getImageUrl(),
+            product.getCalories(),
+            product.getProteinGrams(),
+            product.getCarbGrams(),
+            product.getFatGrams(),
+            product.getSourceName(),
+            product.getSourceUrl()
+        );
         return ResponseEntity.ok(dto);
     }
 }
