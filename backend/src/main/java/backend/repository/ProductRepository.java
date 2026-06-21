@@ -37,55 +37,90 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     """)
     List<Product> findAllOrderByAverageRatingDesc();
 
+    // NEW QUERIES BRANCHING OFF SORT, INCLUDE/EXCLUDE FILTERS DEPENIDNG ON NULL OR NOT
     @Query("""
         SELECT p
         FROM Product p
         LEFT JOIN Review r ON r.product = p
+        WHERE (:category IS NULL OR p.category = :category)
+        AND (:brand IS NULL OR p.brand = :brand)
         GROUP BY p
+        HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
+        ORDER BY p.createdAt DESC, LOWER(p.name) ASC
+    """)
+    List<Product> findAllFilteredOrderByCreatedAtDesc(
+            @Param("minRating") Integer minRating,
+            @Param("category") String category,
+            @Param("brand") String brand
+    );
+
+    @Query("""
+        SELECT p
+        FROM Product p
+        LEFT JOIN Review r ON r.product = p
+        WHERE (:category IS NULL OR p.category = :category)
+        AND (:brand IS NULL OR p.brand = :brand)
+        GROUP BY p
+        HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
+        ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC, LOWER(p.name) ASC
+    """)
+    List<Product> findAllFilteredOrderByAverageRatingDesc(
+            @Param("minRating") Integer minRating,
+            @Param("category") String category,
+            @Param("brand") String brand
+    );
+
+    @Query("""
+        SELECT p
+        FROM Product p
+        LEFT JOIN Review r ON r.product = p
+        WHERE (:category IS NULL OR p.category = :category)
+        AND (:brand IS NULL OR p.brand = :brand)
+        GROUP BY p
+        HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY COUNT(r) DESC, COALESCE(AVG(r.rating), 0) DESC, p.name ASC
     """)
-    List<Product> findAllOrderByReviewCountDesc();
-
-
-    // With minRating queries
-    
-    @Query("""
-    SELECT p
-    FROM Product p
-    LEFT JOIN Review r ON r.product = p
-    GROUP BY p
-    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
-    ORDER BY p.name ASC
-    """)
-    List<Product> findAllByMinRatingOrderByNameAsc(@Param("minRating") Integer minRating);
+    List<Product> findAllFilteredOrderByReviewCountDesc(
+        @Param("minRating") Integer minRating,
+        @Param("category") String category,
+        @Param("brand") String brand
+    );
 
     @Query("""
-    SELECT p
-    FROM Product p
-    LEFT JOIN Review r ON r.product = p
-    GROUP BY p
-    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
-    ORDER BY p.createdAt DESC
+        SELECT p
+        FROM Product p
+        LEFT JOIN Review r ON r.product = p
+        WHERE (:category IS NULL OR p.category = :category)
+        AND (:brand IS NULL OR p.brand = :brand)
+        GROUP BY p
+        HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
+        ORDER BY LOWER(p.name) ASC
     """)
-    List<Product> findAllByMinRatingOrderByCreatedAtDesc(@Param("minRating") Integer minRating);
+    List<Product> findAllFilteredOrderByNameAsc(
+        @Param("minRating") Integer minRating,
+        @Param("category") String category,
+        @Param("brand") String brand
+    );
+
+    // <> is a not equal operator in SQL
+    // We need to check NULL categories and also blank '' categories
+    @Query("""
+        SELECT DISTINCT p.category
+        FROM Product p
+        WHERE p.category IS NOT NULL
+        AND p.category <> ''
+        ORDER BY p.category ASC
+    """)
+    List<String> findDistinctCategories();
 
     @Query("""
-    SELECT p
-    FROM Product p
-    LEFT JOIN Review r ON r.product = p
-    GROUP BY p
-    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
-    ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC, p.name ASC
+        SELECT DISTINCT p.brand
+        FROM Product p
+        WHERE p.brand IS NOT NULL
+        AND p.brand <> ''
+        ORDER BY p.brand ASC
     """)
-    List<Product> findAllByMinRatingOrderByAverageRatingDesc(@Param("minRating") Integer minRating);
+    List<String> findDistinctBrands();
 
-    @Query("""
-    SELECT p
-    FROM Product p
-    LEFT JOIN Review r ON r.product = p
-    GROUP BY p
-    HAVING COALESCE(AVG(r.rating), 0) >= :minRating
-    ORDER BY COUNT(r) DESC, COALESCE(AVG(r.rating), 0) DESC, p.name ASC
-    """)
-    List<Product> findAllByMinRatingOrderByReviewCountDesc(@Param("minRating") Integer minRating);
+
 }

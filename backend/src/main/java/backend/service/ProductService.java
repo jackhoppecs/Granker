@@ -15,46 +15,36 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public List<Product> getAllProducts(String sort, Integer minRating){
-        if (minRating != null) {
-            return getProductsWithMinRating(sort, minRating);
-        }
-        else {
-            return getProductsWithoutMinRating(sort);
-        }
-    }
+    public List<Product> getAllProducts(String sort, Integer minRating, String category, String brand){
+        category = normalizeFilter(category);
+        brand = normalizeFilter(brand);
 
-    // Get all product filter helper functions:
-
-    public List<Product> getProductsWithMinRating(String sort, Integer minRating){
         switch (sort) {
             case "newest":
-                return productRepository.findAllByMinRatingOrderByCreatedAtDesc(minRating);
+                return productRepository.findAllFilteredOrderByCreatedAtDesc(minRating, category, brand);
             case "highest-rating":
-                return productRepository.findAllByMinRatingOrderByAverageRatingDesc(minRating);
+                return productRepository.findAllFilteredOrderByAverageRatingDesc(minRating, category, brand);
             case "most-reviewed":
-                return productRepository.findAllByMinRatingOrderByReviewCountDesc(minRating);
+                return productRepository.findAllFilteredOrderByReviewCountDesc(minRating, category, brand);
             default:
-                return productRepository.findAllByMinRatingOrderByNameAsc(minRating);
+                return productRepository.findAllFilteredOrderByNameAsc(minRating, category, brand);
         }
     }
 
-    public List<Product> getProductsWithoutMinRating(String sort){
-        switch (sort) {
-            case "newest":
-                return productRepository.findAllByOrderByCreatedAtDesc();
-            case "name":
-                return productRepository.findAllByOrderByNameAsc();  
-            case "highest-rating":
-                return productRepository.findAllOrderByAverageRatingDesc();
-            case "most-reviewed":
-                return productRepository.findAllOrderByReviewCountDesc();
-            default:
-                return productRepository.findAll();
+    private String normalizeFilter(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
         }
+        return value;
     }
 
+    public List<String> getCategories(){
+        return productRepository.findDistinctCategories();
+    }
 
+    public List<String> getBrands(){
+        return productRepository.findDistinctBrands();
+    }
 
     public Product getProductById(Long id){
         return productRepository.findById(id).orElse(null);

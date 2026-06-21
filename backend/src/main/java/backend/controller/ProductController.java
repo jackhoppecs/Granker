@@ -35,10 +35,12 @@ public class ProductController {
         @RequestParam(required = false, defaultValue = "name") String sort,
         // Integer is allowed to be null while int is not so using Integer is important
         // defaultValue must always be a string in Spring even if spring is converting
-        @RequestParam(required = false) Integer minRating
+        @RequestParam(required = false) Integer minRating,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String brand
     ) {
         
-        List<Product> products = productService.getAllProducts(sort, minRating);
+        List<Product> products = productService.getAllProducts(sort, minRating, category, brand);
         List<ProductResponseDTO> dtos = new ArrayList<>();
         for (Product product : products){
             // Will need to eventually call repository function in service instead
@@ -103,7 +105,19 @@ public class ProductController {
         );
         return ResponseEntity.ok(dto);
     }
-    
+
+    // Functions to retrive all categories and brands for product filtering
+    @GetMapping("/categories")
+    public List<String> getCategories(){
+        return productService.getCategories();
+    }
+
+    @GetMapping("/brands")
+    public List<String> getBrands(){
+        return productService.getBrands();
+    }
+
+
     //@Valid @RequestBody Product updatedProduct
     // 1. Read JSON body
     // 2. Convert JSON into Product object
