@@ -8,6 +8,7 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Search products by name or brand
 - Sort products by name, newest, highest rating, or most reviewed
 - Filter products by minimum rating
+- Filter products by category or brand
 - View product details, average rating, and review count
 - View reviews for a specific product
 - Sort reviews by newest, highest rating, or lowest rating
@@ -23,6 +24,7 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Edit and delete reviews from the My Reviews page
 - Link review history entries back to their product detail pages
 - Restore logged-in user state after browser refresh
+- Product metadata fields for categories, images, nutrition, and source attribution
 - Register a new user account from the frontend
 
 ## Tech Stack
@@ -75,11 +77,15 @@ Password: password
 
 The app currently includes product browsing, product details, product search, product sorting/filtering, review submission, review editing/deletion for review owners, duplicate review prevention, product creation, seeded demo data, average ratings, review counts, frontend registration, session-based login/logout, persisted login state after refresh, and a My Reviews page where logged-in users can view, edit, delete, and navigate back to products they have reviewed.
 
+The app also includes product metadata and discovery features. Products can now store and display category, image URL, nutrition fields, and source attribution. Users can filter products by category or brand, and product cards/detail pages display more useful product information.
+
 ## Future Improvements
 
-- Product images
-- Product categories
-- Nutrition fields
+- Real data imports
+- Barcode support
+- More detailed nutrition and serving size information
+- User profile pages
+- Favorite or saved products
 - Deployment
 - Automated tests
 - Docker setup
@@ -101,6 +107,10 @@ Added product discovery features. Users can sort products by name, newest, highe
 ### v1.4.0
 
 Added user account and review history features. Users can now register from the frontend, stay logged in after refreshing the browser, and access a My Reviews page showing all reviews they have written. Each review history entry displays product name, brand, rating, review text, timestamps, and a link back to the product detail page. Users can also edit and delete their reviews directly from My Reviews, and navbar links now update based on login state.
+
+### v1.5.0
+
+Added product metadata and improved discovery features. Products now support categories, image URLs, nutrition fields, and source attribution for seeded or imported data. Product cards and detail pages now display richer product information, including category labels, nutrition previews, image placeholders, and source attribution. Users can also filter products by category and brand, with backend support for optional query parameters and filter option endpoints. The product schema is now better prepared for future real-data imports.
 
 ## Screenshots
 
