@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 // UseState = lets component remember/change data
 // UseEffect = let's code run when the page loads
-import { getProducts } from "../api/products";
+import { getProducts, getCategories, getBrands } from "../api/products";
 import ProductCard from "../components/ProductCard";
 
 // A page is a component that represents a whole screen / route
@@ -20,10 +20,16 @@ function ProductsPage() {
   const [sort, setSort] = useState("name");
   const [minRating, setMinRating] = useState("");
 
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+
   // React re-renders the UI when the state changes
   // When this page first loads, call getProducts()
   useEffect(() => {
-    getProducts(sort, minRating)
+    getProducts(sort, minRating, selectedCategory, selectedBrand)
       .then((data) => {
         setProducts(data);
         setError("");
@@ -31,7 +37,26 @@ function ProductsPage() {
       .catch((err) => setError(err.message));
     // Only runs when the component first mounts because of the empty dependency array: []
     // Without that it would re run each time search changed.
-  }, [sort, minRating]);
+  }, [sort, minRating, selectedCategory, selectedBrand]);
+
+  // Grab filter options
+  useEffect(() => {
+    async function fetchFilterOptions() {
+      try {
+        const [categoriesData, brandsData] = await Promise.all([
+          getCategories(),
+          getBrands(),
+        ]);
+
+        setCategories(categoriesData);
+        setBrands(brandsData);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+
+    fetchFilterOptions();
+  }, []);
 
   // After retreiving all products filter based on search
   // When page re renders products is kept the same but the search filter is changed and this runs
@@ -91,6 +116,36 @@ function ProductsPage() {
             <option value="3">3+</option>
             <option value="2">2+</option>
             <option value="1">1+</option>
+          </select>
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="min-rating">Category</label>
+          <select
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
+          >
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="min-rating">Brand</label>
+          <select
+            value={selectedBrand}
+            onChange={(event) => setSelectedBrand(event.target.value)}
+          >
+            <option value="">All brands</option>
+            {brands.map((brand) => (
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
+            ))}
           </select>
         </div>
       </div>
