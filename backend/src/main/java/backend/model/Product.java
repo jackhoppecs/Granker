@@ -5,12 +5,21 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.persistence.UniqueConstraint;
 
 // Entity tells spring that this class should be stored in the DB
 // AKA map this class to a table
 @Entity
 // Table defines the table name otherwise it would default to something else otherwise not required
-@Table(name = "products")
+@Table(name = "products",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_product_source_external_id",
+            // Column names use DB field names not entity variable names
+            columnNames = {"source_name", "external_id"}
+        )
+    }
+)
 public class Product {
     
     // Id defines the primary key
@@ -63,6 +72,9 @@ public class Product {
     private String sourceName;
     @Column(length = 1000)
     private String sourceUrl;
+
+    private String externalId;
+    private LocalDateTime importedAt;
 
     public Product(){
 
