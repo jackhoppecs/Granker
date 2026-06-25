@@ -62,11 +62,11 @@ public class Product {
     @PositiveOrZero
     private Integer calories;
     @PositiveOrZero
-    private Integer proteinGrams;
+    private Double proteinGrams;
     @PositiveOrZero
-    private Integer carbGrams;
+    private Double carbGrams;
     @PositiveOrZero
-    private Integer fatGrams;
+    private Double fatGrams;
 
     @Column(length = 100)
     private String sourceName;
@@ -146,27 +146,27 @@ public class Product {
         this.calories = calories;
     }
 
-    public Integer getProteinGrams() {
+    public Double getProteinGrams() {
         return proteinGrams;
     }
 
-    public void setProteinGrams(Integer proteinGrams){
+    public void setProteinGrams(Double proteinGrams){
         this.proteinGrams = proteinGrams;
     }
 
-    public Integer getCarbGrams(){
+    public Double getCarbGrams(){
         return carbGrams;
     }
 
-    public void setCarbGrams(Integer carbGrams){
+    public void setCarbGrams(Double carbGrams){
         this.carbGrams = carbGrams;
     }
 
-    public Integer getFatGrams(){
+    public Double getFatGrams(){
         return fatGrams;
     }
 
-    public void setFatGrams(Integer fatGrams){
+    public void setFatGrams(Double fatGrams){
         this.fatGrams = fatGrams;
     }
 
@@ -184,6 +184,22 @@ public class Product {
 
     public void setSourceUrl(String sourceUrl){
         this.sourceUrl = sourceUrl;
+    }
+
+    public String getExternalId(){
+        return externalId;
+    }
+
+    public void setExternalId(String externalId){
+        this.externalId = externalId;
+    }
+
+    public LocalDateTime getImportedAt(){
+        return importedAt;
+    }
+
+    public void setImportedAt(LocalDateTime importedAt){
+        this.importedAt = importedAt;
     }
     
 }

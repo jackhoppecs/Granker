@@ -40,9 +40,9 @@ public class DataSeeder {
                 "Chicken",
                 null,
                 320,
-                21,
-                24,
-                16,
+                21.0,
+                24.2,
+                16.4,
                 "Seeded demo data",
                 null
             );
@@ -55,9 +55,9 @@ public class DataSeeder {
                 "Pizza",
                 null,
                 380,
-                16,
-                42,
-                18,
+                16.7,
+                42.1,
+                18.2,
                 "Seeded demo data",
                 null
             );
@@ -70,9 +70,9 @@ public class DataSeeder {
                 "Breakfast",
                 null,
                 180,
-                4,
-                30,
-                5,
+                4.4,
+                30.2,
+                5.1,
                 "Seeded demo data",
                 null
             );
@@ -85,9 +85,9 @@ public class DataSeeder {
                 "Meals",
                 null,
                 310,
-                10,
-                48,
-                9,
+                10.0,
+                48.0,
+                9.0,
                 "Seeded demo data",
                 null
             );
@@ -100,9 +100,9 @@ public class DataSeeder {
                 "Meals",
                 null,
                 420,
-                24,
-                35,
-                22,
+                24.0,
+                35.0,
+                22.0,
                 "Seeded demo data",
                 null
             );
@@ -115,9 +115,9 @@ public class DataSeeder {
                 "Meals",
                 null,
                 350,
-                14,
-                43,
-                14,
+                14.0,
+                43.0,
+                14.0,
                 "Seeded demo data",
                 null
             );
@@ -130,9 +130,9 @@ public class DataSeeder {
                 "Dumplings",
                 null,
                 250,
-                16,
-                29,
-                9,
+                16.0,
+                29.0,
+                9.0,
                 "Seeded demo data",
                 null
             );
@@ -145,9 +145,9 @@ public class DataSeeder {
                 "Dessert",
                 null,
                 100,
-                5,
-                16,
-                2,
+                5.0,
+                16.0,
+                2.0,
                 "Seeded demo data",
                 null
             );
@@ -209,9 +209,9 @@ public class DataSeeder {
         String category,
         String imageUrl,
         Integer calories,
-        Integer proteinGrams,
-        Integer carbGrams,
-        Integer fatGrams,
+        Double proteinGrams,
+        Double carbGrams,
+        Double fatGrams,
         String sourceName,
         String sourceUrl
     ) {

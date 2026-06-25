@@ -17,9 +17,9 @@ public class ProductResponseDTO {
     private String imageUrl;
 
     private Integer calories;
-    private Integer proteinGrams;
-    private Integer carbGrams;
-    private Integer fatGrams;
+    private Double proteinGrams;
+    private Double carbGrams;
+    private Double fatGrams;
 
     private String sourceName;
     private String sourceUrl;
@@ -35,9 +35,9 @@ public class ProductResponseDTO {
         String category,
         String imageUrl,
         Integer calories,
-        Integer proteinGrams,
-        Integer carbGrams,
-        Integer fatGrams,
+        Double proteinGrams,
+        Double carbGrams,
+        Double fatGrams,
         String sourceName,
         String sourceUrl
     ){
@@ -102,15 +102,15 @@ public class ProductResponseDTO {
         return calories;
     }
 
-    public Integer getProteinGrams() {
+    public Double getProteinGrams() {
         return proteinGrams;
     }
 
-    public Integer getCarbGrams(){
+    public Double getCarbGrams(){
         return carbGrams;
     }
 
-    public Integer getFatGrams(){
+    public Double getFatGrams(){
         return fatGrams;
     }
 
