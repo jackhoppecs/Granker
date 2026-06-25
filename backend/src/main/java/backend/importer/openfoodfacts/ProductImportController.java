@@ -1,8 +1,6 @@
 package backend.importer.openfoodfacts;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import backend.importer.ImportedProductDTO;
 import backend.importer.ImportResultDTO;
@@ -19,12 +17,18 @@ public class ProductImportController {
     }
 
     @GetMapping("/api/import/open-food-facts/preview")
-    public List<ImportedProductDTO> previewOpenFoodFactsImports() {
-        return productImportService.previewFrozenFoodImports();
+    public List<ImportedProductDTO> previewOpenFoodFactsImports(
+        @RequestParam String category,
+        @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return productImportService.previewFrozenFoodImports(category, pageSize);
     }
 
     @PostMapping("/api/import/open-food-facts")
-    public ImportResultDTO importOpenFoodFactsProducts() {
-        return productImportService.importFrozenFoodProducts();
+    public ImportResultDTO importOpenFoodFactsProducts(
+        @RequestParam String category,
+        @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return productImportService.importFrozenFoodProducts(category, pageSize);
     }
 }

@@ -22,15 +22,15 @@ public class OpenFoodFactsClient {
     }
 
     // Calls the API and returns the parsed search response
-    public OpenFoodFactsSearchResponse searchFrozenFoods(){
+    public OpenFoodFactsSearchResponse searchProductsByCategory(String category, int pageSize){
         // .get() starts a get request
         // .uri builds the URL path and query parameters
         try{
             return restClient.get().uri(uriBuilder -> uriBuilder
                 .path("/api/v2/search")
-                .queryParam("categories_tags", "en:frozen-pizzas")
+                .queryParam("categories_tags", category)
                 .queryParam("fields", "code,product_name,brands,categories,image_url,url,nutriments")
-                .queryParam("page_size", 10)
+                .queryParam("page_size", pageSize)
                 .build())
                 .retrieve()
                 .body(OpenFoodFactsSearchResponse.class);

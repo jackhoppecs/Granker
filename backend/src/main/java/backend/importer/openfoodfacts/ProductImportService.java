@@ -31,8 +31,9 @@ public class ProductImportService {
         this.productRepository = productRepository;
     }
 
-    public List<ImportedProductDTO> previewFrozenFoodImports(){
-        OpenFoodFactsSearchResponse response = openFoodFactsClient.searchFrozenFoods();
+    public List<ImportedProductDTO> previewFrozenFoodImports(String category, int pageSize){
+        validateImportRequest(category, pageSize);
+        OpenFoodFactsSearchResponse response = openFoodFactsClient.searchProductsByCategory(category, pageSize);
 
         if (response == null || response.getProducts() == null) {
             return List.of();
@@ -45,8 +46,9 @@ public class ProductImportService {
                 .toList();
     }
 
-    public ImportResultDTO importFrozenFoodProducts(){
-        List<ImportedProductDTO> dtos = previewFrozenFoodImports();
+    public ImportResultDTO importFrozenFoodProducts(String category, int pageSize){
+        validateImportRequest(category, pageSize);
+        List<ImportedProductDTO> dtos = previewFrozenFoodImports(category, pageSize);
 
         int fetched = dtos.size();
         int imported = 0;
@@ -102,5 +104,15 @@ public class ProductImportService {
         product.setImportedAt(LocalDateTime.now());
 
         return product;
+    }
+
+    private void validateImportRequest(String category, int pageSize) {
+        if (category == null || category.isBlank()) {
+            throw new IllegalArgumentException("Category is required.");
+        }
+
+        if (pageSize < 1 || pageSize > 50) {
+            throw new IllegalArgumentException("Page size must be between 1 and 50.");
+        }
     }
 }
