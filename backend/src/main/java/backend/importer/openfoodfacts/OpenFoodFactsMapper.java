@@ -13,7 +13,7 @@ public class OpenFoodFactsMapper{
         dto.setName(response.getProductName());
         dto.setBrand(response.getBrands());
         dto.setDescription(null);
-        dto.setCategory(response.getCategories());
+        dto.setCategory(normalizeCategory(response.getCategories()));
         dto.setImageUrl(response.getImageUrl());
 
         dto.setSourceName("Open Food Facts");
@@ -35,5 +35,31 @@ public class OpenFoodFactsMapper{
         }
 
         return (int) Math.round(value);
+    }
+
+    private String normalizeCategory(String categories) {
+        if (categories == null || categories.isBlank()) {
+            return "Other";
+        }
+
+        String lower = categories.toLowerCase();
+
+        if (lower.contains("frozen pizza")) {
+            return "Frozen Pizza";
+        }
+
+        if (lower.contains("frozen ready-made meals")) {
+            return "Frozen Meal";
+        }
+
+        if (lower.contains("ice cream")) {
+            return "Ice Cream";
+        }
+
+        if (lower.contains("frozen vegetables")) {
+            return "Frozen Vegetables";
+        }
+
+        return "Other";
     }
 }
