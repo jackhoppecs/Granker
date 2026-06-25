@@ -26,6 +26,10 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Restore logged-in user state after browser refresh
 - Product metadata fields for categories, images, nutrition, and source attribution
 - Register a new user account from the frontend
+- Import a small real-world product dataset from Open Food Facts
+- Normalize imported Open Food Facts product data into the app's internal product model
+- Prevent duplicate imported products using source name and external product ID
+- Preserve source attribution for imported product data
 
 ## Tech Stack
 
@@ -43,6 +47,7 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Spring Security
 - Spring Data JPA
 - PostgreSQL
+- Open Food Facts API integration
 
 ### Backend
 
@@ -73,17 +78,32 @@ Email: demo@example.com
 Password: password
 ```
 
+## Data Imports
+
+Granker supports a small Open Food Facts import pipeline for bringing real product data into the app. The backend calls the Open Food Facts API, maps the external JSON response into internal import DTOs, normalizes selected fields, and saves usable products into the local PostgreSQL database.
+
+Imported products include source metadata such as source name, source URL, external product ID, and import timestamp. Duplicate imports are prevented using the combination of source name and external product ID.
+
+The import pipeline currently focuses on a small, controlled dataset rather than broad bulk imports. Open Food Facts data can contain noisy categories, missing fields, international products, and inconsistent product metadata, so imported products are filtered and lightly normalized before being saved.
+
+Product data imported from Open Food Facts is attributed on product pages through the stored source fields.
+
 ## MVP Status
 
 The app currently includes product browsing, product details, product search, product sorting/filtering, review submission, review editing/deletion for review owners, duplicate review prevention, product creation, seeded demo data, average ratings, review counts, frontend registration, session-based login/logout, persisted login state after refresh, and a My Reviews page where logged-in users can view, edit, delete, and navigate back to products they have reviewed.
 
-The app also includes product metadata and discovery features. Products can now store and display category, image URL, nutrition fields, and source attribution. Users can filter products by category or brand, and product cards/detail pages display more useful product information.
+The app also includes product metadata and discovery features. Products can store and display category, image URL, nutrition fields, and source attribution. Users can filter products by category or brand, and product cards/detail pages display more useful product information.
+
+Granker now includes a backend import pipeline for Open Food Facts. Imported products are fetched from the external API, converted into a normalized internal DTO, mapped into the app's Product entity, checked for duplicates, stored in PostgreSQL, and displayed through the existing frontend product browsing flow.
 
 ## Future Improvements
 
-- Real data imports
 - Barcode support
 - More detailed nutrition and serving size information
+- Better imported data quality checks
+- Admin-only import controls
+- Import preview and approval workflow
+- Import result history
 - User profile pages
 - Favorite or saved products
 - Deployment
@@ -111,6 +131,14 @@ Added user account and review history features. Users can now register from the 
 ### v1.5.0
 
 Added product metadata and improved discovery features. Products now support categories, image URLs, nutrition fields, and source attribution for seeded or imported data. Product cards and detail pages now display richer product information, including category labels, nutrition previews, image placeholders, and source attribution. Users can also filter products by category and brand, with backend support for optional query parameters and filter option endpoints. The product schema is now better prepared for future real-data imports.
+
+### v1.6.0
+
+Added an Open Food Facts import pipeline for real-world product data. The backend now includes an Open Food Facts API client, external response models for search/product/nutriment data, a normalized ImportedProductDTO, and mapping logic to convert external API responses into Granker products.
+
+Imported products now store import-specific metadata, including source name, source URL, external product ID, and import timestamp. Duplicate imported products are prevented using source name and external ID checks, with database-level uniqueness protection. The import pipeline also includes basic category normalization so noisy external category strings can be mapped into cleaner Granker categories.
+
+This version makes Granker more realistic by allowing the app to populate products from an external food database while preserving source attribution and keeping imported data separate from manually-created product data.
 
 ## Screenshots
 
