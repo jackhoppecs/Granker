@@ -3,6 +3,7 @@ package backend.importer.openfoodfacts;
 import backend.importer.openfoodfacts.OpenFoodFactsClient;
 import backend.importer.openfoodfacts.OpenFoodFactsMapper;
 import backend.importer.openfoodfacts.OpenFoodFactsSearchResponse;
+import backend.importer.openfoodfacts.SupportedImportCategory;
 import backend.importer.ImportResultDTO;
 import backend.importer.ImportedProductDTO;
 import backend.model.Product;
@@ -33,15 +34,23 @@ public class ProductImportService {
 
     public List<ImportedProductDTO> previewFrozenFoodImports(String category, int pageSize){
         validateImportRequest(category, pageSize);
-        OpenFoodFactsSearchResponse response = openFoodFactsClient.searchProductsByCategory(category, pageSize);
+        SupportedImportCategory supportedCategory = SupportedImportCategory.fromRequestValue(category);
+        OpenFoodFactsSearchResponse response = openFoodFactsClient.searchProductsByCategory(supportedCategory.getOpenFoodFactsTag(), pageSize);
 
         if (response == null || response.getProducts() == null) {
             return List.of();
         }
 
+        // Java stream pipeline
+        // starts with raw Openfoodfacts products and ends with a clean list of ImportedProductDTO
         return response.getProducts()
                 .stream()
+                // converts each raw Open Food Facs product into my DTO
+                // Shorthand for product -> openFoodFactsMapper.toImportedProductDTO(product)
                 .map(openFoodFactsMapper::toImportedProductDTO)
+                // modifies DTO as it passes through the stream 
+                .peek(dto -> dto.setCategory(supportedCategory.getNormalizedCategory()))
+                // This keeps only DTO's that pass the validation method
                 .filter(this::isUsableImportedProduct)
                 .toList();
     }
