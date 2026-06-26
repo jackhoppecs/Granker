@@ -68,11 +68,11 @@ public class ImportPreviewResponseDTO {
         this.skippedCount = skippedCount;
     }
 
-    public List<ImportPreviewProductDTO> getproducts(){
+    public List<ImportPreviewProductDTO> getProducts(){
         return products;
     }
 
-    public void setproducts(List<ImportPreviewProductDTO> products){
+    public void setProducts(List<ImportPreviewProductDTO> products){
         this.products = products;
     }
 }
