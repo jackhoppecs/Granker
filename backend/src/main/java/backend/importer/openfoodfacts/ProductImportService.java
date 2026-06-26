@@ -4,6 +4,8 @@ import backend.importer.openfoodfacts.OpenFoodFactsClient;
 import backend.importer.openfoodfacts.OpenFoodFactsMapper;
 import backend.importer.openfoodfacts.OpenFoodFactsSearchResponse;
 import backend.importer.openfoodfacts.SupportedImportCategory;
+import backend.importer.ImportPreviewProductDTO;
+import backend.importer.ImportPreviewResponseDTO;
 import backend.importer.ImportResultDTO;
 import backend.importer.ImportedProductDTO;
 import backend.model.Product;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,65 +35,112 @@ public class ProductImportService {
         this.productRepository = productRepository;
     }
 
-    public List<ImportedProductDTO> previewFrozenFoodImports(String category, int pageSize){
+    public ImportPreviewResponseDTO previewFrozenFoodImports(String category, int pageSize){
         validateImportRequest(category, pageSize);
         SupportedImportCategory supportedCategory = SupportedImportCategory.fromRequestValue(category);
         OpenFoodFactsSearchResponse response = openFoodFactsClient.searchProductsByCategory(supportedCategory.getOpenFoodFactsTag(), pageSize);
 
+
+        // Need to initalize and return a ImportPreviewResponseDTO if no response/products
         if (response == null || response.getProducts() == null) {
-            return List.of();
+            return new ImportPreviewResponseDTO(
+                supportedCategory.getRequestValue(),
+                supportedCategory.getDisplayName(),
+                0,
+                0,
+                0,
+                List.of()
+            );
         }
+
+        
 
         // Java stream pipeline
         // starts with raw Openfoodfacts products and ends with a clean list of ImportedProductDTO
-        return response.getProducts()
-                .stream()
-                // converts each raw Open Food Facs product into my DTO
-                // Shorthand for product -> openFoodFactsMapper.toImportedProductDTO(product)
-                .map(openFoodFactsMapper::toImportedProductDTO)
-                // modifies DTO as it passes through the stream 
-                .peek(dto -> dto.setCategory(supportedCategory.getNormalizedCategory()))
-                // This keeps only DTO's that pass the validation method
-                .filter(this::isUsableImportedProduct)
-                .toList();
+        // return response.getProducts()
+        //         .stream()
+        //         // converts each raw Open Food Facs product into my DTO
+        //         // Shorthand for product -> openFoodFactsMapper.toImportedProductDTO(product)
+        //         .map(openFoodFactsMapper::toImportedProductDTO)
+        //         // modifies DTO as it passes through the stream 
+        //         .peek(dto -> dto.setCategory(supportedCategory.getNormalizedCategory()))
+        //         // This keeps only DTO's that pass the validation method
+        //         .filter(this::isUsableImportedProduct)
+        //         .toList();
+
+        List<ImportPreviewProductDTO> previewProducts = response.getProducts()
+            .stream()
+            .map(openFoodFactsMapper::toImportedProductDTO)
+            .map(dto -> {
+                dto.setCategory(supportedCategory.getNormalizedCategory());
+                return buildPreviewProduct(dto);
+            })
+            .toList();
+            
+        int importableCount = (int) previewProducts.stream()
+            .filter(ImportPreviewProductDTO::isImportable)
+            .count();
+        
+        int skippedCount = previewProducts.size() - importableCount;
+        
+        return new ImportPreviewResponseDTO(
+            supportedCategory.getRequestValue(),
+            supportedCategory.getDisplayName(),
+            previewProducts.size(),
+            importableCount,
+            skippedCount,
+            previewProducts
+        );
     }
 
-    public ImportResultDTO importFrozenFoodProducts(String category, int pageSize){
+    public ImportPreviewResponseDTO importFrozenFoodProducts(String category, int pageSize){
         validateImportRequest(category, pageSize);
-        List<ImportedProductDTO> dtos = previewFrozenFoodImports(category, pageSize);
-
-        int fetched = dtos.size();
-        int imported = 0;
-        int skippedDuplicates = 0;
-        int skippedInvalid = 0;
-
-        for (ImportedProductDTO dto: dtos){
-            if (!isUsableImportedProduct(dto)) {
-                skippedInvalid++;
-                continue;
-            }
-
-            boolean alreadyExists = productRepository.existsBySourceNameAndExternalId(
-                dto.getSourceName(),
-                dto.getExternalId()
-            );
-
-            if (alreadyExists){
-                skippedDuplicates++;
-                continue;
-            }
-
-            Product product = toProduct(dto);
-            productRepository.save(product);
-            imported++;
-        }
-        return new ImportResultDTO(fetched, imported, skippedDuplicates, skippedInvalid);
+        return previewFrozenFoodImports(category, pageSize);
     }
 
     private boolean isUsableImportedProduct(ImportedProductDTO dto) {
         return dto.getExternalId() != null && !dto.getExternalId().isBlank()
                 && dto.getName() != null && !dto.getName().isBlank()
                 && dto.getBrand() != null && !dto.getBrand().isBlank();
+    }
+
+    private ImportPreviewProductDTO buildPreviewProduct(ImportedProductDTO dto) {
+        List<String> skipReasons = getSkipReasons(dto);
+
+        return new ImportPreviewProductDTO(
+                dto,
+                skipReasons.isEmpty(),
+                skipReasons
+        );
+    }
+
+    private List<String> getSkipReasons(ImportedProductDTO dto) {
+        List<String> reasons = new ArrayList<>();
+
+        if (dto.getExternalId() == null || dto.getExternalId().isBlank()) {
+            reasons.add("Missing external ID");
+        }
+
+        if (dto.getName() == null || dto.getName().isBlank()) {
+            reasons.add("Missing product name");
+        }
+
+        if (dto.getBrand() == null || dto.getBrand().isBlank()) {
+            reasons.add("Missing brand");
+        }
+
+        boolean alreadyExists = dto.getSourceName() != null
+                && dto.getExternalId() != null
+                && productRepository.existsBySourceNameAndExternalId(
+                        dto.getSourceName(),
+                        dto.getExternalId()
+                );
+
+        if (alreadyExists) {
+            reasons.add("Already imported");
+        }
+
+        return reasons;
     }
 
     private Product toProduct(ImportedProductDTO dto){

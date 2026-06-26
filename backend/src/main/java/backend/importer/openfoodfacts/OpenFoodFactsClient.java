@@ -35,7 +35,7 @@ public class OpenFoodFactsClient {
                 .retrieve()
                 .body(OpenFoodFactsSearchResponse.class);
         } catch (HttpServerErrorException.ServiceUnavailable ex) {
-        return null;
+            return null;
         }
     }
 }

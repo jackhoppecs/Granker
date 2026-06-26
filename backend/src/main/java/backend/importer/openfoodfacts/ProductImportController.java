@@ -3,6 +3,8 @@ package backend.importer.openfoodfacts;
 import org.springframework.web.bind.annotation.*;
 
 import backend.importer.ImportedProductDTO;
+import backend.importer.ImportPreviewProductDTO;
+import backend.importer.ImportPreviewResponseDTO;
 import backend.importer.ImportResultDTO;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public class ProductImportController {
     }
 
     @GetMapping("/api/import/open-food-facts/preview")
-    public List<ImportedProductDTO> previewOpenFoodFactsImports(
+    public ImportPreviewResponseDTO previewOpenFoodFactsImports(
         @RequestParam String category,
         @RequestParam(defaultValue = "10") int pageSize
     ) {
@@ -25,7 +27,7 @@ public class ProductImportController {
     }
 
     @PostMapping("/api/import/open-food-facts")
-    public ImportResultDTO importOpenFoodFactsProducts(
+    public ImportPreviewResponseDTO importOpenFoodFactsProducts(
         @RequestParam String category,
         @RequestParam(defaultValue = "10") int pageSize
     ) {
