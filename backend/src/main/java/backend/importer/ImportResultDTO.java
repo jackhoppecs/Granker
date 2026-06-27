@@ -3,18 +3,18 @@ package backend.importer;
 public class ImportResultDTO {
     private int fetched;
     private int imported;
-    private int skippedDuplicates;
-    private int skippedInvalid;
+    private int skippedDuplicatesCount;
+    private int skippedInvalidCount;
 
     public ImportResultDTO(){
 
     }
 
-    public ImportResultDTO(int fetched, int imported, int skippedDuplicates, int skippedInvalid){
+    public ImportResultDTO(int fetched, int imported, int skippedDuplicatesCount, int skippedInvalidCount){
         this.fetched = fetched;
         this.imported = imported;
-        this.skippedDuplicates = skippedDuplicates;
-        this.skippedInvalid = skippedInvalid;
+        this.skippedDuplicatesCount = skippedDuplicatesCount;
+        this.skippedInvalidCount = skippedInvalidCount;
     }
 
     public int getFetched() {
@@ -33,19 +33,19 @@ public class ImportResultDTO {
         this.imported = imported;
     }
 
-    public int getSkippedDuplicates() {
-        return skippedDuplicates;
+    public int getSkippedDuplicatesCount() {
+        return skippedDuplicatesCount;
     }
 
-    public void setSkippedDuplicates(int skippedDuplicates) {
-        this.skippedDuplicates = skippedDuplicates;
+    public void setSkippedDuplicatesCount(int skippedDuplicatesCount) {
+        this.skippedDuplicatesCount = skippedDuplicatesCount;
     }
 
-    public int getSkippedInvalid() {
-        return skippedInvalid;
+    public int getSkippedInvalidCount() {
+        return skippedInvalidCount;
     }
 
-    public void setSkippedInvalid(int skippedInvalid) {
-        this.skippedInvalid = skippedInvalid;
+    public void setSkippedInvalidCount(int skippedInvalidCount) {
+        this.skippedInvalidCount = skippedInvalidCount;
     }
 }

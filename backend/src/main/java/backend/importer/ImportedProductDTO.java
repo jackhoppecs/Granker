@@ -1,7 +1,5 @@
 package backend.importer;
 
-import java.time.LocalDateTime;
-
 public class ImportedProductDTO {
     private String externalId;
     private String name;

@@ -36,9 +36,12 @@ public class ProductImportService {
     }
 
     public ImportPreviewResponseDTO previewFrozenFoodImports(String category, int pageSize){
+        long totalStart = System.currentTimeMillis();
         validateImportRequest(category, pageSize);
         SupportedImportCategory supportedCategory = SupportedImportCategory.fromRequestValue(category);
+        long offStart = System.currentTimeMillis();
         OpenFoodFactsSearchResponse response = openFoodFactsClient.searchProductsByCategory(supportedCategory.getOpenFoodFactsTag(), pageSize);
+        System.out.println("OFF fetch ms: " + (System.currentTimeMillis() - offStart));
 
 
         // Need to initalize and return a ImportPreviewResponseDTO if no response/products
@@ -82,7 +85,7 @@ public class ProductImportService {
             .count();
         
         int skippedCount = previewProducts.size() - importableCount;
-        
+        System.out.println("Total preview ms: " + (System.currentTimeMillis() - totalStart));
         return new ImportPreviewResponseDTO(
             supportedCategory.getRequestValue(),
             supportedCategory.getDisplayName(),
@@ -93,16 +96,38 @@ public class ProductImportService {
         );
     }
 
-    public ImportPreviewResponseDTO importFrozenFoodProducts(String category, int pageSize){
-        validateImportRequest(category, pageSize);
-        return previewFrozenFoodImports(category, pageSize);
+    public ImportResultDTO importFrozenFoodProducts(String category, int pageSize) {
+        ImportPreviewResponseDTO preview = previewFrozenFoodImports(category, pageSize);
+
+        int skippedDuplicates = 0;
+        int skippedInvalid = 0;
+
+        List<Product> productsToSave = new ArrayList<>();
+
+        for (ImportPreviewProductDTO previewProduct : preview.getProducts()) {
+            if (previewProduct.isImportable()) {
+                ImportedProductDTO dto = previewProduct.getProduct();
+                productsToSave.add(toProduct(dto));
+            } else {
+                if (previewProduct.getSkipReasons().contains("Already imported")) {
+                    skippedDuplicates++;
+                } else {
+                    skippedInvalid++;
+                }
+            }
+        }
+
+        List<Product> savedProducts = productRepository.saveAll(productsToSave);
+
+        return new ImportResultDTO(
+            preview.getFetchedCount(),
+            savedProducts.size(),
+            skippedDuplicates,
+            skippedInvalid
+        );
     }
 
-    private boolean isUsableImportedProduct(ImportedProductDTO dto) {
-        return dto.getExternalId() != null && !dto.getExternalId().isBlank()
-                && dto.getName() != null && !dto.getName().isBlank()
-                && dto.getBrand() != null && !dto.getBrand().isBlank();
-    }
+    // HELPER FUNCTIONS
 
     private ImportPreviewProductDTO buildPreviewProduct(ImportedProductDTO dto) {
         List<String> skipReasons = getSkipReasons(dto);
@@ -129,6 +154,8 @@ public class ProductImportService {
             reasons.add("Missing brand");
         }
 
+        long duplicateStart = System.currentTimeMillis();
+
         boolean alreadyExists = dto.getSourceName() != null
                 && dto.getExternalId() != null
                 && productRepository.existsBySourceNameAndExternalId(
@@ -139,7 +166,7 @@ public class ProductImportService {
         if (alreadyExists) {
             reasons.add("Already imported");
         }
-
+        System.out.println("Duplicate check ms: " + (System.currentTimeMillis() - duplicateStart));
         return reasons;
     }
 

@@ -27,7 +27,7 @@ public class ProductImportController {
     }
 
     @PostMapping("/api/import/open-food-facts")
-    public ImportPreviewResponseDTO importOpenFoodFactsProducts(
+    public ImportResultDTO importOpenFoodFactsProducts(
         @RequestParam String category,
         @RequestParam(defaultValue = "10") int pageSize
     ) {
