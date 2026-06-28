@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import {
   previewOpenFoodFactsImport,
   importOpenFoodFactsProducts,
@@ -20,6 +20,7 @@ function ImportPreviewPage() {
 
     try {
       const data = await previewOpenFoodFactsImport(category, pageSize);
+      setPreview(data);
     } catch (err) {
       setError(err.message);
       setPreview(null);
@@ -54,9 +55,9 @@ function ImportPreviewPage() {
       <label htmlFor="">
         Category
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <Option value="pizza">Pizza</Option>
-          <Option value="frozen-meals">Frozen Meals</Option>
-          <Option value="ice-cream">Ice Cream</Option>
+          <option value="pizza">Pizza</option>
+          <option value="frozen-meals">Frozen Meals</option>
+          <option value="ice-cream">Ice Cream</option>
         </select>
       </label>
 

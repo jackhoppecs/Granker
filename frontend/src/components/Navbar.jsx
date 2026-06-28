@@ -16,6 +16,7 @@ function Navbar({ currentUser, handleLogout }) {
         {currentUser ? (
           <>
             <Link to="/my-reviews">My Reviews</Link>
+            <Link to="/import">Imports</Link>
             <button className="navbar-button" onClick={handleLogout}>
               Logout
             </button>

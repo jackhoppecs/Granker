@@ -7,6 +7,7 @@ import CreateProductPage from "./pages/CreateProductPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MyReviewsPage from "./pages/MyReviewsPage";
+import ImportPreviewPage from "./pages/ImportPreviewPage";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -77,9 +78,10 @@ function App() {
           element={<RegisterPage setCurrentUser={setCurrentUser} />}
         ></Route>
         <Route
-          path="my-reviews"
+          path="/my-reviews"
           element={<MyReviewsPage currentUser={currentUser} />}
         ></Route>
+        <Route path="/import" element={<ImportPreviewPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

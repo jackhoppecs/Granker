@@ -1,41 +1,134 @@
 const API_BASE_URL = "http://localhost:8080";
 
+// export async function previewOpenFoodFactsImport(category, pageSize) {
+//   const params = new URLSearchParams({
+//     category,
+//     pageSize,
+//   });
+
+//   const response = await fetch(
+//     `${API_BASE_URL}/api/import/open-food-facts/preview?category=${params}`,
+//     {
+//       credentials: "include",
+//     },
+//   );
+
+//   if (!response.ok) {
+//     throw new Error("Failed to preview import results.");
+//   }
+
+//   return response.json();
+// }
+
+// export async function importOpenFoodFactsProducts(category, pageSize) {
+//   const params = new URLSearchParams({
+//     category,
+//     pageSize,
+//   });
+//   const response = await fetch(
+//     `${API_BASE_URL}/api/import/open-food-facts?category=${params}`,
+//     {
+//       method: "POST",
+//       credentials: "include",
+//     },
+//   );
+
+//   if (!response.ok) {
+//     throw new Error("Failed to import products.");
+//   }
+
+//   return response.json();
+// }
+
 export async function previewOpenFoodFactsImport(category, pageSize) {
-  const params = new URLSearchParams({
+  return {
     category,
-    pageSize,
-  });
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/import/open-food-facts/preview?category=${params}`,
-    {
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to preview import results.");
-  }
-
-  return response.json();
+    displayName: "Pizza",
+    fetchedCount: 4,
+    importableCount: 2,
+    skippedCount: 2,
+    products: [
+      {
+        product: {
+          externalId: "test-001",
+          name: "Test Frozen Pizza",
+          brand: "Granker Test Brand",
+          description: "Temporary mock product.",
+          category: "Pizza",
+          imageUrl: "",
+          calories: 320,
+          proteinGrams: 14,
+          carbGrams: 42,
+          fatGrams: 11,
+          sourceName: "Open Food Facts",
+          sourceUrl: "https://world.openfoodfacts.org/product/test-001",
+        },
+        importable: true,
+        skipReasons: [],
+      },
+      {
+        product: {
+          externalId: "test-002",
+          name: "Missing Brand Meal",
+          brand: "",
+          description: "",
+          category: "Frozen Meals",
+          imageUrl: "",
+          calories: null,
+          proteinGrams: null,
+          carbGrams: null,
+          fatGrams: null,
+          sourceName: "Open Food Facts",
+          sourceUrl: "",
+        },
+        importable: false,
+        skipReasons: ["Missing brand"],
+      },
+      {
+        product: {
+          externalId: "test-003",
+          name: "",
+          brand: "Some Brand",
+          description: "",
+          category: "Ice Cream",
+          imageUrl: "",
+          calories: 210,
+          proteinGrams: 4,
+          carbGrams: 30,
+          fatGrams: 9,
+          sourceName: "Open Food Facts",
+          sourceUrl: "",
+        },
+        importable: false,
+        skipReasons: ["Missing product name"],
+      },
+      {
+        product: {
+          externalId: "test-004",
+          name: "Already Imported Pizza",
+          brand: "Old Brand",
+          description: "",
+          category: "Pizza",
+          imageUrl: "",
+          calories: 280,
+          proteinGrams: 12,
+          carbGrams: 35,
+          fatGrams: 10,
+          sourceName: "Open Food Facts",
+          sourceUrl: "",
+        },
+        importable: false,
+        skipReasons: ["Already imported"],
+      },
+    ],
+  };
 }
 
 export async function importOpenFoodFactsProducts(category, pageSize) {
-  const params = new URLSearchParams({
-    category,
-    pageSize,
-  });
-  const response = await fetch(
-    `${API_BASE_URL}/api/import/open-food-facts?category=${params}`,
-    {
-      method: "POST",
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to import products.");
-  }
-
-  return response.json();
+  return {
+    fetched: 4,
+    imported: 2,
+    skippedDuplicates: 1,
+    skippedInvalid: 1,
+  };
 }
