@@ -55,7 +55,7 @@ function ImportPreviewPage() {
       <label htmlFor="">
         Category
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="pizza">Pizza</option>
+          <option value="frozen-pizza">Pizza</option>
           <option value="frozen-meals">Frozen Meals</option>
           <option value="ice-cream">Ice Cream</option>
         </select>
@@ -115,8 +115,8 @@ function ImportPreviewPage() {
           <h2>Import Result</h2>
           <p>Fetched: {importResult.fetched}</p>
           <p>Imported: {importResult.imported}</p>
-          <p>Skipped duplicates: {importResult.skippedDuplicates}</p>
-          <p>Skipped invalid: {importResult.skippedInvalid}</p>
+          <p>Skipped duplicates: {importResult.skippedDuplicatesCount}</p>
+          <p>Skipped invalid: {importResult.skippedInvalidCount}</p>
         </section>
       )}
     </main>
