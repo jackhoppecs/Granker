@@ -30,6 +30,10 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - Normalize imported Open Food Facts product data into the app's internal product model
 - Prevent duplicate imported products using source name and external product ID
 - Preserve source attribution for imported product data
+- Preview Open Food Facts imports before saving products
+- Select supported import categories and page sizes from the frontend
+- Display detailed importability status and skip reasons before importing
+- Return user-friendly errors when Open Food Facts is unavailable
 
 ## Tech Stack
 
@@ -80,13 +84,21 @@ Password: password
 
 ## Data Imports
 
-Granker supports a small Open Food Facts import pipeline for bringing real product data into the app. The backend calls the Open Food Facts API, maps the external JSON response into internal import DTOs, normalizes selected fields, and saves usable products into the local PostgreSQL database.
+Granker supports a small Open Food Facts import pipeline for bringing real product data into the app. The backend calls the Open Food Facts API, maps the external JSON response into internal import DTOs, normalizes selected fields, validates imported products, and saves usable products into the local PostgreSQL database.
 
 Imported products include source metadata such as source name, source URL, external product ID, and import timestamp. Duplicate imports are prevented using the combination of source name and external product ID.
 
-The import pipeline currently focuses on a small, controlled dataset rather than broad bulk imports. Open Food Facts data can contain noisy categories, missing fields, international products, and inconsistent product metadata, so imported products are filtered and lightly normalized before being saved.
+The import workflow uses a preview-first approach. Users select a supported category and page size, preview products returned from Open Food Facts, review which products are importable or skipped, and then import only the products that passed validation.
 
-Product data imported from Open Food Facts is attributed on product pages through the stored source fields.
+Supported import categories currently include:
+
+- Frozen Pizza
+- Frozen Meals
+- Ice Cream
+
+The import pipeline currently focuses on a small, controlled dataset rather than broad bulk imports. Open Food Facts data can contain noisy categories, missing fields, international products, and inconsistent product metadata, so imported products are filtered, validated, and lightly normalized before being saved.
+
+The import preview displays fetched product counts, importable product counts, skipped product counts, and product-level skip reasons. This makes it easier to inspect imported data quality before adding products to Granker.
 
 ## MVP Status
 
@@ -94,7 +106,7 @@ The app currently includes product browsing, product details, product search, pr
 
 The app also includes product metadata and discovery features. Products can store and display category, image URL, nutrition fields, and source attribution. Users can filter products by category or brand, and product cards/detail pages display more useful product information.
 
-Granker now includes a backend import pipeline for Open Food Facts. Imported products are fetched from the external API, converted into a normalized internal DTO, mapped into the app's Product entity, checked for duplicates, stored in PostgreSQL, and displayed through the existing frontend product browsing flow.
+Granker now includes a preview-based backend import pipeline for Open Food Facts. Imported products are fetched from the external API, converted into a normalized internal DTO, validated, checked for duplicates, mapped into the app's Product entity, stored in PostgreSQL, and displayed through the existing frontend product browsing flow. The frontend import preview page allows a user to choose a supported category and page size, inspect importable products and skip reasons, and only import products after previewing the data.
 
 ## Future Improvements
 
@@ -102,7 +114,6 @@ Granker now includes a backend import pipeline for Open Food Facts. Imported pro
 - More detailed nutrition and serving size information
 - Better imported data quality checks
 - Admin-only import controls
-- Import preview and approval workflow
 - Import result history
 - User profile pages
 - Favorite or saved products
@@ -139,6 +150,18 @@ Added an Open Food Facts import pipeline for real-world product data. The backen
 Imported products now store import-specific metadata, including source name, source URL, external product ID, and import timestamp. Duplicate imported products are prevented using source name and external ID checks, with database-level uniqueness protection. The import pipeline also includes basic category normalization so noisy external category strings can be mapped into cleaner Granker categories.
 
 This version makes Granker more realistic by allowing the app to populate products from an external food database while preserving source attribution and keeping imported data separate from manually-created product data.
+
+### v1.7.0
+
+Added an import preview and data quality workflow for Open Food Facts imports. Import endpoints now support category and page-size parameters, allowing the app to fetch smaller, controlled sets of products by supported frozen food category.
+
+This version adds a supported import category whitelist, including frozen pizza, frozen burritos, frozen vegetables, frozen meals, and ice cream. Imported products now go through stricter validation and improved category normalization before they can be saved.
+
+The backend now returns detailed import preview results, including fetched product counts, importable product counts, skipped product counts, and product-level skip reasons. This makes the import process more transparent and helps prevent low-quality or duplicate data from being added silently.
+
+The frontend now includes an import preview page where users can select an import category and page size, preview Open Food Facts products, review which products are importable, see skip reasons for rejected products, and import only after previewing the results.
+
+Open Food Facts API failures are now handled with clearer, user-friendly error messages, making the import flow easier to understand when the external service is unavailable.
 
 ## Screenshots
 
