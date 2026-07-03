@@ -24,6 +24,10 @@ public class User {
     @NotBlank
     private String password;
 
+    // Boolean can be null and boolean has to be true/false
+    @Column(nullable = false)
+    private boolean admin = false;
+
     public User(){
     }
 
@@ -31,6 +35,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.admin = false;
     }
 
     // Spring uses a library called Jackson to convert JSON to a java object
@@ -71,6 +76,10 @@ public class User {
         return password;
     }
 
+    public boolean isAdmin() {
+        return admin;
+    }
+
     public void setId(Long id){
         this.id = id;
     }
@@ -85,5 +94,9 @@ public class User {
 
     public void setPassword(String password){
         this.password = password;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }
