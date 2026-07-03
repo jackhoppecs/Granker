@@ -25,7 +25,7 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         List<UserResponseDTO> dtos = new ArrayList<>();
         for (User user : users){
-            UserResponseDTO addUser = new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+            UserResponseDTO addUser = new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
             dtos.add(addUser);
         }
 
@@ -39,7 +39,7 @@ public class UserController {
         if (user == null){
             return ResponseEntity.notFound().build();
         }
-        UserResponseDTO dto = new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+        UserResponseDTO dto = new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
         return ResponseEntity.ok(dto);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreateUserRequest request){
         User newUser = new User(request.getUsername(), request.getEmail(), request.getPassword());
         User createdUser = userService.createUser(newUser);
-        UserResponseDTO dto = new UserResponseDTO(createdUser.getId(), createdUser.getUsername(), createdUser.getEmail());
+        UserResponseDTO dto = new UserResponseDTO(createdUser.getId(), createdUser.getUsername(), createdUser.getEmail(), createdUser.isAdmin());
         return ResponseEntity.ok(dto);
     }
 
@@ -59,7 +59,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        UserResponseDTO dto = new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+        UserResponseDTO dto = new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
         return ResponseEntity.ok(dto);
     }
 
