@@ -23,6 +23,8 @@ public class DataSeeder {
         PasswordEncoder passwordEncoder
     ) {
         return args -> {
+            seedAdminUser(userRepository, passwordEncoder);
+
             if (productRepository.count() > 0 || reviewRepository.count() > 0 || userRepository.count() > 0) {
                 return;
             }
@@ -246,5 +248,22 @@ public class DataSeeder {
         review.setText(text);
 
         reviewRepository.save(review);
+    }
+
+    private void seedAdminUser(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder
+    ) {
+        if (userRepository.findByEmail("admin@example.com").isPresent()) {
+            return;
+        }
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setEmail("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("password"));
+        admin.setAdmin(true);
+
+        userRepository.save(admin);
     }
 }
