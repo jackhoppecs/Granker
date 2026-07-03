@@ -24,6 +24,7 @@ public class UserService {
     }
 
     public User createUser(User user){
+        user.setAdmin(false);
         return userRepository.save(user);
     }
 

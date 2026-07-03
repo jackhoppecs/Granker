@@ -32,7 +32,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        return new UserResponseDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
+        return new UserResponseDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(), savedUser.isAdmin());
     }
 
     public UserResponseDTO login(LoginRequest request){
@@ -42,13 +42,13 @@ public class AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+        return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
     }
 
     public UserResponseDTO getCurrentUser(Long userId){
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         
-            return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+            return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
     }
 }
