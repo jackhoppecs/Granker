@@ -105,7 +105,7 @@ public class ReviewService {
 
         // Check if current review belongs to current session
         if(!review.getUser().getId().equals(userId)){
-            throw new RuntimeException("You are not allowed to update this review");
+            throw new RuntimeException("You are not allowed to delete this review");
         }
 
         // Delete and return that we succesfully deleted review

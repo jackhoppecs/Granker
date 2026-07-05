@@ -4,12 +4,14 @@ import backend.dto.CreateProductRequest;
 import backend.dto.ProductResponseDTO;
 import backend.model.Product;
 import backend.model.Review;
+import backend.service.AuthService;
 import backend.service.ProductService;
 import backend.service.ReviewService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -22,10 +24,12 @@ import java.util.ArrayList;
 public class ProductController {
     private final ProductService productService;
     private final ReviewService reviewService;
+    private final AuthService authService;
 
-    public ProductController(ProductService productService, ReviewService reviewService){
+    public ProductController(ProductService productService, ReviewService reviewService, AuthService authService){
         this.productService = productService;
         this.reviewService = reviewService;
+        this.authService = authService;
     }
 
     // This handles GET /api/products
@@ -125,7 +129,8 @@ public class ProductController {
     // 4. If valid → run your method
     // 5. If invalid → return 400 Bad Request before your service runs
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody Product updatedProduct){
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody Product updatedProduct, HttpSession session){
+        authService.requireAdminUser(session);
         // Find product by Id, if it exists update attributes of the product with updatedProduct data
         Product product = productService.updateProduct(id, updatedProduct);
         if (product == null){
@@ -160,7 +165,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id, HttpSession session){
+        authService.requireAdminUser(session);
         // We don't need a return because we aren't using the data anymore it has been deleted
         if (productService.deleteProduct(id)){
             return ResponseEntity.noContent().build();
@@ -171,7 +177,8 @@ public class ProductController {
 
     @PostMapping
     // Spring takes JSON from request body and turns it into a Product object to be saved to DB
-    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request){
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request, HttpSession session){
+        authService.requireAdminUser(session);
         Product product = new Product(
             request.getName(), 
             request.getBrand(), 
