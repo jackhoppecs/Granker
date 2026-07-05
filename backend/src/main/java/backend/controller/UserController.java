@@ -4,8 +4,11 @@ import backend.model.User;
 import backend.service.UserService;
 import backend.dto.CreateUserRequest;
 import backend.dto.UserResponseDTO;
+import backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -15,13 +18,16 @@ import java.util.ArrayList;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+    private final AuthService authService;
 
-    public UserController(UserService userService){
+    public UserController(UserService userService, AuthService authService){
         this.userService = userService;
+        this.authService = authService;
     }
 
     @GetMapping
-    public List<UserResponseDTO> getAllUsers(){
+    public List<UserResponseDTO> getAllUsers(HttpSession session){
+        authService.requireAdminUser(session);
         List<User> users = userService.getAllUsers();
         List<UserResponseDTO> dtos = new ArrayList<>();
         for (User user : users){
@@ -34,7 +40,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id){
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id, HttpSession session){
+        authService.requireAdminUser(session);
         User user = userService.getUserById(id);
         if (user == null){
             return ResponseEntity.notFound().build();
@@ -43,16 +50,28 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreateUserRequest request){
-        User newUser = new User(request.getUsername(), request.getEmail(), request.getPassword());
-        User createdUser = userService.createUser(newUser);
-        UserResponseDTO dto = new UserResponseDTO(createdUser.getId(), createdUser.getUsername(), createdUser.getEmail(), createdUser.isAdmin());
-        return ResponseEntity.ok(dto);
-    }
+    // @PostMapping
+    // public ResponseEntity<UserResponseDTO> createUser(
+    //         @Valid @RequestBody CreateUserRequest request,
+    //         HttpSession session
+    // ) {
+    //     authService.requireAdminUser(session);
+
+    //     User createdUser = userService.createUser(request);
+
+    //     UserResponseDTO dto = new UserResponseDTO(
+    //             createdUser.getId(),
+    //             createdUser.getUsername(),
+    //             createdUser.getEmail(),
+    //             createdUser.isAdmin()
+    //     );
+
+    //     return ResponseEntity.ok(dto);
+    // }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser){
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser, HttpSession session){
+        authService.requireAdminUser(session);
         User user = userService.updateUser(id, updatedUser);
 
         if (user == null){
@@ -64,7 +83,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, HttpSession session){
+        authService.requireAdminUser(session);
         if (userService.deleteUser(id)){
             return ResponseEntity.noContent().build();
         }
