@@ -1,6 +1,8 @@
 package backend.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import backend.dto.UserResponseDTO;
@@ -8,6 +10,7 @@ import backend.dto.auth.LoginRequest;
 import backend.dto.auth.RegisterRequest;
 import backend.model.User;
 import backend.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AuthService {
@@ -29,6 +32,7 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setAdmin(false);
 
         User savedUser = userRepository.save(user);
 
@@ -50,5 +54,31 @@ public class AuthService {
             .orElseThrow(() -> new RuntimeException("User not found"));
         
             return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
+    }
+
+    public User requireLoggedInUser(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You must be logged in.");
+        }
+
+       return userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid session."
+        ));
+    }
+
+    public User requireAdminUser(HttpSession session) {
+        User user = requireLoggedInUser(session);
+        if (!user.isAdmin()) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Admin access required."
+                );
+        }
+
+        return user;
     }
 }
