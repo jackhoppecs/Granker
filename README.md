@@ -100,26 +100,33 @@ The import pipeline currently focuses on a small, controlled dataset rather than
 
 The import preview displays fetched product counts, importable product counts, skipped product counts, and product-level skip reasons. This makes it easier to inspect imported data quality before adding products to Granker.
 
+Open Food Facts import preview and import execution are admin-only so normal users cannot repeatedly call the external API through the app backend.
+
 ## MVP Status
 
-The app currently includes product browsing, product details, product search, product sorting/filtering, review submission, review editing/deletion for review owners, duplicate review prevention, product creation, seeded demo data, average ratings, review counts, frontend registration, session-based login/logout, persisted login state after refresh, and a My Reviews page where logged-in users can view, edit, delete, and navigate back to products they have reviewed.
+The app currently includes product browsing, product details, product search, product sorting/filtering, review submission, review editing/deletion for review owners, duplicate review prevention, seeded demo data, average ratings, review counts, frontend registration, session-based login/logout, persisted login state after refresh, and a My Reviews page where logged-in users can view, edit, delete, and navigate back to products they have reviewed.
 
 The app also includes product metadata and discovery features. Products can store and display category, image URL, nutrition fields, and source attribution. Users can filter products by category or brand, and product cards/detail pages display more useful product information.
 
-Granker now includes a preview-based backend import pipeline for Open Food Facts. Imported products are fetched from the external API, converted into a normalized internal DTO, validated, checked for duplicates, mapped into the app's Product entity, stored in PostgreSQL, and displayed through the existing frontend product browsing flow. The frontend import preview page allows a user to choose a supported category and page size, inspect importable products and skip reasons, and only import products after previewing the data.
+Granker includes a preview-based backend import pipeline for Open Food Facts. Imported products are fetched from the external API, converted into a normalized internal DTO, validated, checked for duplicates, mapped into the app's Product entity, stored in PostgreSQL, and displayed through the existing frontend product browsing flow. The frontend import preview page allows admin users to choose a supported category and page size, inspect importable products and skip reasons, and only import products after previewing the data.
+
+The app now includes basic role-based protection for sensitive actions. Product management, user management, and Open Food Facts import tools are restricted to admin users, while normal users can continue using the core review and browsing features.
 
 ## Future Improvements
 
-- Barcode support
-- More detailed nutrition and serving size information
-- Better imported data quality checks
-- Admin-only import controls
+- Public deployment
+- Production-safe admin account setup using environment variables or manual database setup
+- Rate limiting for sensitive endpoints
+- Automated backend and frontend tests
+- Docker setup
 - Import result history
+- Better imported data quality checks
+- More detailed nutrition and serving size information
 - User profile pages
 - Favorite or saved products
-- Deployment
-- Automated tests
-- Docker setup
+- Barcode support
+- Mobile frontend exploration
+- More consistent authorization helper usage across controllers
 
 ## Version Status
 
@@ -162,6 +169,18 @@ The backend now returns detailed import preview results, including fetched produ
 The frontend now includes an import preview page where users can select an import category and page size, preview Open Food Facts products, review which products are importable, see skip reasons for rejected products, and import only after previewing the results.
 
 Open Food Facts API failures are now handled with clearer, user-friendly error messages, making the import flow easier to understand when the external service is unavailable.
+
+### v.1.8.0
+
+Added basic security and admin-role protections to make the app safer and more deployable.
+
+Users now include an admin flag, and auth responses include admin status so the frontend can adjust navigation and page access based on the current user's role. Public registration defaults new users to non-admin accounts, while seeded development data includes a separate admin demo user.
+
+Open Food Facts import preview and import execution are now admin-only. This prevents normal users from repeatedly calling the external Open Food Facts API through the app backend. Product management actions, including product creation, updates, and deletion, are also restricted to admins.
+
+The frontend now hides admin-only navigation links from normal users and shows friendly blocked-access messages when a non-admin or logged-out user navigates directly to an admin-only page. API error handling was improved so unauthorized and forbidden responses produce clearer user-facing messages.
+
+This version establishes a cleaner permission model: normal users can browse products and manage their own reviews, while admins manage product data, imports, and user-management endpoints.
 
 ## Screenshots
 
