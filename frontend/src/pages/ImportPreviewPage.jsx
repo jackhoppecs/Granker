@@ -4,7 +4,7 @@ import {
   importOpenFoodFactsProducts,
 } from "../api/import";
 
-function ImportPreviewPage() {
+function ImportPreviewPage({ currentUser }) {
   const [category, setCategory] = useState("pizza");
   const [pageSize, setPageSize] = useState(10);
   const [preview, setPreview] = useState(null);
@@ -47,6 +47,17 @@ function ImportPreviewPage() {
     } finally {
       setIsImportLoading(false);
     }
+  }
+
+  // Technically we removed this option from navigation if a user is not an admin or not logged in
+  // Furthermore we protected the API against non admin use
+  // But if someone did somehow navigate here, this would look cleaner
+  if (!currentUser) {
+    return <p>Please log in to access the import tools.</p>;
+  }
+
+  if (!currentUser.admin) {
+    return <p>You need an admin account to access the import tools.</p>;
   }
   return (
     <main>

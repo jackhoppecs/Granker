@@ -12,6 +12,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  // console.log("currentUser:", currentUser);
   const [authLoading, setAuthLoading] = useState(true);
   async function handleLogout() {
     try {
@@ -62,7 +63,10 @@ function App() {
         <Route path="/" element={<ProductsPage />}></Route>
         <Route path="/products" element={<ProductsPage />}></Route>
         {/* This needs to go before Product details route so it doesnt think 'new' is a product id */}
-        <Route path="/products/new" element={<CreateProductPage />}></Route>
+        <Route
+          path="/products/new"
+          element={<CreateProductPage currentUser={currentUser} />}
+        ></Route>
         <Route
           path="/products/:id"
           element={<ProductDetailsPage currentUser={currentUser} />}
@@ -81,7 +85,10 @@ function App() {
           path="/my-reviews"
           element={<MyReviewsPage currentUser={currentUser} />}
         ></Route>
-        <Route path="/import" element={<ImportPreviewPage />}></Route>
+        <Route
+          path="/import"
+          element={<ImportPreviewPage currentUser={currentUser} />}
+        ></Route>
       </Routes>
     </BrowserRouter>
   );

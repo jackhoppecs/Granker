@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProduct } from "../api/products";
 
-function CreateProductPage() {
+function CreateProductPage({ currentUser }) {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -38,6 +38,14 @@ function CreateProductPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (!currentUser) {
+    return <p>Please log in to access the import tools.</p>;
+  }
+
+  if (!currentUser.admin) {
+    return <p>You need an admin account to access the import tools.</p>;
   }
 
   return (
