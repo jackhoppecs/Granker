@@ -1,4 +1,5 @@
 const API_BASE_URL = "http://localhost:8080";
+import { handleApiResponse } from "./apiUtils";
 
 export async function previewOpenFoodFactsImport(category, pageSize) {
   const params = new URLSearchParams({
@@ -13,11 +14,7 @@ export async function previewOpenFoodFactsImport(category, pageSize) {
     },
   );
 
-  if (!response.ok) {
-    throw new Error("Failed to preview import results.");
-  }
-
-  return response.json();
+  return handleApiResponse(response);
 }
 
 export async function importOpenFoodFactsProducts(category, pageSize) {
@@ -33,11 +30,7 @@ export async function importOpenFoodFactsProducts(category, pageSize) {
     },
   );
 
-  if (!response.ok) {
-    throw new Error("Failed to import products.");
-  }
-
-  return response.json();
+  return handleApiResponse(response);
 }
 
 // export async function previewOpenFoodFactsImport(category, pageSize) {
