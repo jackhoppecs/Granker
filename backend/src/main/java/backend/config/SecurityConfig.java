@@ -2,6 +2,7 @@ package backend.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,13 +21,17 @@ import org.springframework.security.config.Customizer;
 // Look inside it for objects/beans that should be managed by Spring.
 @Configuration
 public class SecurityConfig {
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     // Bean == Create this object and store it in the Spring application context.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // The springboot security dependency we added in pom blocks unathorized requests for now we make:
+    // The springboot security dependency we added in pom blocks unauthorized requests.
     // /auth/register public
     // /auth/login public
     // everything else is also public for now
@@ -43,10 +48,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of(frontendUrl));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
@@ -55,6 +60,7 @@ public class SecurityConfig {
 
         // This creates an object that lets you attach CORS rules to URL patterns
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
         // Use this CORS config for every backend route.
         source.registerCorsConfiguration("/**", config);
 
