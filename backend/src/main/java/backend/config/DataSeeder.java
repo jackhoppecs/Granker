@@ -1,5 +1,6 @@
 package backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,9 @@ import backend.repository.UserRepository;
 @Configuration
 public class DataSeeder {
 
+    @Value("${app.seed.enabled}")
+    private boolean seedEnabled;
+
     @Bean
     CommandLineRunner seedData(
         ProductRepository productRepository,
@@ -23,11 +27,15 @@ public class DataSeeder {
         PasswordEncoder passwordEncoder
     ) {
         return args -> {
-            seedAdminUser(userRepository, passwordEncoder);
+            if (!seedEnabled) {
+                return;
+            }
 
             if (productRepository.count() > 0 || reviewRepository.count() > 0 || userRepository.count() > 0) {
                 return;
             }
+
+            createDemoAdminUser(userRepository, passwordEncoder);
 
             User demoUser = createUser(userRepository, passwordEncoder, "demo_user", "demo@example.com", "password");
             User alex = createUser(userRepository, passwordEncoder, "alex", "alex@example.com", "password");
@@ -250,20 +258,16 @@ public class DataSeeder {
         reviewRepository.save(review);
     }
 
-    private void seedAdminUser(
+    private User createDemoAdminUser(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder
     ) {
-        if (userRepository.findByEmail("admin@example.com").isPresent()) {
-            return;
-        }
-
         User admin = new User();
         admin.setUsername("admin");
         admin.setEmail("admin@example.com");
         admin.setPassword(passwordEncoder.encode("password"));
         admin.setAdmin(true);
 
-        userRepository.save(admin);
+        return userRepository.save(admin);
     }
 }
