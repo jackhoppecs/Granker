@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+import API_BASE_URL from "./config";
 
 export async function getReviewsByProductId(productId, sort = "newest") {
   const params = new URLSearchParams();

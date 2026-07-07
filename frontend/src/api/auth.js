@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+import API_BASE_URL from "./config";
 
 export async function login(credentials) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -54,7 +54,7 @@ export async function register(username, email, password) {
     }),
   });
 
-  if (!response.ok){
+  if (!response.ok) {
     throw new Error("Registration failed");
   }
 
