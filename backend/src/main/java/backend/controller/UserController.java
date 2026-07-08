@@ -2,7 +2,7 @@ package backend.controller;
 
 import backend.model.User;
 import backend.service.UserService;
-import backend.dto.CreateUserRequest;
+import backend.dto.UpdateUserRequest;
 import backend.dto.UserResponseDTO;
 import backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -70,9 +70,9 @@ public class UserController {
     // }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser, HttpSession session){
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request, HttpSession session){
         authService.requireAdminUser(session);
-        User user = userService.updateUser(id, updatedUser);
+        User user = userService.updateUser(id, request);
 
         if (user == null){
             return ResponseEntity.notFound().build();

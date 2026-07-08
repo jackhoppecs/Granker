@@ -1,6 +1,7 @@
 package backend.service;
 
 import backend.dto.CreateUserRequest;
+import backend.dto.UpdateUserRequest;
 import backend.model.User;
 import backend.repository.UserRepository;
 import java.util.List;
@@ -8,14 +9,17 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> getAllUsers(){
@@ -40,12 +44,19 @@ public class UserService {
     //     return userRepository.save(user);
     // }
 
-    public User updateUser(Long id, User updatedUser){
+    public User updateUser(Long id, UpdateUserRequest request){
         return userRepository.findById(id)
         .map(user -> {
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-            user.setPassword(updatedUser.getPassword());
+            user.setUsername(request.getUsername());
+            userRepository.findByEmail(request.getEmail()).ifPresent(existingUser -> {
+                if (!existingUser.getId().equals(id)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use.");
+                }
+            });
+            user.setEmail(request.getEmail());
+            if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
             return userRepository.save(user);
         }).orElse(null);
     }
