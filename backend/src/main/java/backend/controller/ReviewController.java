@@ -38,7 +38,7 @@ public class ReviewController {
         List<Review> reviews = reviewService.getAllReviews();
         List<ReviewResponseDTO> dtos = new ArrayList<>();
         for (Review review : reviews){
-            ReviewResponseDTO dto = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
+            ReviewResponseDTO dto = toReviewResponseDTO(review);
             dtos.add(dto);
         }
         return dtos;
@@ -78,31 +78,22 @@ public class ReviewController {
     // Request body = data used to create/update the resource
     // Session/auth = identity of the current user
     @PostMapping("/products/{productId}/reviews")
-    public ResponseEntity<?> createReview(@PathVariable Long productId, @Valid @RequestBody CreateReviewRequest review, HttpSession session){
-        Review addReview = new Review(review.getRating(), review.getText());
+    public ResponseEntity<?> createReview(@PathVariable Long productId, @Valid @RequestBody CreateReviewRequest request, HttpSession session){
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-         try {
-        Review createdReview = reviewService.createReview(productId, userId, addReview);
+        try {
+            Review createdReview = reviewService.createReview(productId, userId, request);
 
-        if (createdReview == null) {
-            return ResponseEntity.notFound().build();
-        }
+            if (createdReview == null) {
+                return ResponseEntity.notFound().build();
+            }
 
-        ReviewResponseDTO response = new ReviewResponseDTO(
-            createdReview.getId(),
-            createdReview.getRating(),
-            createdReview.getText(),
-            createdReview.getUser().getUsername(),
-            createdReview.getProduct().getId(),
-            createdReview.getCreatedAt(), 
-            createdReview.getUpdatedAt()
-        );
+            ReviewResponseDTO response = toReviewResponseDTO(createdReview);
 
-        return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
             return ResponseEntity.status(409).body(e.getMessage());
@@ -135,7 +126,7 @@ public class ReviewController {
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("reviews/me")
+    @GetMapping("/reviews/me")
     public ResponseEntity<List<MyReviewResponseDTO>> getMyReviews(HttpSession session){
         Long userId = (Long) session.getAttribute("userId");
 
@@ -162,21 +153,20 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{id}")
-    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody CreateReviewRequest updatedReview, HttpSession session){
+    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id, @Valid @RequestBody CreateReviewRequest request, HttpSession session){
         Long userId = (Long) session.getAttribute("userId");
 
         if (userId == null){
             return ResponseEntity.status(401).build();
         }
 
-        Review received = new Review(updatedReview.getRating(), updatedReview.getText());
-        Review review = reviewService.updateReview(id, received, userId);
+        Review review = reviewService.updateReview(id, request, userId);
 
         if (review == null){
             return ResponseEntity.notFound().build();
         }
 
-        ReviewResponseDTO response = new ReviewResponseDTO(review.getId(), review.getRating(), review.getText(), review.getUser().getUsername(), review.getProduct().getId(), review.getCreatedAt(), review.getUpdatedAt());
+        ReviewResponseDTO response = toReviewResponseDTO(review);
         return ResponseEntity.ok(response);
     }
 
@@ -193,5 +183,17 @@ public class ReviewController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    private ReviewResponseDTO toReviewResponseDTO(Review review) {
+        return new ReviewResponseDTO(
+                review.getId(),
+                review.getRating(),
+                review.getText(),
+                review.getUser().getUsername(),
+                review.getProduct().getId(),
+                review.getCreatedAt(),
+                review.getUpdatedAt()
+        );
     }
 }

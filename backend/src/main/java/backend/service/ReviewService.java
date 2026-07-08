@@ -1,5 +1,6 @@
 package backend.service;
 
+import backend.dto.CreateReviewRequest;
 import backend.model.Product;
 import backend.model.User;
 import backend.model.Review;
@@ -40,7 +41,7 @@ public class ReviewService {
         return reviewRepository.findById(id).orElse(null);
     }
 
-    public Review createReview(Long productId, Long userId, Review review){
+    public Review createReview(Long productId, Long userId, CreateReviewRequest request){
         Product product = producRepository.findById(productId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
 
@@ -55,6 +56,9 @@ public class ReviewService {
         }
 
         // Set product and user for a review
+        Review review = new Review();
+        review.setRating(request.getRating());
+        review.setText(request.getText());
         review.setProduct(product);
         review.setUser(user);
 
@@ -79,15 +83,16 @@ public class ReviewService {
         return reviewRepository.findByUserId(userId);
     }
 
-    public Review updateReview(Long id, Review updatedReview, Long userId){
+    public Review updateReview(Long id, CreateReviewRequest request, Long userId){
         return reviewRepository.findById(id)
         .map(review -> {
 
             if (!review.getUser().getId().equals(userId)){
                 throw new RuntimeException("You are not allowed to update this review");
             }
-            review.setRating(updatedReview.getRating());
-            review.setText(updatedReview.getText());
+
+            review.setRating(request.getRating());
+            review.setText(request.getText());
 
             return reviewRepository.save(review);
         }).orElse(null);

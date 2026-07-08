@@ -1,6 +1,5 @@
 package backend.service;
 
-import backend.dto.CreateUserRequest;
 import backend.dto.UpdateUserRequest;
 import backend.model.User;
 import backend.repository.UserRepository;
