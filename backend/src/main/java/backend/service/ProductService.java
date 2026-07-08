@@ -1,5 +1,7 @@
 package backend.service;
 
+import backend.dto.CreateProductRequest;
+import backend.dto.UpdateProductRequest;
 import backend.model.Product;
 import backend.repository.ProductRepository;
 import java.util.List;
@@ -50,17 +52,17 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-    public Product updateProduct(Long id, Product updatedProduct){
+    public Product updateProduct(Long id, UpdateProductRequest request){
         // Updated product is an entirely new object separate from the one on the DB
         // Therefore we need to update the existing object in the DB and then save that one
-        // If we simply saved updatedProduct it has no id and will create a new reocrd
+        // If we simply saved request it has no id and will create a new reocrd
         // Let's say the id did exist, well we could miss data or overwrite fields not included
         // This is more concise
         return productRepository.findById(id)
         .map(product -> {
-            product.setName(updatedProduct.getName());
-            product.setBrand(updatedProduct.getBrand());
-            product.setDescription(updatedProduct.getDescription());
+            product.setName(request.getName());
+            product.setBrand(request.getBrand());
+            product.setDescription(request.getDescription());
             return productRepository.save(product);
         }).orElse(null);
     }
@@ -73,11 +75,28 @@ public class ProductService {
         return true;
     }
 
-    public Product createProduct(Product product){
+    public Product createProduct(CreateProductRequest request){
+        Product product = new Product(
+            request.getName(), 
+            request.getBrand(), 
+            request.getDescription()
+        ); 
+
+        // Set optional fields
+        // If we made the constructor huge we would have to keep everything in order which can become annoying and lead to mistakes
+        product.setCategory(request.getCategory());
+        product.setImageUrl(request.getImageUrl());
+        product.setCalories(request.getCalories());
+        product.setProteinGrams(request.getProteinGrams());
+        product.setCarbGrams(request.getCarbGrams());
+        product.setFatGrams(request.getFatGrams());
+        product.setSourceName(
+            request.getSourceName() == null || request.getSourceName().isBlank()
+                ? "User submitted"
+                : request.getSourceName()
+        );
+        product.setSourceUrl(request.getSourceUrl());
+
         return productRepository.save(product);
     }
-
-
-
-
 }

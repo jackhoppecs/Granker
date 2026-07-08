@@ -2,6 +2,7 @@ package backend.controller;
 
 import backend.dto.CreateProductRequest;
 import backend.dto.ProductResponseDTO;
+import backend.dto.UpdateProductRequest;
 import backend.model.Product;
 import backend.model.Review;
 import backend.service.AuthService;
@@ -129,10 +130,10 @@ public class ProductController {
     // 4. If valid → run your method
     // 5. If invalid → return 400 Bad Request before your service runs
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody Product updatedProduct, HttpSession session){
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody UpdateProductRequest request, HttpSession session){
         authService.requireAdminUser(session);
         // Find product by Id, if it exists update attributes of the product with updatedProduct data
-        Product product = productService.updateProduct(id, updatedProduct);
+        Product product = productService.updateProduct(id, request);
         if (product == null){
             return ResponseEntity.notFound().build();
         }
@@ -176,30 +177,11 @@ public class ProductController {
     }
 
     @PostMapping
-    // Spring takes JSON from request body and turns it into a Product object to be saved to DB
+    // Spring takes JSON from the request body and turns it into a CreateProductRequest DTO.
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequest request, HttpSession session){
         authService.requireAdminUser(session);
-        Product product = new Product(
-            request.getName(), 
-            request.getBrand(), 
-            request.getDescription()
-        ); 
-
-        // Set optional fields
-        // If we made the constructor huge we would have to keep everything in order which can become annoying and lead to mistakes
-        product.setCategory(request.getCategory());
-        product.setImageUrl(request.getImageUrl());
-        product.setCalories(request.getCalories());
-        product.setProteinGrams(request.getProteinGrams());
-        product.setCarbGrams(request.getCarbGrams());
-        product.setFatGrams(request.getFatGrams());
-        product.setSourceName(
-            request.getSourceName() == null || request.getSourceName().isBlank()
-                ? "User submitted"
-                : request.getSourceName()
-        );
-        product.setSourceUrl(request.getSourceUrl());
-        Product newProduct = productService.createProduct(product);
+        
+        Product newProduct = productService.createProduct(request);
 
         ProductResponseDTO dto = new ProductResponseDTO(
             newProduct.getId(), 
@@ -210,14 +192,14 @@ public class ProductController {
             0, 
             newProduct.getCreatedAt(),
 
-            product.getCategory(),
-            product.getImageUrl(),
-            product.getCalories(),
-            product.getProteinGrams(),
-            product.getCarbGrams(),
-            product.getFatGrams(),
-            product.getSourceName(),
-            product.getSourceUrl()
+            newProduct.getCategory(),
+            newProduct.getImageUrl(),
+            newProduct.getCalories(),
+            newProduct.getProteinGrams(),
+            newProduct.getCarbGrams(),
+            newProduct.getFatGrams(),
+            newProduct.getSourceName(),
+            newProduct.getSourceUrl()
         );
         return ResponseEntity.ok(dto);
     }

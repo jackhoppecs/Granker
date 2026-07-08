@@ -74,6 +74,7 @@ export async function getProductById(productId) {
 export async function createProduct(product) {
   const response = await fetch(`${API_BASE_URL}/api/products`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -101,7 +102,7 @@ export async function getBrands() {
   const response = await fetch(`${API_BASE_URL}/api/products/brands`);
 
   if (!response.ok) {
-    throw new Error("Failed to retrieve categories");
+    throw new Error("Failed to retrieve brands");
   }
 
   return response.json();
