@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ReviewService {
@@ -52,7 +53,10 @@ public class ReviewService {
 
         // Check for duplicate reviews on one product
         if (reviewRepository.existsByProductIdAndUserId(productId, userId)){
-            throw new RuntimeException("You have already reviewed this product");
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "You have already reviewed this product."
+            );
         }
 
         // Set product and user for a review
@@ -88,7 +92,10 @@ public class ReviewService {
         .map(review -> {
 
             if (!review.getUser().getId().equals(userId)){
-                throw new RuntimeException("You are not allowed to update this review");
+                throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to update this review."
+                );
             }
 
             review.setRating(request.getRating());
@@ -110,7 +117,10 @@ public class ReviewService {
 
         // Check if current review belongs to current session
         if(!review.getUser().getId().equals(userId)){
-            throw new RuntimeException("You are not allowed to delete this review");
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "You are not allowed to delete this review."
+            );
         }
 
         // Delete and return that we succesfully deleted review

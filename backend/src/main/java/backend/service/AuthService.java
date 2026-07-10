@@ -25,7 +25,10 @@ public class AuthService {
 
     public UserResponseDTO register(RegisterRequest request){
         if (userRepository.findByEmail(request.getEmail()).isPresent()){
-            throw new RuntimeException("Email already in use");
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Email already in use."
+            );
         }
 
         User user = new User();
@@ -40,10 +43,17 @@ public class AuthService {
     }
 
     public UserResponseDTO login(LoginRequest request){
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid email or password."
+        ));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invalid email or password");
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid email or password."
+            );
         }
 
         return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
@@ -51,9 +61,12 @@ public class AuthService {
 
     public UserResponseDTO getCurrentUser(Long userId){
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-        
-            return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid session."
+        ));
+
+        return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.isAdmin());
     }
 
     public User requireLoggedInUser(HttpSession session) {
