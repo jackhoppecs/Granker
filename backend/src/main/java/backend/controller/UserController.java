@@ -50,25 +50,6 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-    // @PostMapping
-    // public ResponseEntity<UserResponseDTO> createUser(
-    //         @Valid @RequestBody CreateUserRequest request,
-    //         HttpSession session
-    // ) {
-    //     authService.requireAdminUser(session);
-
-    //     User createdUser = userService.createUser(request);
-
-    //     UserResponseDTO dto = new UserResponseDTO(
-    //             createdUser.getId(),
-    //             createdUser.getUsername(),
-    //             createdUser.getEmail(),
-    //             createdUser.isAdmin()
-    //     );
-
-    //     return ResponseEntity.ok(dto);
-    // }
-
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request, HttpSession session){
         authService.requireAdminUser(session);

@@ -29,20 +29,6 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    // public User createUser(CreateUserRequest request) {
-    //     if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use.");
-    //     }
-
-    //     User user = new User();
-    //     user.setUsername(request.getUsername());
-    //     user.setEmail(request.getEmail());
-    //     user.setPassword(passwordEncoder.encode(request.getPassword()));
-    //     user.setAdmin(false);
-
-    //     return userRepository.save(user);
-    // }
-
     public User updateUser(Long id, UpdateUserRequest request){
         return userRepository.findById(id)
         .map(user -> {
