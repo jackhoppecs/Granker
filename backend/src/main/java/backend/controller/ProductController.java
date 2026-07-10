@@ -9,8 +9,11 @@ import backend.service.AuthService;
 import backend.service.ProductService;
 import backend.service.ReviewService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpSession;
 
@@ -83,7 +86,7 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id){
         Product product = productService.getProductById(id);
         if (product ==  null){
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found.");
         }
 
         List<Review> reviews = reviewService.getReviewsByProductId(product.getId());
@@ -135,7 +138,7 @@ public class ProductController {
         // Find product by Id, if it exists update attributes of the product with updatedProduct data
         Product product = productService.updateProduct(id, request);
         if (product == null){
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found.");
         }
 
         List<Review> reviews = reviewService.getReviewsByProductId(product.getId());
