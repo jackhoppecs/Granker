@@ -1,6 +1,9 @@
 package backend.dto;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class CreateProductRequest {
     @NotBlank
@@ -9,17 +12,27 @@ public class CreateProductRequest {
     @NotBlank
     private String brand;
 
+    @Size(max = 2000)
     private String description;
-
+    
+    @Size(max = 200)
     private String category;
+
+    @Size(max = 500)
     private String imageUrl;
 
+    @Min(0)
     private Integer calories;
+    @DecimalMin("0.0")
     private Double proteinGrams;
+    @DecimalMin("0.0")
     private Double carbGrams;
+    @DecimalMin("0.0")
     private Double fatGrams;
 
+    @Size(max = 100)
     private String sourceName;
+    @Size(max = 500)
     private String sourceUrl;
 
     public CreateProductRequest(){
