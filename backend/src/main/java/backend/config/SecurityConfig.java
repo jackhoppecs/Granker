@@ -35,6 +35,12 @@ public class SecurityConfig {
     // /auth/register public
     // /auth/login public
     // everything else is also public for now
+
+    // Spring Security is currently used for CORS, CSRF config, and password encoding.
+    // Route authorization is handled manually in controllers/services using HttpSession
+    // and AuthService checks such as requireAdminUser(session).
+    //
+    // Future improvement: move route-level authorization into Spring Security filters/roles.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
