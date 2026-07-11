@@ -63,16 +63,6 @@ function MyReviewsPage({ currentUser }) {
     }
   }
 
-  if (!currentUser) {
-    return (
-      <main className="page">
-        <h1>My Reviews</h1>
-        <p>Please log in to view your reviews.</p>
-        <Link to="/login">Go to Login</Link>
-      </main>
-    );
-  }
-
   if (loading) {
     return (
       <main className="page">

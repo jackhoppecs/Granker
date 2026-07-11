@@ -9,6 +9,8 @@ import RegisterPage from "./pages/RegisterPage";
 import MyReviewsPage from "./pages/MyReviewsPage";
 import ImportPreviewPage from "./pages/ImportPreviewPage";
 import Navbar from "./components/Navbar";
+import AdminRoute from "./components/AdminRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -44,7 +46,7 @@ function App() {
   }, []);
 
   if (authLoading) {
-    return <p>Loading...</p>;
+    return <p>Checking your session...</p>;
   }
 
   return (
@@ -65,7 +67,11 @@ function App() {
         {/* This needs to go before Product details route so it doesnt think 'new' is a product id */}
         <Route
           path="/products/new"
-          element={<CreateProductPage currentUser={currentUser} />}
+          element={
+            <AdminRoute currentUser={currentUser}>
+              <CreateProductPage />
+            </AdminRoute>
+          }
         ></Route>
         <Route
           path="/products/:id"
@@ -83,11 +89,19 @@ function App() {
         ></Route>
         <Route
           path="/my-reviews"
-          element={<MyReviewsPage currentUser={currentUser} />}
+          element={
+            <ProtectedRoute currentUser={currentUser}>
+              <MyReviewsPage currentUser={currentUser} />
+            </ProtectedRoute>
+          }
         ></Route>
         <Route
           path="/import"
-          element={<ImportPreviewPage currentUser={currentUser} />}
+          element={
+            <AdminRoute currentUser={currentUser}>
+              <ImportPreviewPage />
+            </AdminRoute>
+          }
         ></Route>
       </Routes>
     </BrowserRouter>
