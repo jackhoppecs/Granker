@@ -14,8 +14,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  // console.log("currentUser:", currentUser);
   const [authLoading, setAuthLoading] = useState(true);
+  const [logoutError, setLogoutError] = useState("");
   async function handleLogout() {
     try {
       await logout();
@@ -23,7 +23,7 @@ function App() {
       // It only renders the page for the current URL plus other components under app outside of routes
       setCurrentUser(null);
     } catch (err) {
-      console.error(err);
+      setLogoutError(err.message || "Could not log out. Please try again.");
     }
   }
   // The browser keeps the session id cookie even when refreshed
@@ -60,6 +60,7 @@ function App() {
     <BrowserRouter>
       {/* Passing currentUser and handleLogout function as props to navbar */}
       <Navbar currentUser={currentUser} handleLogout={handleLogout} />
+      {logoutError && <p className="error-message">{logoutError}</p>}
       <Routes>
         {/* These are just paths to where we have these pages not same as APIs */}
         <Route path="/" element={<ProductsPage />}></Route>

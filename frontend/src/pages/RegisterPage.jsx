@@ -33,7 +33,6 @@ function RegisterPage({ setCurrentUser }) {
       setCurrentUser(user);
       navigate("/products");
     } catch (err) {
-      console.error(err);
       setError("Registration failed. Please try again");
     }
   }
