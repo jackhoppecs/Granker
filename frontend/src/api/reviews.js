@@ -11,7 +11,7 @@ export async function getReviewsByProductId(productId, sort = "newest") {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch reviews");
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -23,7 +23,7 @@ export async function getMyReviews() {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to load your reviews");
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -43,10 +43,7 @@ export async function createReview(productId, review) {
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Failed to create review. Status: ${response.status}. Body: ${errorText}`,
-    );
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -63,10 +60,7 @@ export async function updateReview(reviewId, updatedReviewData) {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Failed to edit review. Status: ${response.status}. Body: ${errorText}`,
-    );
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -82,9 +76,6 @@ export async function deleteReview(reviewId) {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Failed to delete review. Status: ${response.status}. Body: ${errorText}`,
-    );
+    return handleApiResponse(response);
   }
 }

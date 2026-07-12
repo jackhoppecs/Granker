@@ -54,7 +54,7 @@ export async function getProducts(
   // ]
 
   if (!response.ok) {
-    throw new Error("Failed to fetch products");
+    return handleApiResponse(response);
   }
 
   // turns that JSON into a JavaScript array of objects.
@@ -65,7 +65,7 @@ export async function getProductById(productId) {
   const response = await fetch(`${API_BASE_URL}/api/products/${productId}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch product");
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -82,7 +82,7 @@ export async function createProduct(product) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create product");
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -92,7 +92,7 @@ export async function getCategories() {
   const response = await fetch(`${API_BASE_URL}/api/products/categories`);
 
   if (!response.ok) {
-    throw new Error("Failed to retrieve categories");
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -102,7 +102,7 @@ export async function getBrands() {
   const response = await fetch(`${API_BASE_URL}/api/products/brands`);
 
   if (!response.ok) {
-    throw new Error("Failed to retrieve brands");
+    return handleApiResponse(response);
   }
 
   return response.json();

@@ -15,7 +15,7 @@ function MyReviewsPage({ currentUser }) {
         const data = await getMyReviews();
         setReviews(data);
       } catch (err) {
-        setError("Could not load your reviews.");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -46,6 +46,7 @@ function MyReviewsPage({ currentUser }) {
       );
 
       setEditingReviewId(null);
+      setError("");
     } catch (err) {
       setError(err.message);
     }
@@ -58,6 +59,7 @@ function MyReviewsPage({ currentUser }) {
       setReviews((prevReviews) =>
         prevReviews.filter((r) => r.reviewId !== reviewId),
       );
+      setError("");
     } catch (err) {
       setError(err.message);
     }

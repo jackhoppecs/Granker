@@ -11,7 +11,7 @@ export async function login(credentials) {
   });
 
   if (!response.ok) {
-    throw new Error("Invalid username or password");
+    return handleApiResponse(response);
   }
 
   return response.json();
@@ -24,7 +24,7 @@ export async function logout() {
   });
 
   if (!response.ok) {
-    throw new Error("Logout failed");
+    return handleApiResponse(response);
   }
 }
 
@@ -55,7 +55,7 @@ export async function register(username, email, password) {
   });
 
   if (!response.ok) {
-    throw new Error("Registration failed");
+    return handleApiResponse(response);
   }
 
   return response.json();
