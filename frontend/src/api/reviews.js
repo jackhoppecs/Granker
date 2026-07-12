@@ -1,4 +1,5 @@
 import API_BASE_URL from "./config";
+import { handleApiResponse } from "./apiUtils";
 
 export async function getReviewsByProductId(productId, sort = "newest") {
   const params = new URLSearchParams();

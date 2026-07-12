@@ -1,4 +1,5 @@
 import API_BASE_URL from "./config";
+import { handleApiResponse } from "./apiUtils";
 
 export async function login(credentials) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
