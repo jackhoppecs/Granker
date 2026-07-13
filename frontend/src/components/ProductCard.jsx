@@ -1,19 +1,26 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-// Components are usually a smaller reusable UI piece.
-// So we reuse this ProductCard in our Products page
 function ProductCard({ product }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const showImage = product.imageUrl && !imageFailed;
+
   return (
     <Link className="product-card" to={`/products/${product.id}`}>
-      {product.imageUrl ? (
-        <img
-          className="product-card-image"
-          src={product.imageUrl}
-          alt={`${product.brand} ${product.name}`}
-        />
-      ) : (
-        <div className="product-card-image-placeholder">No image</div>
-      )}
+      <div className="product-card-image-container">
+        {showImage ? (
+          <img
+            className="product-card-image"
+            src={product.imageUrl}
+            alt={`${product.brand} ${product.name}`}
+            loading="lazy"
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <div className="product-image-placeholder">No image</div>
+        )}
+      </div>
 
       <div className="product-card-content">
         <div className="product-card-header">

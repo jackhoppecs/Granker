@@ -19,6 +19,7 @@ function ProductDetailsPage({ currentUser }) {
   const [error, setError] = useState("");
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [sort, setSort] = useState("");
+  const [imageFailed, setImageFailed] = useState(false);
 
   // useEffect runs code after the component renders
   useEffect(() => {
@@ -126,17 +127,20 @@ function ProductDetailsPage({ currentUser }) {
         {product.category && (
           <p className="product-category">Category: {product.category}</p>
         )}
-        {product.imageUrl ? (
-          <img
-            className="product-detail-image"
-            src={product.imageUrl}
-            alt={`${product.brand} ${product.name}`}
-          />
-        ) : (
-          <div className="product-detail-image-placeholder">
-            No image available
-          </div>
-        )}
+        <div className="product-detail-image-container">
+          {product.imageUrl && !imageFailed ? (
+            <img
+              className="product-detail-image"
+              src={product.imageUrl}
+              alt={`${product.brand} ${product.name}`}
+              onError={() => setImageFailed(true)}
+            />
+          ) : (
+            <div className="product-detail-image-placeholder">
+              No image available
+            </div>
+          )}
+        </div>
         <div className="nutrition-section">
           <h3>Nutrition</h3>
 
