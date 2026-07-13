@@ -53,7 +53,9 @@ Granker is a full-stack frozen foods review app. Users can browse frozen food pr
 - PostgreSQL
 - Open Food Facts API integration
 
-### Backend
+## Local Deployment
+
+### Backend Setup
 
 ```bash
 cd backend
@@ -67,7 +69,7 @@ cd backend
 .\mvnw spring-boot:run
 ```
 
-### Frontend
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -77,10 +79,65 @@ npm run dev
 
 ## Demo Login
 
+When local demo seed data is enabled, the app can use:
+
 ```txt
 Email: demo@example.com
 Password: password
 ```
+
+## Local Development
+
+## Environment Variables
+
+The app uses environment variables so local development and hosted deployment can use different configuration without committing secrets.
+
+### Backend Environment Variables
+
+| Variable               | Purpose                          | Example Local Value                        |
+| ---------------------- | -------------------------------- | ------------------------------------------ |
+| `DATABASE_URL`         | JDBC URL for PostgreSQL          | `jdbc:postgresql://localhost:5432/granker` |
+| `DATABASE_USERNAME`    | PostgreSQL username              | `postgres`                                 |
+| `DATABASE_PASSWORD`    | PostgreSQL password              | `postgres`                                 |
+| `FRONTEND_URL`         | Allowed frontend origin for CORS | `http://localhost:5173`                    |
+| `SEED_ENABLED`         | Enables local/demo seed data     | `false`                                    |
+| `DDL_AUTO`             | Hibernate schema behavior        | `update`                                   |
+| `SHOW_SQL`             | Enables SQL logging              | `false`                                    |
+| `ADMIN_CREATE_ENABLED` | Enables startup admin creation   | `false`                                    |
+| `ADMIN_USERNAME`       | Startup admin username           | `admin`                                    |
+| `ADMIN_EMAIL`          | Startup admin email              | `admin@example.com`                        |
+| `ADMIN_PASSWORD`       | Startup admin password           | not committed                              |
+
+### Frontend Environment Variables
+
+| Variable       | Purpose                                           | Example Local Value     |
+| -------------- | ------------------------------------------------- | ----------------------- |
+| `API_BASE_URL` | Backend API base URL used by frontend fetch calls | `http://localhost:8080` |
+
+## Deployment Status
+
+Granker is currently prepared for deployment but is not yet publicly hosted.
+
+The planned first deployment target is:
+
+- Frontend: Vercel
+- Backend: Render
+- Database: Render PostgreSQL
+
+The app has been updated to support environment-based backend configuration, frontend API configuration, production-safe seed behavior, admin account initialization, CORS configuration for a hosted frontend origin, validation cleanup, safer error responses, and session-based authentication across frontend/backend requests.
+
+## Production Deployment Notes
+
+Before deploying publicly:
+
+- Set all backend database credentials through host environment variables.
+- Set `FRONTEND_URL` to the deployed frontend URL.
+- Set `API_BASE_URL` to the deployed backend API URL.
+- Keep `SEED_ENABLED=false` in production unless intentionally creating demo data.
+- Use `ADMIN_CREATE_ENABLED=true` only when creating the initial admin account, then disable it after the account exists.
+- Do not commit real database passwords, admin passwords, or hosted secrets.
+- Verify session cookie behavior after deployment, especially if the frontend and backend are hosted on different domains.
+- Verify CORS only allows the deployed frontend origin.
 
 ## Data Imports
 
@@ -114,8 +171,9 @@ The app now includes basic role-based protection for sensitive actions. Product 
 
 ## Future Improvements
 
-- Public deployment
-- Production-safe admin account setup using environment variables or manual database setup
+- Full production deployment with hosted frontend, backend, and PostgreSQL database
+- Production cookie/session verification after deployment
+- Route-level authorization using Spring Security roles
 - Rate limiting for sensitive endpoints
 - Automated backend and frontend tests
 - Docker setup
@@ -162,7 +220,7 @@ This version makes Granker more realistic by allowing the app to populate produc
 
 Added an import preview and data quality workflow for Open Food Facts imports. Import endpoints now support category and page-size parameters, allowing the app to fetch smaller, controlled sets of products by supported frozen food category.
 
-This version adds a supported import category whitelist, including frozen pizza, frozen burritos, frozen vegetables, frozen meals, and ice cream. Imported products now go through stricter validation and improved category normalization before they can be saved.
+This version adds a supported import category whitelist, including frozen pizza, frozen meals, and ice cream. Imported products now go through stricter validation and improved category normalization before they can be saved.
 
 The backend now returns detailed import preview results, including fetched product counts, importable product counts, skipped product counts, and product-level skip reasons. This makes the import process more transparent and helps prevent low-quality or duplicate data from being added silently.
 
@@ -170,7 +228,7 @@ The frontend now includes an import preview page where users can select an impor
 
 Open Food Facts API failures are now handled with clearer, user-friendly error messages, making the import flow easier to understand when the external service is unavailable.
 
-### v.1.8.0
+### v1.8.0
 
 Added basic security and admin-role protections to make the app safer and more deployable.
 
@@ -181,6 +239,14 @@ Open Food Facts import preview and import execution are now admin-only. This pre
 The frontend now hides admin-only navigation links from normal users and shows friendly blocked-access messages when a non-admin or logged-out user navigates directly to an admin-only page. API error handling was improved so unauthorized and forbidden responses produce clearer user-facing messages.
 
 This version establishes a cleaner permission model: normal users can browse products and manage their own reviews, while admins manage product data, imports, and user-management endpoints.
+
+### v1.9.0
+
+Prepared the app for a future hosted deployment. Backend configuration now uses environment variables for database credentials, frontend CORS origin, seed behavior, SQL logging, and startup admin creation. Demo seed behavior is disabled by default, and production admin creation can be controlled through environment variables.
+
+This version also improves production safety by validating request DTOs, avoiding raw entity request bodies, confirming password hashing for account creation paths, returning safer error responses without stack traces, and handling invalid request paths more cleanly.
+
+The frontend now uses an environment-based API base URL, includes credentials on authenticated requests, improves auth loading and expired-session behavior, centralizes API error handling, and provides friendlier unauthorized and forbidden route states.
 
 ## Screenshots
 
