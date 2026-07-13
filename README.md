@@ -110,9 +110,9 @@ The app uses environment variables so local development and hosted deployment ca
 
 ### Frontend Environment Variables
 
-| Variable       | Purpose                                           | Example Local Value     |
-| -------------- | ------------------------------------------------- | ----------------------- |
-| `API_BASE_URL` | Backend API base URL used by frontend fetch calls | `http://localhost:8080` |
+| Variable            | Purpose                                           | Example Local Value     |
+| ------------------- | ------------------------------------------------- | ----------------------- |
+| `VITE_API_BASE_URL` | Backend API base URL used by frontend fetch calls | `http://localhost:8080` |
 
 ## Deployment Status
 
@@ -132,7 +132,7 @@ Before deploying publicly:
 
 - Set all backend database credentials through host environment variables.
 - Set `FRONTEND_URL` to the deployed frontend URL.
-- Set `API_BASE_URL` to the deployed backend API URL.
+- Set `VITE_API_BASE_URL` to the deployed backend API URL.
 - Keep `SEED_ENABLED=false` in production unless intentionally creating demo data.
 - Use `ADMIN_CREATE_ENABLED=true` only when creating the initial admin account, then disable it after the account exists.
 - Do not commit real database passwords, admin passwords, or hosted secrets.
