@@ -21,9 +21,9 @@ public class OpenFoodFactsMapper{
 
         if (response.getNutriments() != null) {
             dto.setCalories(toInteger(response.getNutriments().getCalories()));
-            dto.setProteinGrams(response.getNutriments().getProteinGrams());
-            dto.setCarbGrams(response.getNutriments().getCarbGrams());
-            dto.setFatGrams(response.getNutriments().getFatGrams());
+            dto.setProteinGrams(roundToOneDecimal(response.getNutriments().getProteinGrams()));
+            dto.setCarbGrams(roundToOneDecimal(response.getNutriments().getCarbGrams()));
+            dto.setFatGrams(roundToOneDecimal(response.getNutriments().getFatGrams()));
         }
 
         return dto;
@@ -61,5 +61,13 @@ public class OpenFoodFactsMapper{
         }
 
         return "Other";
+    }
+
+    private Double roundToOneDecimal(Double value) {
+        if (value == null) {
+            return null;
+        }
+
+        return Math.round(value * 10.0) / 10.0;
     }
 }
