@@ -3,7 +3,7 @@
 }
 
 :root {
-  --color-background: #f6f8f6;
+  --color-background: #f5f8f3;
   --color-surface: #ffffff;
   --color-surface-muted: #f1f7f2;
 
@@ -49,7 +49,7 @@ body {
 
 .page-header p {
   margin: 8px 0 0;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 1.1rem;
 }
 
@@ -117,7 +117,8 @@ body {
 
 .search-bar input:focus {
   outline: none;
-  border-color: #333;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
 }
 
 /* GROUPS SEARCH AND CONTROLS ALL TOGETHER */
@@ -162,7 +163,8 @@ body {
 .control-group input:focus,
 .control-group select:focus {
   outline: none;
-  border-color: #555;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
 }
 
 @media (max-width: 700px) {
@@ -271,6 +273,12 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
+.product-card:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
+}
+
 .product-card h2 {
   margin: 0 0 8px;
   font-size: 1.2rem;
@@ -369,13 +377,13 @@ body {
 
 .product-brand {
   margin: 0 0 12px;
-  color: #666;
+  color: var(--color-text-muted);
   font-weight: 600;
 }
 
 .product-description {
   margin: 0;
-  color: #555;
+  color: var(--color-text-muted);
   line-height: 1.5;
 }
 
@@ -452,7 +460,8 @@ body {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #333;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
 }
 
 .form-group option {
@@ -588,7 +597,7 @@ body {
 
 .product-review-count {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
 }
 
@@ -632,7 +641,7 @@ body {
 
 .review-date {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   margin: 0.5rem 0 0;
 }
 
@@ -715,8 +724,8 @@ body {
 .review-form-group select:focus,
 .review-form-group textarea:focus {
   outline: none;
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
 }
 
 .review-save-button {
@@ -771,8 +780,7 @@ body {
 }
 
 .section-subtitle {
-  margin: 0.25rem 0 0;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .review-sort-control {
