@@ -972,6 +972,26 @@ body {
   text-decoration: underline;
 }
 
+.login {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login:hover {
+  text-decoration: underline;
+}
+
+.register:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 700px) {
   .nutrition-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

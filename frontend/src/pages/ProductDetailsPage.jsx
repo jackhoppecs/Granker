@@ -6,7 +6,7 @@ import { getReviewsByProductId } from "../api/reviews";
 import { createReview } from "../api/reviews";
 import { updateReview } from "../api/reviews";
 import { deleteReview } from "../api/reviews";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
 
@@ -190,7 +190,16 @@ function ProductDetailsPage({ currentUser }) {
       </section>
 
       {!currentUser ? (
-        <p className="empty-state">Log in to write a review.</p>
+        <p className="empty-state">
+          <Link className="login" to="/login">
+            Log in
+          </Link>{" "}
+          to your account or{" "}
+          <Link className="register" to="/register">
+            create a new account
+          </Link>{" "}
+          to write a review.
+        </p>
       ) : currentUserReview ? (
         <p className="empty-state">
           You already reviewed this product. You can edit or delete your review
