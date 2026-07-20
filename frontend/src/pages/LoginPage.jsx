@@ -5,12 +5,13 @@ import { login } from "../api/auth";
 function LoginPage({ setCurrentUser }) {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("demo@example.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
 
   async function handleSubmit(event) {
+    setFormError("");
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -41,7 +42,6 @@ function LoginPage({ setCurrentUser }) {
         <h1>Log In</h1>
         <p>Log in to submit reviews.</p>
       </header>
-      <p>Use demo@example.com / password for the MVP demo.</p>
       <form className="review-form" onSubmit={handleSubmit}>
         {formError && <p className="form-error">{formError}</p>}
 
@@ -53,6 +53,7 @@ function LoginPage({ setCurrentUser }) {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             disabled={submitting}
+            autoComplete="username"
           />
         </div>
 
@@ -64,6 +65,7 @@ function LoginPage({ setCurrentUser }) {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             disabled={submitting}
+            autoComplete="current-password"
           />
         </div>
 
