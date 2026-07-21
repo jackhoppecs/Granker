@@ -32,6 +32,11 @@ public class OpenFoodFactsClient {
     public OpenFoodFactsSearchResponse searchProductsByCategory(String category, int pageSize){
         // .get() starts a get request
         // .uri builds the URL path and query parameters
+        logger.error(
+            "OpenFoodFacts search called: category={}, pageSize={}",
+            category,
+            pageSize
+        );
         try{
             return restClient.get().uri(uriBuilder -> uriBuilder
                 .path("/api/v2/search")
