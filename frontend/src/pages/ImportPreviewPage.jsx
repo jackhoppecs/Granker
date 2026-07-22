@@ -5,7 +5,7 @@ import {
 } from "../api/import";
 
 function ImportPreviewPage() {
-  const [category, setCategory] = useState("pizza");
+  const [category, setCategory] = useState("frozen-pizza");
   const [pageSize, setPageSize] = useState(10);
   const [preview, setPreview] = useState(null);
   const [importResult, setImportResult] = useState(null);
