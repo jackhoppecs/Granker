@@ -18,8 +18,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class ProductImportService {
+
+     private static final Logger logger =
+        LoggerFactory.getLogger(ProductImportService.class);
 
     private final OpenFoodFactsClient openFoodFactsClient;
     private final OpenFoodFactsMapper openFoodFactsMapper;
@@ -36,11 +42,25 @@ public class ProductImportService {
     }
 
     public ImportPreviewResponseDTO previewFrozenFoodImports(String category, int pageSize){
+        logger.error(
+            "IMPORT SERVICE REACHED: category={}, pageSize={}",
+            category,
+            pageSize
+        );
         long totalStart = System.currentTimeMillis();
         validateImportRequest(category, pageSize);
+        logger.error("IMPORT REQUEST VALIDATED");
         SupportedImportCategory supportedCategory = SupportedImportCategory.fromRequestValue(category);
+        logger.error(
+            "SUPPORTED CATEGORY RESOLVED: requestValue={}, offTag={}",
+            supportedCategory.getRequestValue(),
+            supportedCategory.getOpenFoodFactsTag()
+        );
         long offStart = System.currentTimeMillis();
+
+        logger.error("ABOUT TO CALL OPEN FOOD FACTS CLIENT");
         OpenFoodFactsSearchResponse response = openFoodFactsClient.searchProductsByCategory(supportedCategory.getOpenFoodFactsTag(), pageSize);
+        logger.error("OPEN FOOD FACTS CLIENT RETURNED");
         System.out.println("OFF fetch ms: " + (System.currentTimeMillis() - offStart));
 
 

@@ -42,7 +42,9 @@ public class ProductImportController {
             category,
             pageSize
         );
+        logger.error("ABOUT TO CHECK ADMIN");
         authService.requireAdminUser(session);
+        logger.error("ADMIN CHECK PASSED");
         return productImportService.previewFrozenFoodImports(category, pageSize);
     }
     //   React request
