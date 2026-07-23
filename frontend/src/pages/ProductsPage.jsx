@@ -27,11 +27,15 @@ function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [loading, setLoading] = useState(false);
+  const [filtersLoading, setFiltersLoading] = useState(true);
+  const [filtersError, setFiltersError] = useState("");
 
   // React re-renders the UI when the state changes
   // When this page first loads, call getProducts()
   useEffect(() => {
     setLoading(true);
+    // Creates a promise that is already successful
+    // Think of it as starting a promise chain with no meaningful value
     Promise.resolve()
       // .then(() => {
       //   if (import.meta.env.DEV) {
@@ -53,7 +57,13 @@ function ProductsPage() {
   // Grab filter options
   useEffect(() => {
     async function fetchFilterOptions() {
+      setFiltersLoading(true);
+      setFiltersError("");
+
       try {
+        // if (import.meta.env.DEV) {
+        //   await new Promise((resolve) => setTimeout(resolve, 1500));
+        // }
         const [categoriesData, brandsData] = await Promise.all([
           getCategories(),
           getBrands(),
@@ -63,6 +73,8 @@ function ProductsPage() {
         setBrands(brandsData);
       } catch (err) {
         setError(err.message);
+      } finally {
+        setFiltersLoading(false);
       }
     }
 
@@ -135,32 +147,48 @@ function ProductsPage() {
         </div>
 
         <div className="control-group">
-          <label htmlFor="min-rating">Category</label>
+          <label htmlFor="product-category">Category</label>
           <select
+            id="product-category"
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
+            disabled={filtersLoading}
           >
-            <option value="">All categories</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
+            {filtersLoading ? (
+              <option value="">Loading categories...</option>
+            ) : (
+              <>
+                <option value="">All categories</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </>
+            )}
           </select>
         </div>
 
         <div className="control-group">
-          <label htmlFor="min-rating">Brand</label>
+          <label htmlFor="product-brand">Brand</label>
           <select
+            id="product-brand"
             value={selectedBrand}
             onChange={(event) => setSelectedBrand(event.target.value)}
+            disabled={filtersLoading}
           >
-            <option value="">All brands</option>
-            {brands.map((brand) => (
-              <option key={brand} value={brand}>
-                {brand}
-              </option>
-            ))}
+            {filtersLoading ? (
+              <option value="">Loading brands...</option>
+            ) : (
+              <>
+                <option value="">All brands</option>
+                {brands.map((brand) => (
+                  <option key={brand} value={brand}>
+                    {brand}
+                  </option>
+                ))}
+              </>
+            )}
           </select>
         </div>
       </div>
