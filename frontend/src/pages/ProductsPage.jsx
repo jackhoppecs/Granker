@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 // UseEffect = let's code run when the page loads
 import { getProducts, getCategories, getBrands } from "../api/products";
 import ProductCard from "../components/ProductCard";
+import LoadingState from "../components/LoadingState";
 
 // A page is a component that represents a whole screen / route
 // Pages usually connected to react router
@@ -25,18 +26,28 @@ function ProductsPage() {
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // React re-renders the UI when the state changes
   // When this page first loads, call getProducts()
   useEffect(() => {
-    getProducts(sort, minRating, selectedCategory, selectedBrand)
+    setLoading(true);
+    Promise.resolve()
+      // .then(() => {
+      //   if (import.meta.env.DEV) {
+      //     return new Promise((resolve) => setTimeout(resolve, 1500));
+      //   }
+      // })
+      .then(() => getProducts(sort, minRating, selectedCategory, selectedBrand))
       .then((data) => {
         setProducts(data);
         setError("");
+        setLoading(false);
       })
-      .catch((err) => setError(err.message));
-    // Only runs when the component first mounts because of the empty dependency array: []
-    // Without that it would re run each time search changed.
+      .catch((err) => setError(err.message))
+      .finally(() => {
+        setLoading(false);
+      });
   }, [sort, minRating, selectedCategory, selectedBrand]);
 
   // Grab filter options
@@ -65,6 +76,10 @@ function ProductsPage() {
       product.name.toLowerCase().includes(search.toLowerCase()) ||
       product.brand.toLowerCase().includes(search.toLowerCase()),
   );
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   return (
     <main className="container">
@@ -150,19 +165,22 @@ function ProductsPage() {
         </div>
       </div>
 
-      {error && <p className="error">{error}</p>}
-
       <section className="product-list">
-        {filteredProducts.length === 0 ? (
+        {loading ? (
+          <LoadingState message="Loading Products..."></LoadingState>
+        ) : error ? (
+          <div className="error-state">
+            <h2>Unable to load products</h2>
+            <p>{error}</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="empty-state">
             <h2>No products found</h2>
-            <p>Try clearing your search or lowering the minimum rating.</p>
+            <p>Try clearing your search or changing your filters.</p>
           </div>
         ) : (
           filteredProducts.map((product) => (
-            // key helps react track each item efficiently. each item should have a unique key
-            // product just passes in each product to ProductCard
-            <ProductCard key={product.id} product={product}></ProductCard>
+            <ProductCard key={product.id} product={product} />
           ))
         )}
       </section>
