@@ -1,6 +1,8 @@
 // Calls Open Food Facts and maps the raw JSON response into external response classes.
 package backend.importer.openfoodfacts;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -17,6 +19,9 @@ public class OpenFoodFactsClient {
     // Stores the configured HTTP client
     private final RestClient restClient;
 
+    private static final Logger logger =
+        LoggerFactory.getLogger(OpenFoodFactsClient.class);
+
     // Spring provides a RestClient.Builder which allows us to create a RestClient with a base URL
     // .build() actually creates the RestClient
     public OpenFoodFactsClient(RestClient.Builder restClientBuilder){
@@ -27,6 +32,11 @@ public class OpenFoodFactsClient {
     public OpenFoodFactsSearchResponse searchProductsByCategory(String category, int pageSize){
         // .get() starts a get request
         // .uri builds the URL path and query parameters
+        logger.error(
+            "OpenFoodFacts search called: category={}, pageSize={}",
+            category,
+            pageSize
+        );
         try{
             return restClient.get().uri(uriBuilder -> uriBuilder
                 .path("/api/v2/search")
@@ -38,12 +48,29 @@ public class OpenFoodFactsClient {
                 .retrieve()
                 .body(OpenFoodFactsSearchResponse.class);
         } catch (RestClientResponseException ex) {
-            throw new OpenFoodFactsException(
-                "Open Food Facts returned HTTP " + ex.getStatusCode().value()
+            logger.error(
+                "Open Food Facts returned HTTP {}. Response body: {}",
+                ex.getStatusCode(),
+                ex.getResponseBodyAsString(),
+                ex
             );
-        } catch (ResourceAccessException ex) {
+
             throw new OpenFoodFactsException(
-                "Could not reach Open Food Facts. The request may have timed out."
+                "Open Food Facts returned HTTP "
+                    + ex.getStatusCode().value(),
+                ex
+            );
+
+        } catch (ResourceAccessException ex) {
+            logger.error(
+                "Could not reach Open Food Facts: {}",
+                ex.getMessage(),
+                ex
+            );
+
+            throw new OpenFoodFactsException(
+                "Could not reach Open Food Facts: " + ex.getMessage(),
+                ex
             );
         }
     }

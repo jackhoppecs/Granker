@@ -13,8 +13,14 @@ import java.util.List;
 
 import javax.swing.Spring;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 public class ProductImportController {
+
+    private static final Logger logger =
+        LoggerFactory.getLogger(ProductImportController.class);
     
     private final ProductImportService productImportService;
     private final AuthService authService;
@@ -30,7 +36,15 @@ public class ProductImportController {
         @RequestParam(defaultValue = "10") int pageSize,
         HttpSession session
     ) {
+        
+        logger.error(
+            "IMPORT PREVIEW CONTROLLER REACHED: category={}, pageSize={}",
+            category,
+            pageSize
+        );
+        logger.error("ABOUT TO CHECK ADMIN");
         authService.requireAdminUser(session);
+        logger.error("ADMIN CHECK PASSED");
         return productImportService.previewFrozenFoodImports(category, pageSize);
     }
     //   React request
