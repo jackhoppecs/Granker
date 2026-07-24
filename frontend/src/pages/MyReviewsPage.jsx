@@ -15,9 +15,9 @@ function MyReviewsPage({ currentUser }) {
       try {
         setLoading(true);
         setError("");
-        if (import.meta.env.DEV) {
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-        }
+        // if (import.meta.env.DEV) {
+        //   await new Promise((resolve) => setTimeout(resolve, 1500));
+        // }
         const data = await getMyReviews();
         setReviews(data);
       } catch (err) {
