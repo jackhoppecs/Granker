@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getMyReviews, updateReview, deleteReview } from "../api/reviews";
 import MyReviewCard from "../components/MyReviewCard";
+import LoadingState from "../components/LoadingState";
 
 function MyReviewsPage({ currentUser }) {
   const [reviews, setReviews] = useState([]);
@@ -12,6 +13,11 @@ function MyReviewsPage({ currentUser }) {
   useEffect(() => {
     async function loadMyReviews() {
       try {
+        setLoading(true);
+        setError("");
+        if (import.meta.env.DEV) {
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        }
         const data = await getMyReviews();
         setReviews(data);
       } catch (err) {
@@ -24,6 +30,7 @@ function MyReviewsPage({ currentUser }) {
     if (currentUser) {
       loadMyReviews();
     } else {
+      setReviews([]);
       setLoading(false);
     }
   }, [currentUser]);
@@ -67,9 +74,17 @@ function MyReviewsPage({ currentUser }) {
 
   if (loading) {
     return (
-      <main className="page">
-        <h1>My Reviews</h1>
-        <p>Loading your reviews...</p>
+      <main className="page my-reviews-page">
+        <header className="page-header">
+          <div>
+            <h1>My Reviews</h1>
+            <p>
+              Manage the reviews you have written across different products.
+            </p>
+          </div>
+        </header>
+
+        <LoadingState message="Loading your reviews..." />
       </main>
     );
   }
