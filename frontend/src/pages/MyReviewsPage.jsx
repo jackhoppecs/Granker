@@ -91,9 +91,20 @@ function MyReviewsPage({ currentUser }) {
 
   if (error) {
     return (
-      <main className="page">
-        <h1>My Reviews</h1>
-        <p className="error-message">{error}</p>
+      <main className="page my-reviews-page">
+        <header className="page-header">
+          <div>
+            <h1>My Reviews</h1>
+            <p>
+              Manage the reviews you have written across different products.
+            </p>
+          </div>
+        </header>
+
+        <div className="error-state">
+          <h2>Unable to load your reviews</h2>
+          <p>{error}</p>
+        </div>
       </main>
     );
   }
