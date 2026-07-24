@@ -9,43 +9,86 @@ import { deleteReview } from "../api/reviews";
 import { useParams, Link } from "react-router-dom";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
+import LoadingState from "../components/LoadingState";
 
 function ProductDetailsPage({ currentUser }) {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [productLoading, setProductLoading] = useState(true);
+  const [productError, setProductError] = useState("");
+
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState("");
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [sort, setSort] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
 
-  // useEffect runs code after the component renders
+  // useEffect for loading the product
   useEffect(() => {
-    async function loadProductDetails() {
-      try {
-        const productData = await getProductById(id);
-        const reviewData = await getReviewsByProductId(id, sort);
+    async function loadProduct() {
+      setProductLoading(true);
+      setProductError("");
+      setImageFailed(false);
 
+      try {
+        // if (import.meta.env.DEV) {
+        //   await new Promise((resolve) => setTimeout(resolve, 1500));
+        // }
+
+        const productData = await getProductById(id);
         setProduct(productData);
-        setReviews(reviewData);
       } catch (err) {
-        setError(err.message);
+        setProductError(err.message);
       } finally {
-        setLoading(false);
+        setProductLoading(false);
       }
     }
-    loadProductDetails();
-    // The [id] means run again if the id changes
+
+    loadProduct();
+  }, [id]);
+
+  // useEffect for loading the reviews
+  useEffect(() => {
+    async function loadReviews() {
+      setReviewsLoading(true);
+      setReviewsError(false);
+
+      try {
+        // if (import.meta.env.DEV) {
+        //   await new Promise((resolve) => setTimeout(resolve, 1500));
+        // }
+
+        const reviewData = await getReviewsByProductId(id, sort);
+        setReviews(reviewData);
+      } catch (err) {
+        setReviewsError(err.message);
+      } finally {
+        setReviewsLoading(false);
+      }
+    }
+    loadReviews();
   }, [id, sort]);
 
-  if (loading) {
-    return <p>Loading product...</p>;
+  if (productLoading) {
+    return (
+      <main className="container">
+        <LoadingState message="Loading product..." />
+      </main>
+    );
   }
 
-  if (error) {
-    return <p className="error">{error}</p>;
+  if (productError) {
+    return (
+      <main className="container">
+        <div className="error-state">
+          <h1>Unable to load product</h1>
+          <p>{productError}</p>
+          <Link to="/">Return to products</Link>
+        </div>
+      </main>
+    );
   }
 
   async function handleSubmitReview(review) {
@@ -188,27 +231,30 @@ function ProductDetailsPage({ currentUser }) {
           </p>
         )}
       </section>
-
-      {!currentUser ? (
-        <p className="empty-state">
-          <Link className="login" to="/login">
-            Log in
-          </Link>{" "}
-          to your account or{" "}
-          <Link className="register" to="/register">
-            create a new account
-          </Link>{" "}
-          to write a review.
-        </p>
-      ) : currentUserReview ? (
-        <p className="empty-state">
-          You already reviewed this product. You can edit or delete your review
-          below.
-        </p>
-      ) : (
-        <section>
-          <ReviewForm onSubmitReview={handleSubmitReview} />
-        </section>
+      {!reviewsLoading && (
+        <>
+          {!currentUser ? (
+            <p className="empty-state">
+              <Link className="login" to="/login">
+                Log in
+              </Link>{" "}
+              to your account or{" "}
+              <Link className="register" to="/register">
+                create a new account
+              </Link>{" "}
+              to write a review.
+            </p>
+          ) : currentUserReview ? (
+            <p className="empty-state">
+              You already reviewed this product. You can edit or delete your
+              review below.
+            </p>
+          ) : (
+            <section>
+              <ReviewForm onSubmitReview={handleSubmitReview} />
+            </section>
+          )}
+        </>
       )}
 
       <section className="reviews-section">
@@ -229,7 +275,14 @@ function ProductDetailsPage({ currentUser }) {
             </select>
           </div>
         </div>
-        {reviews.length === 0 ? (
+        {reviewsLoading ? (
+          <LoadingState message="Loading reviews..." />
+        ) : reviewsError ? (
+          <div className="error-state">
+            <h2>Unable to load reviews</h2>
+            <p>{reviewsError}</p>
+          </div>
+        ) : reviews.length === 0 ? (
           <div className="empty-state">
             <h2>No reviews yet</h2>
             <p>Be the first to review this product.</p>
