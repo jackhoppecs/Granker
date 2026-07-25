@@ -1,5 +1,5 @@
 import API_BASE_URL from "./config";
-import { handleApiResponse } from "./apiUtils";
+import { apiFetch } from "./apiUtils";
 
 // export means to make this function available to other files
 // async means the function does asynchronous work, and will return a "Promise"
@@ -35,9 +35,7 @@ export async function getProducts(
     params.append("brand", brand);
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/products?${params.toString()}`,
-  );
+  return apiFetch(`${API_BASE_URL}/api/products?${params.toString()}`);
   // Spring Boot controller returns JSON
   //   [
   //   {
@@ -54,26 +52,15 @@ export async function getProducts(
   //   }
   // ]
 
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  // turns that JSON into a JavaScript array of objects.
-  return response.json();
+  return handleApiResponse(response);
 }
 
 export async function getProductById(productId) {
-  const response = await fetch(`${API_BASE_URL}/api/products/${productId}`);
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  return response.json();
+  return apiFetch(`${API_BASE_URL}/api/products/${productId}`);
 }
 
 export async function createProduct(product) {
-  const response = await fetch(`${API_BASE_URL}/api/products`, {
+  return apiFetch(`${API_BASE_URL}/api/products`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -81,30 +68,12 @@ export async function createProduct(product) {
     },
     body: JSON.stringify(product),
   });
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  return response.json();
 }
 
 export async function getCategories() {
-  const response = await fetch(`${API_BASE_URL}/api/products/categories`);
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  return response.json();
+  return apiFetch(`${API_BASE_URL}/api/products/categories`);
 }
 
 export async function getBrands() {
-  const response = await fetch(`${API_BASE_URL}/api/products/brands`);
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  return response.json();
+  return apiFetch(`${API_BASE_URL}/api/products/brands`);
 }
