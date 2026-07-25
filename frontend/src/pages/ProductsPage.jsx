@@ -82,6 +82,7 @@ function ProductsPage() {
   }, []);
 
   // Detects if a filter is active
+  // Don't need to include sort because it doesn't remove products
   const hasActiveFilters =
     search.trim() !== "" ||
     minRating !== "" ||

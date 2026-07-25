@@ -136,6 +136,12 @@ function ProductDetailsPage({ currentUser }) {
     ? reviews.find((review) => review.username === currentUser.username)
     : null;
 
+  const hasNutrition =
+    product.calories != null ||
+    product.proteinGrams != null ||
+    product.carbGrams != null ||
+    product.fatGrams != null;
+
   return (
     <main className="container">
       <section className="product-detail-card">
@@ -184,39 +190,42 @@ function ProductDetailsPage({ currentUser }) {
             </div>
           )}
         </div>
-        <div className="nutrition-section">
-          <h3>Nutrition</h3>
 
-          <div className="nutrition-grid">
-            {product.calories != null && (
-              <div>
-                <strong>{product.calories}</strong>
-                <span>Calories</span>
-              </div>
-            )}
+        {hasNutrition && (
+          <div className="nutrition-section">
+            <h3>Nutrition</h3>
 
-            {product.proteinGrams != null && (
-              <div>
-                <strong>{product.proteinGrams}g</strong>
-                <span>Protein</span>
-              </div>
-            )}
+            <div className="nutrition-grid">
+              {product.calories != null && (
+                <div>
+                  <strong>{product.calories}</strong>
+                  <span>Calories</span>
+                </div>
+              )}
 
-            {product.carbGrams != null && (
-              <div>
-                <strong>{product.carbGrams}g</strong>
-                <span>Carbs</span>
-              </div>
-            )}
+              {product.proteinGrams != null && (
+                <div>
+                  <strong>{product.proteinGrams}g</strong>
+                  <span>Protein</span>
+                </div>
+              )}
 
-            {product.fatGrams != null && (
-              <div>
-                <strong>{product.fatGrams}g</strong>
-                <span>Fat</span>
-              </div>
-            )}
+              {product.carbGrams != null && (
+                <div>
+                  <strong>{product.carbGrams}g</strong>
+                  <span>Carbs</span>
+                </div>
+              )}
+
+              {product.fatGrams != null && (
+                <div>
+                  <strong>{product.fatGrams}g</strong>
+                  <span>Fat</span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {product.sourceName && (
           <p className="source-attribution">
