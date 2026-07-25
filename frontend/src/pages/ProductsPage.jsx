@@ -81,6 +81,13 @@ function ProductsPage() {
     fetchFilterOptions();
   }, []);
 
+  // Detects if a filter is active
+  const hasActiveFilters =
+    search.trim() !== "" ||
+    minRating !== "" ||
+    selectedCategory !== "" ||
+    selectedBrand !== "";
+
   // After retreiving all products filter based on search
   // When page re renders products is kept the same but the search filter is changed and this runs
   const filteredProducts = products.filter(
@@ -195,17 +202,24 @@ function ProductsPage() {
 
       <section className="product-list">
         {loading ? (
-          <LoadingState message="Loading Products..."></LoadingState>
+          <LoadingState message="Loading products..." />
         ) : error ? (
           <div className="error-state">
             <h2>Unable to load products</h2>
             <p>{error}</p>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="empty-state">
-            <h2>No products found</h2>
-            <p>Try clearing your search or changing your filters.</p>
-          </div>
+          hasActiveFilters ? (
+            <div className="empty-state">
+              <h2>No matching products</h2>
+              <p>Try clearing your search or changing your filters.</p>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h2>No products available yet</h2>
+              <p>Products will appear here once they have been added.</p>
+            </div>
+          )
         ) : (
           filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
