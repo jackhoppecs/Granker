@@ -1,8 +1,8 @@
 import API_BASE_URL from "./config";
-import { handleApiResponse } from "./apiUtils";
+import { apiFetch } from "./apiUtils";
 
 export async function login(credentials) {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  return apiFetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -10,39 +10,37 @@ export async function login(credentials) {
     credentials: "include",
     body: JSON.stringify(credentials),
   });
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  return response.json();
 }
 
 export async function logout() {
-  const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+  return apiFetch(`${API_BASE_URL}/auth/logout`, {
     method: "POST",
     credentials: "include",
   });
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
 }
 
 export async function getCurrentUser() {
-  const response = await fetch(`${API_BASE_URL}/auth/me`, {
-    credentials: "include",
-  });
+  let response;
 
-  if (!response.ok) {
+  try {
+    response = await fetch(`${API_BASE_URL}/auth/me`, {
+      credentials: "include",
+    });
+  } catch {
+    throw new Error(
+      "Unable to connect to the server. Check your connection and try again.",
+    );
+  }
+
+  if (response.status === 401) {
     return null;
   }
 
-  return response.json();
+  return handleApiResponse(response);
 }
 
 export async function register(username, email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+  return apiFetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -54,10 +52,4 @@ export async function register(username, email, password) {
       password,
     }),
   });
-
-  if (!response.ok) {
-    return handleApiResponse(response);
-  }
-
-  return response.json();
 }
