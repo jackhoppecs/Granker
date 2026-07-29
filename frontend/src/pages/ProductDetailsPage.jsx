@@ -20,7 +20,11 @@ function ProductDetailsPage({ currentUser }) {
   const [productError, setProductError] = useState("");
 
   const [reviewsLoading, setReviewsLoading] = useState(true);
+  // Error for retrieving reviews
   const [reviewsError, setReviewsError] = useState("");
+  // Error for actions on reviews (deleting/updating/submitting)
+  const [reviewActionError, setReviewActionError] = useState("");
+
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [sort, setSort] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
@@ -31,6 +35,7 @@ function ProductDetailsPage({ currentUser }) {
       setProductLoading(true);
       setProductError("");
       setImageFailed(false);
+      setReviewActionError("");
 
       try {
         // if (import.meta.env.DEV) {
@@ -53,7 +58,7 @@ function ProductDetailsPage({ currentUser }) {
   useEffect(() => {
     async function loadReviews() {
       setReviewsLoading(true);
-      setReviewsError(false);
+      setReviewsError("");
 
       try {
         // if (import.meta.env.DEV) {
@@ -93,17 +98,21 @@ function ProductDetailsPage({ currentUser }) {
 
   async function handleSubmitReview(review) {
     try {
+      setReviewActionError("");
+
       const createdReview = await createReview(id, review);
       setReviews((currentReviews) => [createdReview, ...currentReviews]);
 
       await refreshProductSummary();
     } catch (err) {
-      setError(err.message);
+      setReviewActionError(err.message || "Unable to submit review.");
     }
   }
 
   async function handleUpdateReview(reviewId, updatedReviewData) {
     try {
+      setReviewActionError("");
+
       const updatedReview = await updateReview(reviewId, updatedReviewData);
       setReviews((prevReviews) =>
         prevReviews.map((r) => (r.id === reviewId ? updatedReview : r)),
@@ -112,17 +121,19 @@ function ProductDetailsPage({ currentUser }) {
       setEditingReviewId(null);
       await refreshProductSummary();
     } catch (err) {
-      setError(err.message);
+      setReviewActionError(err.message || "Unable to update review.");
     }
   }
 
   async function handleDeleteReview(reviewId) {
     try {
+      setReviewActionError("");
+
       await deleteReview(reviewId);
       setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
       await refreshProductSummary();
     } catch (err) {
-      setError(err.message);
+      setReviewActionError(err.message || "Unable to delete review.");
     }
   }
 
@@ -265,7 +276,11 @@ function ProductDetailsPage({ currentUser }) {
           )}
         </>
       )}
-
+      {reviewActionError && (
+        <p className="form-error" role="alert">
+          {reviewActionError}
+        </p>
+      )}
       <section className="reviews-section">
         <div className="section-header reviews-header">
           <div>
