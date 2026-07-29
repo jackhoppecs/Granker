@@ -1,3 +1,12 @@
+// Used to retain error code for additional frontend behavior
+export class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 export async function handleApiResponse(response) {
   if (response.ok) {
     if (response.status === 204) {
@@ -10,52 +19,40 @@ export async function handleApiResponse(response) {
   const errorData = await response.json().catch(() => null);
   const backendMessage = errorData?.message;
 
+  let message;
+
   if (response.status === 400) {
-    throw new Error(backendMessage || "Please check your input and try again.");
+    message = backendMessage || "Please check your input and try again.";
+  } else if (response.status === 401) {
+    message =
+      backendMessage || "Your session has expired. Please log in again.";
+  } else if (response.status === 403) {
+    message =
+      backendMessage || "You do not have permission to perform this action.";
+  } else if (response.status === 404) {
+    message = backendMessage || "The requested item could not be found.";
+  } else if (response.status === 409) {
+    message = backendMessage || "This action conflicts with existing data.";
+  } else if (response.status >= 500) {
+    message = "The server encountered a problem. Please try again shortly.";
+  } else {
+    message = backendMessage || "Something went wrong. Please try again.";
   }
 
-  if (response.status === 401) {
-    throw new Error(
-      backendMessage || "Your session has expired. Please log in again.",
-    );
-  }
-
-  if (response.status === 403) {
-    throw new Error(
-      backendMessage || "You do not have permission to perform this action.",
-    );
-  }
-
-  if (response.status === 404) {
-    throw new Error(backendMessage || "The requested item could not be found.");
-  }
-
-  if (response.status === 409) {
-    throw new Error(
-      backendMessage || "This action conflicts with existing data.",
-    );
-  }
-
-  if (response.status >= 500) {
-    throw new Error(
-      "The server encountered a problem. Please try again shortly.",
-    );
-  }
-
-  throw new Error(backendMessage || "Something went wrong. Please try again.");
+  throw new ApiError(message, response.status);
 }
 
 export async function apiFetch(url, options = {}) {
-  try {
-    const response = await fetch(url, options);
-    return await handleApiResponse(response);
-  } catch (err) {
-    if (err instanceof TypeError) {
-      throw new Error(
-        "Unable to connect to the server. Check your connection and try again.",
-      );
-    }
+  let response;
 
-    throw err;
+  try {
+    response = await fetch(url, options);
+  } catch {
+    throw new ApiError(
+      "Unable to connect to the server. Check your connection and try again.",
+      null,
+    );
   }
+
+  return handleApiResponse(response);
 }
