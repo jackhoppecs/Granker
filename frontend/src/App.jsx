@@ -11,10 +11,12 @@ import ImportPreviewPage from "./pages/ImportPreviewPage";
 import Navbar from "./components/Navbar";
 import AdminRoute from "./components/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LoadingState from "./components/LoadingState";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState("");
   const [logoutError, setLogoutError] = useState("");
   async function handleLogout() {
     try {
@@ -31,10 +33,15 @@ function App() {
   useEffect(() => {
     async function checkSession() {
       try {
+        setAuthError("");
+
         const user = await getCurrentUser();
         setCurrentUser(user);
       } catch (err) {
         setCurrentUser(null);
+        setAuthError(
+          err.message || "Unable to verify your session. Please try again.",
+        );
       } finally {
         setAuthLoading(false);
       }
@@ -46,7 +53,9 @@ function App() {
   }, []);
 
   if (authLoading) {
-    return <p>Checking your session...</p>;
+    <main className="container">
+      <LoadingState message="Checking your session..." />
+    </main>;
   }
 
   return (
@@ -60,6 +69,11 @@ function App() {
     <BrowserRouter>
       {/* Passing currentUser and handleLogout function as props to navbar */}
       <Navbar currentUser={currentUser} handleLogout={handleLogout} />
+      {authError && (
+        <p className="error-message" role="alert">
+          {authError}
+        </p>
+      )}
       {logoutError && <p className="error-message">{logoutError}</p>}
       <Routes>
         {/* These are just paths to where we have these pages not same as APIs */}
