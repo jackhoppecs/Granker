@@ -1,5 +1,5 @@
 import API_BASE_URL from "./config";
-import { handleApiResponse } from "./apiUtils";
+import { apiFetch } from "./apiUtils";
 
 export async function previewOpenFoodFactsImport(category, pageSize) {
   const params = new URLSearchParams({
@@ -7,14 +7,12 @@ export async function previewOpenFoodFactsImport(category, pageSize) {
     pageSize,
   });
 
-  const response = await fetch(
+  return apiFetch(
     `${API_BASE_URL}/api/import/open-food-facts/preview?${params}`,
     {
       credentials: "include",
     },
   );
-
-  return handleApiResponse(response);
 }
 
 export async function importOpenFoodFactsProducts(category, pageSize) {
@@ -22,15 +20,10 @@ export async function importOpenFoodFactsProducts(category, pageSize) {
     category,
     pageSize,
   });
-  const response = await fetch(
-    `${API_BASE_URL}/api/import/open-food-facts?${params}`,
-    {
-      method: "POST",
-      credentials: "include",
-    },
-  );
-
-  return handleApiResponse(response);
+  return apiFetch(`${API_BASE_URL}/api/import/open-food-facts?${params}`, {
+    method: "POST",
+    credentials: "include",
+  });
 }
 
 // export async function previewOpenFoodFactsImport(category, pageSize) {
