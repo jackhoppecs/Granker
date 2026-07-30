@@ -105,6 +105,12 @@ function ProductDetailsPage({ currentUser }) {
 
       await refreshProductSummary();
     } catch (err) {
+      if (err.status === 401) {
+        setReviewActionError(
+          "Your session expired, so you can no longer submit a review. Please log in again.",
+        );
+        return;
+      }
       setReviewActionError(err.message || "Unable to submit review.");
     }
   }
@@ -121,6 +127,12 @@ function ProductDetailsPage({ currentUser }) {
       setEditingReviewId(null);
       await refreshProductSummary();
     } catch (err) {
+      if (err.status === 401) {
+        setReviewActionError(
+          "Your session expired, so you can no longer update this review. Please log in again.",
+        );
+        return;
+      }
       setReviewActionError(err.message || "Unable to update review.");
     }
   }
@@ -133,6 +145,12 @@ function ProductDetailsPage({ currentUser }) {
       setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
       await refreshProductSummary();
     } catch (err) {
+      if (err.status === 401) {
+        setReviewActionError(
+          "Your session expired, so you can no longer delete this review. Please log in again.",
+        );
+        return;
+      }
       setReviewActionError(err.message || "Unable to delete review.");
     }
   }
