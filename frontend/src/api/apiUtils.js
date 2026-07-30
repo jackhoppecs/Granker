@@ -45,6 +45,7 @@ export async function handleApiResponse(response) {
 export async function apiFetch(url, options = {}) {
   let response;
 
+  // Submit fetch request and if can't connect to backend send custom message
   try {
     response = await fetch(url, options);
   } catch {
@@ -54,5 +55,14 @@ export async function apiFetch(url, options = {}) {
     );
   }
 
-  return handleApiResponse(response);
+  // Handle the response from fetch. If it's 401 a session could've expired
+  try {
+    return await handleApiResponse(response);
+  } catch (err) {
+    if (err.status === 401) {
+      window.dispatchEvent(new Event("session-expired"));
+    }
+
+    throw err;
+  }
 }
