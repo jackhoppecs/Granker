@@ -18,8 +18,12 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
   const [logoutError, setLogoutError] = useState("");
+
   async function handleLogout() {
     try {
+      setLogoutError("");
+      setAuthError("");
+
       await logout();
       // When this prop is changed not all possible pages re-renders
       // It only renders the page for the current URL plus other components under app outside of routes
@@ -28,6 +32,7 @@ function App() {
       setLogoutError(err.message || "Could not log out. Please try again.");
     }
   }
+
   // The browser keeps the session id cookie even when refreshed
   // and React uses /auth/me after refresh to ask the backend which user that session belongs to.
   useEffect(() => {
@@ -52,10 +57,36 @@ function App() {
     // then it runs once when App first mounts, not every re-render.
   }, []);
 
+  // listen for session expired event
+  // Empty dependency array means this runs once when App mounts
+  // This is because we only want to register one global session listener
+  // Without useEffect registering directly inside the component body could happen on every render and create multiple listeners
+  useEffect(() => {
+    function handleSessionExpired() {
+      setCurrentUser(null);
+      setAuthError("Your session has expired. Please log in again.");
+    }
+
+    // Listens for the event "session-expired" and runs handleSessionExpired
+    window.addEventListener("session-expired", handleSessionExpired);
+
+    return () => {
+      // Cleanup the component when app dismounts (avoids dup behavior)
+      window.removeEventListener("session-expired", handleSessionExpired);
+    };
+  }, []);
+
   if (authLoading) {
-    <main className="container">
-      <LoadingState message="Checking your session..." />
-    </main>;
+    return (
+      <main className="container">
+        <LoadingState message="Checking your session..." />
+      </main>
+    );
+  }
+
+  function handleAuthSuccess(user) {
+    setCurrentUser(user);
+    setAuthError("");
   }
 
   return (
@@ -96,11 +127,11 @@ function App() {
           path="/login"
           // Need that function to pass to LoginPage not Route
           // That is why we pass it in there instead of as another attribute of Route
-          element={<LoginPage setCurrentUser={setCurrentUser} />}
+          element={<LoginPage setCurrentUser={handleAuthSuccess} />}
         ></Route>
         <Route
           path="/register"
-          element={<RegisterPage setCurrentUser={setCurrentUser} />}
+          element={<RegisterPage setCurrentUser={handleAuthSuccess} />}
         ></Route>
         <Route
           path="/my-reviews"
