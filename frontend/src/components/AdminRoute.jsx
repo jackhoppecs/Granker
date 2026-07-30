@@ -1,6 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-
-function AdminRoute({ currentUser, children }) {
+function AdminRoute({ currentUser, sessionExpired, children }) {
   const location = useLocation();
 
   if (!currentUser) {
@@ -10,7 +9,9 @@ function AdminRoute({ currentUser, children }) {
         replace
         state={{
           from: location.pathname,
-          message: "Your session has expired. Please log in again.",
+          message: sessionExpired
+            ? "Your session has expired. Please log in again."
+            : "Please log in to continue.",
         }}
       />
     );

@@ -18,6 +18,7 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
   const [logoutError, setLogoutError] = useState("");
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   async function handleLogout() {
     try {
@@ -28,6 +29,7 @@ function App() {
       // When this prop is changed not all possible pages re-renders
       // It only renders the page for the current URL plus other components under app outside of routes
       setCurrentUser(null);
+      setSessionExpired(false);
     } catch (err) {
       setLogoutError(err.message || "Could not log out. Please try again.");
     }
@@ -65,6 +67,7 @@ function App() {
     function handleSessionExpired() {
       setCurrentUser(null);
       setAuthError("Your session has expired. Please log in again.");
+      setSessionExpired(true);
     }
 
     // Listens for the event "session-expired" and runs handleSessionExpired
@@ -86,6 +89,7 @@ function App() {
 
   function handleAuthSuccess(user) {
     setCurrentUser(user);
+    setSessionExpired(false);
     setAuthError("");
   }
 
@@ -114,7 +118,10 @@ function App() {
         <Route
           path="/products/new"
           element={
-            <AdminRoute currentUser={currentUser}>
+            <AdminRoute
+              currentUser={currentUser}
+              sessionExpired={sessionExpired}
+            >
               <CreateProductPage />
             </AdminRoute>
           }
@@ -136,7 +143,10 @@ function App() {
         <Route
           path="/my-reviews"
           element={
-            <ProtectedRoute currentUser={currentUser}>
+            <ProtectedRoute
+              currentUser={currentUser}
+              sessionExpired={sessionExpired}
+            >
               <MyReviewsPage currentUser={currentUser} />
             </ProtectedRoute>
           }
@@ -144,7 +154,10 @@ function App() {
         <Route
           path="/import"
           element={
-            <AdminRoute currentUser={currentUser}>
+            <AdminRoute
+              currentUser={currentUser}
+              sessionExpired={sessionExpired}
+            >
               <ImportPreviewPage />
             </AdminRoute>
           }

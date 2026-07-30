@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 
-function ProtectedRoute({ currentUser, children }) {
+function ProtectedRoute({ currentUser, sessionExpired, children }) {
   const location = useLocation();
 
   if (!currentUser) {
@@ -10,7 +10,9 @@ function ProtectedRoute({ currentUser, children }) {
         replace
         state={{
           from: location.pathname,
-          message: "Please log in to continue.",
+          message: sessionExpired
+            ? "Your session has expired. Please log in again."
+            : "Please log in to continue.",
         }}
       />
     );
