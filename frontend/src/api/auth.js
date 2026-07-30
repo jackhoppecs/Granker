@@ -1,5 +1,5 @@
 import API_BASE_URL from "./config";
-import { apiFetch } from "./apiUtils";
+import { apiFetch, handleApiResponse } from "./apiUtils";
 
 export async function login(credentials) {
   return apiFetch(`${API_BASE_URL}/auth/login`, {
