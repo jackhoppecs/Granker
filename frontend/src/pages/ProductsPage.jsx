@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getProducts, getCategories, getBrands } from "../api/products";
 import ProductCard from "../components/ProductCard";
 import LoadingState from "../components/LoadingState";
+import { useSearchParams } from "react-router-dom";
 
 // A page is a component that represents a whole screen / route
 // Pages usually connected to react router
@@ -18,17 +19,30 @@ function ProductsPage() {
 
   const [search, setSearch] = useState("");
 
-  const [sort, setSort] = useState("name");
-  const [minRating, setMinRating] = useState("");
+  // Represents everything after ? : /products?sort=highest-rating&minRating=4
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sort = searchParams.get("sort") || "name";
+  const minRating = searchParams.get("minRating") || "";
+  const selectedCategory = searchParams.get("category") || "";
+  const selectedBrand = searchParams.get("brand") || "";
 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
   const [loading, setLoading] = useState(false);
   const [filtersLoading, setFiltersLoading] = useState(true);
   const [filtersError, setFiltersError] = useState("");
+
+  function updateFilter(name, value) {
+    const params = new URLSearchParams(searchParams);
+
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+
+    setSearchParams(params);
+  }
 
   // React re-renders the UI when the state changes
   // When this page first loads, call getProducts()
@@ -54,7 +68,7 @@ function ProductsPage() {
       });
   }, [sort, minRating, selectedCategory, selectedBrand]);
 
-  // Grab filter options
+  // Grab filter options (Brands / Categories)
   useEffect(() => {
     async function fetchFilterOptions() {
       setFiltersLoading(true);
@@ -129,7 +143,7 @@ function ProductsPage() {
           <select
             id="product-sort"
             value={sort}
-            onChange={(e) => setSort(e.target.value)}
+            onChange={(e) => updateFilter("sort", e.target.value)}
           >
             <option value="name">Name</option>
             <option value="newest">Newest</option>
@@ -143,7 +157,7 @@ function ProductsPage() {
           <select
             id="min-rating"
             value={minRating}
-            onChange={(e) => setMinRating(e.target.value)}
+            onChange={(e) => updateFilter("minRating", e.target.value)}
           >
             <option value="">Any Rating</option>
             <option value="5">5+</option>
@@ -159,7 +173,7 @@ function ProductsPage() {
           <select
             id="product-category"
             value={selectedCategory}
-            onChange={(event) => setSelectedCategory(event.target.value)}
+            onChange={(event) => updateFilter("category", event.target.value)}
             disabled={filtersLoading}
           >
             {filtersLoading ? (
@@ -182,7 +196,7 @@ function ProductsPage() {
           <select
             id="product-brand"
             value={selectedBrand}
-            onChange={(event) => setSelectedBrand(event.target.value)}
+            onChange={(event) => updateFilter("brand", event.target.value)}
             disabled={filtersLoading}
           >
             {filtersLoading ? (

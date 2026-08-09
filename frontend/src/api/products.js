@@ -51,8 +51,6 @@ export async function getProducts(
   //     "description": "Frozen pizza"
   //   }
   // ]
-
-  return handleApiResponse(response);
 }
 
 export async function getProductById(productId) {
