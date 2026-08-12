@@ -17,19 +17,19 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public List<Product> getAllProducts(String sort, Integer minRating, String category, String brand){
+    public List<Product> getAllProducts(String sort, Integer minRating, String category, String brand, String search){
         category = normalizeFilter(category);
         brand = normalizeFilter(brand);
 
         switch (sort) {
             case "newest":
-                return productRepository.findAllFilteredOrderByCreatedAtDesc(minRating, category, brand);
+                return productRepository.findAllFilteredOrderByCreatedAtDesc(minRating, category, brand, search);
             case "highest-rating":
-                return productRepository.findAllFilteredOrderByAverageRatingDesc(minRating, category, brand);
+                return productRepository.findAllFilteredOrderByAverageRatingDesc(minRating, category, brand, search);
             case "most-reviewed":
-                return productRepository.findAllFilteredOrderByReviewCountDesc(minRating, category, brand);
+                return productRepository.findAllFilteredOrderByReviewCountDesc(minRating, category, brand, search);
             default:
-                return productRepository.findAllFilteredOrderByNameAsc(minRating, category, brand);
+                return productRepository.findAllFilteredOrderByNameAsc(minRating, category, brand, search);
         }
     }
 

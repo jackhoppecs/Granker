@@ -45,10 +45,11 @@ public class ProductController {
         // defaultValue must always be a string in Spring even if spring is converting
         @RequestParam(required = false) Integer minRating,
         @RequestParam(required = false) String category,
-        @RequestParam(required = false) String brand
+        @RequestParam(required = false) String brand,
+        @RequestParam(required = false) String search
     ) {
         
-        List<Product> products = productService.getAllProducts(sort, minRating, category, brand);
+        List<Product> products = productService.getAllProducts(sort, minRating, category, brand, search);
         List<ProductResponseDTO> dtos = new ArrayList<>();
         for (Product product : products){
             // Will need to eventually call repository function in service instead

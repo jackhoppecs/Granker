@@ -44,6 +44,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         LEFT JOIN Review r ON r.product = p
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
+        AND (
+            :search IS NULL
+            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY p.createdAt DESC, LOWER(p.name) ASC
@@ -51,7 +56,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllFilteredOrderByCreatedAtDesc(
             @Param("minRating") Integer minRating,
             @Param("category") String category,
-            @Param("brand") String brand
+            @Param("brand") String brand,
+            @Param("search") String search
     );
 
     @Query("""
@@ -60,6 +66,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         LEFT JOIN Review r ON r.product = p
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
+        AND (
+            :search IS NULL
+            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC, LOWER(p.name) ASC
@@ -67,7 +78,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllFilteredOrderByAverageRatingDesc(
             @Param("minRating") Integer minRating,
             @Param("category") String category,
-            @Param("brand") String brand
+            @Param("brand") String brand,
+            @Param("search") String search
     );
 
     @Query("""
@@ -76,6 +88,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         LEFT JOIN Review r ON r.product = p
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
+        AND (
+            :search IS NULL
+            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY COUNT(r) DESC, COALESCE(AVG(r.rating), 0) DESC, p.name ASC
@@ -83,7 +100,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllFilteredOrderByReviewCountDesc(
         @Param("minRating") Integer minRating,
         @Param("category") String category,
-        @Param("brand") String brand
+        @Param("brand") String brand,
+        @Param("search") String search
     );
 
     @Query("""
@@ -92,6 +110,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         LEFT JOIN Review r ON r.product = p
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
+        AND (
+            :search IS NULL
+            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY LOWER(p.name) ASC
@@ -99,7 +122,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllFilteredOrderByNameAsc(
         @Param("minRating") Integer minRating,
         @Param("category") String category,
-        @Param("brand") String brand
+        @Param("brand") String brand,
+        @Param("search") String search
     );
 
     // <> is a not equal operator in SQL
