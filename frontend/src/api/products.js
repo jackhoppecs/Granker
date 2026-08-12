@@ -9,6 +9,7 @@ export async function getProducts(
   minRating = "",
   category = "",
   brand = "",
+  search = "",
 ) {
   // await means call the backend and pause the function until there's a response
   // fetch is build into the browser and sentds an HTTP request
@@ -33,6 +34,10 @@ export async function getProducts(
 
   if (brand) {
     params.append("brand", brand);
+  }
+
+  if (search) {
+    params.append("search", search);
   }
 
   return apiFetch(`${API_BASE_URL}/api/products?${params.toString()}`);

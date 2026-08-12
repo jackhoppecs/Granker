@@ -17,14 +17,17 @@ function ProductsPage() {
   // error is the current value, setError is the function used to update error
   const [error, setError] = useState("");
 
-  const [search, setSearch] = useState("");
-
   // Represents everything after ? : /products?sort=highest-rating&minRating=4
   const [searchParams, setSearchParams] = useSearchParams();
   const sort = searchParams.get("sort") || "name";
   const minRating = searchParams.get("minRating") || "";
   const selectedCategory = searchParams.get("category") || "";
   const selectedBrand = searchParams.get("brand") || "";
+  const search = searchParams.get("search") || "";
+
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get("search") || "",
+  );
 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -56,7 +59,9 @@ function ProductsPage() {
       //     return new Promise((resolve) => setTimeout(resolve, 1500));
       //   }
       // })
-      .then(() => getProducts(sort, minRating, selectedCategory, selectedBrand))
+      .then(() =>
+        getProducts(sort, minRating, selectedCategory, selectedBrand, search),
+      )
       .then((data) => {
         setProducts(data);
         setError("");
@@ -66,7 +71,7 @@ function ProductsPage() {
       .finally(() => {
         setLoading(false);
       });
-  }, [sort, minRating, selectedCategory, selectedBrand]);
+  }, [sort, minRating, selectedCategory, selectedBrand, search]);
 
   // Grab filter options (Brands / Categories)
   useEffect(() => {
@@ -105,14 +110,18 @@ function ProductsPage() {
 
   // After retreiving all products filter based on search
   // When page re renders products is kept the same but the search filter is changed and this runs
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.brand.toLowerCase().includes(search.toLowerCase()),
-  );
+  // const filteredProducts = products.filter(
+  //   (product) =>
+  //     product.name.toLowerCase().includes(search.toLowerCase()) ||
+  //     product.brand.toLowerCase().includes(search.toLowerCase()),
+  // );
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function handleSearch() {
+    updateFilter("search", searchInput.trim());
   }
 
   return (
@@ -132,8 +141,8 @@ function ProductsPage() {
           <input
             id="product-search"
             type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search by product or brand..."
           />
         </div>
@@ -213,6 +222,9 @@ function ProductsPage() {
             )}
           </select>
         </div>
+        <button type="button" onClick={handleSearch}>
+          Search
+        </button>
       </div>
 
       <section className="product-list">
@@ -223,7 +235,7 @@ function ProductsPage() {
             <h2>Unable to load products</h2>
             <p>{error}</p>
           </div>
-        ) : filteredProducts.length === 0 ? (
+        ) : products.length === 0 ? (
           hasActiveFilters ? (
             <div className="empty-state">
               <h2>No matching products</h2>
@@ -236,7 +248,7 @@ function ProductsPage() {
             </div>
           )
         ) : (
-          filteredProducts.map((product) => (
+          products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))
         )}
