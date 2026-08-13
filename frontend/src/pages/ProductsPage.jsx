@@ -35,6 +35,8 @@ function ProductsPage() {
   const [filtersLoading, setFiltersLoading] = useState(true);
   const [filtersError, setFiltersError] = useState("");
 
+  const [hasMore, setHasMore] = useState(false);
+
   function updateFilter(name, value) {
     const params = new URLSearchParams(searchParams);
 
@@ -63,7 +65,8 @@ function ProductsPage() {
         getProducts(sort, minRating, selectedCategory, selectedBrand, search),
       )
       .then((data) => {
-        setProducts(data);
+        setProducts(data.products);
+        setHasMore(data.hasMore);
         setError("");
         setLoading(false);
       })

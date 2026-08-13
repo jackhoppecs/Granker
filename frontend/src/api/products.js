@@ -10,6 +10,8 @@ export async function getProducts(
   category = "",
   brand = "",
   search = "",
+  page = 0,
+  size = 20,
 ) {
   // await means call the backend and pause the function until there's a response
   // fetch is build into the browser and sentds an HTTP request
@@ -39,6 +41,9 @@ export async function getProducts(
   if (search) {
     params.append("search", search);
   }
+
+  params.append("page", page);
+  params.append("size", size);
 
   return apiFetch(`${API_BASE_URL}/api/products?${params.toString()}`);
   // Spring Boot controller returns JSON
