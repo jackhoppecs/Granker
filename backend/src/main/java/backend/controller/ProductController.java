@@ -9,6 +9,7 @@ import backend.service.AuthService;
 import backend.service.ProductService;
 import backend.service.ReviewService;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +37,14 @@ public class ProductController {
         this.authService = authService;
     }
 
+    public record ProductSliceResponse(
+        List<ProductResponseDTO> products,
+        boolean hasMore
+    ) {}
+
     // This handles GET /api/products
     @GetMapping
-    public List<ProductResponseDTO> getAllProducts(
+    public ProductSliceResponse getAllProducts(
         // Accept an optional string that decides how to sort products
         @RequestParam(required = false, defaultValue = "name") String sort,
         // Integer is allowed to be null while int is not so using Integer is important
@@ -46,12 +52,14 @@ public class ProductController {
         @RequestParam(required = false) Integer minRating,
         @RequestParam(required = false) String category,
         @RequestParam(required = false) String brand,
-        @RequestParam(required = false) String search
+        @RequestParam(required = false) String search,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size
     ) {
         
-        List<Product> products = productService.getAllProducts(sort, minRating, category, brand, search);
+        Slice<Product> productSlice = productService.getAllProducts(sort, minRating, category, brand, search, page, size);
         List<ProductResponseDTO> dtos = new ArrayList<>();
-        for (Product product : products){
+        for (Product product : productSlice.getContent()){
             // Will need to eventually call repository function in service instead
             // Also a N + 1 pattern for queries, we can optimize later
             List<Review> reviews = reviewService.getReviewsByProductId(product.getId());
@@ -79,7 +87,10 @@ public class ProductController {
             dtos.add(addProduct);
         }
 
-        return dtos;
+        return new ProductSliceResponse(
+            dtos,
+            productSlice.hasNext()
+        );
     }
 
     // This handles GET /api/products/1 etc

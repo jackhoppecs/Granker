@@ -2,15 +2,15 @@ package backend.repository;
 
 import backend.model.Product;
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 // JPA repostiory basically gives you a bunch of functions for free that are basically all CRUD
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findAllByOrderByNameAsc();
-
-    List<Product> findAllByOrderByCreatedAtDesc();
 
     // Select p means return product objects, even though we are using reviews to sort we still return products
     // p is just an alias so instead of writing Product each time we use p
@@ -45,19 +45,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
         AND (
-            :search IS NULL
-            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
-            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+            :search = ''
+            OR LOWER(p.name) LIKE CONCAT('%', :search, '%')
+            OR LOWER(p.brand) LIKE CONCAT('%', :search, '%')
         )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY p.createdAt DESC, LOWER(p.name) ASC
     """)
-    List<Product> findAllFilteredOrderByCreatedAtDesc(
+    Slice<Product> findAllFilteredOrderByCreatedAtDesc(
             @Param("minRating") Integer minRating,
             @Param("category") String category,
             @Param("brand") String brand,
-            @Param("search") String search
+            @Param("search") String search,
+            Pageable pageable
     );
 
     @Query("""
@@ -67,19 +68,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
         AND (
-            :search IS NULL
-            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
-            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+            :search = ''
+            OR LOWER(p.name) LIKE CONCAT('%', :search, '%')
+            OR LOWER(p.brand) LIKE CONCAT('%', :search, '%')
         )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC, LOWER(p.name) ASC
     """)
-    List<Product> findAllFilteredOrderByAverageRatingDesc(
+    Slice<Product> findAllFilteredOrderByAverageRatingDesc(
             @Param("minRating") Integer minRating,
             @Param("category") String category,
             @Param("brand") String brand,
-            @Param("search") String search
+            @Param("search") String search,
+            Pageable pageable
     );
 
     @Query("""
@@ -89,19 +91,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
         AND (
-            :search IS NULL
-            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
-            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+            :search = ''
+            OR LOWER(p.name) LIKE CONCAT('%', :search, '%')
+            OR LOWER(p.brand) LIKE CONCAT('%', :search, '%')
         )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY COUNT(r) DESC, COALESCE(AVG(r.rating), 0) DESC, p.name ASC
     """)
-    List<Product> findAllFilteredOrderByReviewCountDesc(
+    Slice<Product> findAllFilteredOrderByReviewCountDesc(
         @Param("minRating") Integer minRating,
         @Param("category") String category,
         @Param("brand") String brand,
-        @Param("search") String search
+        @Param("search") String search,
+        Pageable pageable
     );
 
     @Query("""
@@ -111,19 +114,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         WHERE (:category IS NULL OR p.category = :category)
         AND (:brand IS NULL OR p.brand = :brand)
         AND (
-            :search IS NULL
-            OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
-            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :search, '%'))
+            :search = ''
+            OR LOWER(p.name) LIKE CONCAT('%', :search, '%')
+            OR LOWER(p.brand) LIKE CONCAT('%', :search, '%')
         )
         GROUP BY p
         HAVING (:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)
         ORDER BY LOWER(p.name) ASC
     """)
-    List<Product> findAllFilteredOrderByNameAsc(
+    Slice<Product> findAllFilteredOrderByNameAsc(
         @Param("minRating") Integer minRating,
         @Param("category") String category,
         @Param("brand") String brand,
-        @Param("search") String search
+        @Param("search") String search,
+        Pageable pageable
     );
 
     // <> is a not equal operator in SQL

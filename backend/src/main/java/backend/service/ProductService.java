@@ -6,6 +6,9 @@ import backend.model.Product;
 import backend.repository.ProductRepository;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,19 +20,24 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public List<Product> getAllProducts(String sort, Integer minRating, String category, String brand, String search){
+    public Slice<Product> getAllProducts(String sort, Integer minRating, String category, String brand, String search, int page, int size){
         category = normalizeFilter(category);
         brand = normalizeFilter(brand);
+        search = search == null
+            ? ""
+            : search.trim().toLowerCase();
+            
+        Pageable pageable  = PageRequest.of(page, size);
 
         switch (sort) {
             case "newest":
-                return productRepository.findAllFilteredOrderByCreatedAtDesc(minRating, category, brand, search);
+                return productRepository.findAllFilteredOrderByCreatedAtDesc(minRating, category, brand, search, pageable);
             case "highest-rating":
-                return productRepository.findAllFilteredOrderByAverageRatingDesc(minRating, category, brand, search);
+                return productRepository.findAllFilteredOrderByAverageRatingDesc(minRating, category, brand, search, pageable);
             case "most-reviewed":
-                return productRepository.findAllFilteredOrderByReviewCountDesc(minRating, category, brand, search);
+                return productRepository.findAllFilteredOrderByReviewCountDesc(minRating, category, brand, search, pageable);
             default:
-                return productRepository.findAllFilteredOrderByNameAsc(minRating, category, brand, search);
+                return productRepository.findAllFilteredOrderByNameAsc(minRating, category, brand, search, pageable);
         }
     }
 
