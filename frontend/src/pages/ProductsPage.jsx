@@ -179,13 +179,19 @@ function ProductsPage() {
       <div className="product-controls">
         <div className="control-group search-control">
           <label htmlFor="product-search">Search</label>
-          <input
-            id="product-search"
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search by product or brand..."
-          />
+          <div className="search-row">
+            <input
+              id="product-search"
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search by product or brand..."
+            />
+
+            <button type="button" onClick={handleSearch}>
+              Search
+            </button>
+          </div>
         </div>
 
         <div className="control-group">
@@ -263,9 +269,6 @@ function ProductsPage() {
             )}
           </select>
         </div>
-        <button type="button" onClick={handleSearch}>
-          Search
-        </button>
       </div>
 
       {loading ? (

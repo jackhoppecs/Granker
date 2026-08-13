@@ -113,36 +113,15 @@ body {
   border-radius: 4px;
 }
 
-/* PRODUCT SEARCH BAR */
-.search-bar {
-  margin-bottom: 24px;
-}
-
-.search-bar input {
-  width: 100%;
-  max-width: 420px;
-  padding: 12px 14px;
-
-  border: 1px solid #d0d0d0;
-  border-radius: 10px;
-
-  font-size: 1rem;
-  background-color: white;
-}
-
-.search-bar input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
-}
-
 /* GROUPS SEARCH AND CONTROLS ALL TOGETHER */
 .product-controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
-  align-items: end;
+
   margin: 1.5rem 0;
   padding: 1rem;
+
   border: 1px solid #e5e5e5;
   border-radius: 12px;
   background: #fafafa;
@@ -156,7 +135,17 @@ body {
 }
 
 .search-control {
+  grid-column: 1 / -1;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-row input {
   flex: 1;
+  min-width: 0;
 }
 
 .control-group label {
@@ -184,13 +173,46 @@ body {
 
 @media (max-width: 700px) {
   .product-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .search-control {
+    grid-column: auto;
+  }
+
+  .search-row {
     flex-direction: column;
-    align-items: stretch;
   }
 
   .control-group {
     width: 100%;
   }
+}
+
+.control-group input,
+.control-group select,
+.search-row button {
+  min-height: 44px;
+}
+
+.control-group select,
+.control-group input,
+.search-row button {
+  color: #222;
+  font: inherit;
+}
+
+.search-row button,
+.load-more-container button {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  color: #222;
+  font: inherit;
+  min-height: 2.5rem;
+  padding: 0.55rem 1rem;
 }
 
 /* GRID PATTERN ON PRODUCTS PAGE */
