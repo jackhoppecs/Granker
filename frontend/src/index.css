@@ -1136,3 +1136,10 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* Loading more on products page */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}

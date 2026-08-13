@@ -35,7 +35,9 @@ function ProductsPage() {
   const [filtersLoading, setFiltersLoading] = useState(true);
   const [filtersError, setFiltersError] = useState("");
 
+  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   function updateFilter(name, value) {
     const params = new URLSearchParams(searchParams);
@@ -62,11 +64,20 @@ function ProductsPage() {
       //   }
       // })
       .then(() =>
-        getProducts(sort, minRating, selectedCategory, selectedBrand, search),
+        getProducts(
+          sort,
+          minRating,
+          selectedCategory,
+          selectedBrand,
+          search,
+          0,
+          5,
+        ),
       )
       .then((data) => {
         setProducts(data.products);
         setHasMore(data.hasMore);
+        setPage(0);
         setError("");
         setLoading(false);
       })
@@ -121,6 +132,33 @@ function ProductsPage() {
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function handleLoadMore() {
+    const nextPage = page + 1;
+
+    try {
+      setLoadingMore(true);
+
+      const data = await getProducts(
+        sort,
+        minRating,
+        selectedCategory,
+        selectedBrand,
+        search,
+        nextPage,
+        5,
+      );
+
+      setProducts((currentProducts) => [...currentProducts, ...data.products]);
+
+      setHasMore(data.hasMore);
+      setPage(nextPage);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingMore(false);
+    }
   }
 
   function handleSearch() {
@@ -230,32 +268,46 @@ function ProductsPage() {
         </button>
       </div>
 
-      <section className="product-list">
-        {loading ? (
-          <LoadingState message="Loading products..." />
-        ) : error ? (
-          <div className="error-state">
-            <h2>Unable to load products</h2>
-            <p>{error}</p>
+      {loading ? (
+        <LoadingState message="Loading products..." />
+      ) : error ? (
+        <div className="error-state">
+          <h2>Unable to load products</h2>
+          <p>{error}</p>
+        </div>
+      ) : products.length === 0 ? (
+        hasActiveFilters ? (
+          <div className="empty-state">
+            <h2>No matching products</h2>
+            <p>Try clearing your search or changing your filters.</p>
           </div>
-        ) : products.length === 0 ? (
-          hasActiveFilters ? (
-            <div className="empty-state">
-              <h2>No matching products</h2>
-              <p>Try clearing your search or changing your filters.</p>
-            </div>
-          ) : (
-            <div className="empty-state">
-              <h2>No products available yet</h2>
-              <p>Products will appear here once they have been added.</p>
-            </div>
-          )
         ) : (
-          products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))
-        )}
-      </section>
+          <div className="empty-state">
+            <h2>No products available yet</h2>
+            <p>Products will appear here once they have been added.</p>
+          </div>
+        )
+      ) : (
+        <section>
+          <div className="product-list">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {hasMore && (
+            <div className="load-more-container">
+              <button
+                type="button"
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+              >
+                {loadingMore ? "Loading..." : "Load More"}
+              </button>
+            </div>
+          )}
+        </section>
+      )}
     </main>
   );
 }
