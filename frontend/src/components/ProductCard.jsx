@@ -43,7 +43,7 @@ function ProductCard({ product }) {
                 ★ {product.averageRating.toFixed(1)} / 5
               </p>
               <p className="product-review-count">
-                {product.reviewCount}{" "}
+                {product.reviewCount.toLocaleString()}{" "}
                 {product.reviewCount === 1 ? "review" : "reviews"}
               </p>
             </>

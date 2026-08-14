@@ -424,6 +424,45 @@ body {
   line-height: 1.5;
 }
 
+@media (max-width: 700px) {
+  .product-card {
+    padding: 14px;
+  }
+
+  .product-card-image-container {
+    aspect-ratio: auto;
+    height: 200px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .product-card h2 {
+    font-size: 1.05rem;
+  }
+
+  .product-card-content {
+    gap: 0.45rem;
+  }
+
+  .product-card-header {
+    gap: 0.5rem;
+  }
+
+  .product-card-category {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .product-card-nutrition {
+    gap: 0.35rem;
+  }
+
+  .product-card-nutrition span {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.8rem;
+  }
+}
+
 /* REVIEW FORM COMPONENT STYLING */
 .review-user {
   margin: 0;
