@@ -10,6 +10,7 @@ import { useParams, Link } from "react-router-dom";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
 import LoadingState from "../components/LoadingState";
+import Toast from "../components/Toast";
 
 function ProductDetailsPage({ currentUser }) {
   const { id } = useParams();
@@ -28,6 +29,12 @@ function ProductDetailsPage({ currentUser }) {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [sort, setSort] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
+
+  const [toast, setToast] = useState(null);
+
+  function showToast(message, type = "success") {
+    setToast({ message, type });
+  }
 
   // useEffect for loading the product
   useEffect(() => {
@@ -104,6 +111,7 @@ function ProductDetailsPage({ currentUser }) {
       setReviews((currentReviews) => [createdReview, ...currentReviews]);
 
       await refreshProductSummary();
+      showToast("Review added successfully.", "success");
     } catch (err) {
       if (err.status === 401) {
         setReviewActionError(
@@ -126,6 +134,7 @@ function ProductDetailsPage({ currentUser }) {
       // close edit mode
       setEditingReviewId(null);
       await refreshProductSummary();
+      showToast("Review successfully updated.", "success");
     } catch (err) {
       if (err.status === 401) {
         setReviewActionError(
@@ -144,6 +153,7 @@ function ProductDetailsPage({ currentUser }) {
       await deleteReview(reviewId);
       setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
       await refreshProductSummary();
+      showToast("Review successfully deleted.", "success");
     } catch (err) {
       if (err.status === 401) {
         setReviewActionError(
@@ -182,6 +192,14 @@ function ProductDetailsPage({ currentUser }) {
 
           <span className="product-detail-badge">Frozen Food</span>
         </div>
+
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
 
         <div className="product-rating-summary">
           {product.reviewCount > 0 ? (
