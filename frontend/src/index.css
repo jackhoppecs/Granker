@@ -706,6 +706,42 @@ body {
   color: #7f1d1d;
 }
 
+/* Button error styling */
+.error-state a,
+.error-state button {
+  display: inline-block;
+  margin-top: 0.85rem;
+
+  color: #991b1b;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.error-state button {
+  padding: 0;
+  border: none;
+  background: none;
+
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.error-state a:hover,
+.error-state button:hover {
+  color: #7f1d1d;
+}
+
+.error-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
 .form-success {
   margin: 0;
   padding: 12px 14px;

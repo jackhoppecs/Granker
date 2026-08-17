@@ -32,6 +32,8 @@ function ProductDetailsPage({ currentUser }) {
 
   // 404 error
   const [productNotFound, setProductNotFound] = useState(false);
+  // Retrying to load a product
+  const [retrying, setRetrying] = useState(false);
 
   const [toast, setToast] = useState(null);
 
@@ -91,6 +93,28 @@ function ProductDetailsPage({ currentUser }) {
     loadReviews();
   }, [id, sort]);
 
+  async function handleRetryProduct() {
+    if (retrying) return;
+
+    try {
+      setRetrying(true);
+
+      const productData = await getProductById(id);
+
+      setProduct(productData);
+      setProductError("");
+    } catch (err) {
+      if (err.status === 404) {
+        setProductNotFound(true);
+        setProductError("");
+      } else {
+        setProductError(err.message);
+      }
+    } finally {
+      setRetrying(false);
+    }
+  }
+
   if (productLoading) {
     return (
       <main className="container">
@@ -119,7 +143,16 @@ function ProductDetailsPage({ currentUser }) {
         <div className="error-state">
           <h1>Unable to load product</h1>
           <p>{productError}</p>
-          <Link to="/">Return to products</Link>
+          <div className="error-actions">
+            <Link to="/">Return to products</Link>
+            <button
+              type="button"
+              onClick={handleRetryProduct}
+              disabled={retrying}
+            >
+              {retrying ? "Trying again..." : "Try Again"}
+            </button>
+          </div>
         </div>
       </main>
     );
