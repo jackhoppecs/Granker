@@ -12,6 +12,7 @@ import Navbar from "./components/Navbar";
 import AdminRoute from "./components/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingState from "./components/LoadingState";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -162,6 +163,7 @@ function App() {
             </AdminRoute>
           }
         ></Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
