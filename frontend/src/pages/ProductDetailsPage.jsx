@@ -30,6 +30,9 @@ function ProductDetailsPage({ currentUser }) {
   const [sort, setSort] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
 
+  // 404 error
+  const [productNotFound, setProductNotFound] = useState(false);
+
   const [toast, setToast] = useState(null);
 
   function showToast(message, type = "success") {
@@ -43,6 +46,7 @@ function ProductDetailsPage({ currentUser }) {
       setProductError("");
       setImageFailed(false);
       setReviewActionError("");
+      setProductNotFound(false);
 
       try {
         // if (import.meta.env.DEV) {
@@ -52,7 +56,11 @@ function ProductDetailsPage({ currentUser }) {
         const productData = await getProductById(id);
         setProduct(productData);
       } catch (err) {
-        setProductError(err.message);
+        if (err.status === 404) {
+          setProductNotFound(true);
+        } else {
+          setProductError(err.message);
+        }
       } finally {
         setProductLoading(false);
       }
@@ -87,6 +95,20 @@ function ProductDetailsPage({ currentUser }) {
     return (
       <main className="container">
         <LoadingState message="Loading product..." />
+      </main>
+    );
+  }
+
+  if (productNotFound) {
+    return (
+      <main className="container">
+        <div className="error-state">
+          <h1>Product not found</h1>
+          <p>
+            This product may have been removed or the link may be incorrect.
+          </p>
+          <Link to="/">Return to products</Link>
+        </div>
       </main>
     );
   }
