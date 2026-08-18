@@ -180,8 +180,8 @@ body {
   background: white;
 }
 
-.control-group input:focus,
-.control-group select:focus {
+.control-group input:focus-visible,
+.control-group select:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
@@ -229,6 +229,13 @@ body {
   font: inherit;
   min-height: 2.5rem;
   padding: 0.55rem 1rem;
+}
+
+.search-row button:focus-visible,
+.load-more-container button:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
 }
 
 /* GRID PATTERN ON PRODUCTS PAGE */
@@ -326,7 +333,7 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.product-card:focus {
+.product-card:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
@@ -548,9 +555,9 @@ body {
   resize: vertical;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);
@@ -902,8 +909,8 @@ body {
   resize: vertical;
 }
 
-.review-form-group select:focus,
-.review-form-group textarea:focus {
+.review-form-group select:focus-visible,
+.review-form-group textarea:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgb(21 128 61 / 15%);

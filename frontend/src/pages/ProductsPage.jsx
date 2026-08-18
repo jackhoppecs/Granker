@@ -73,7 +73,7 @@ function ProductsPage() {
           selectedBrand,
           search,
           0,
-          20,
+          10,
         ),
       )
       .then((data) => {
