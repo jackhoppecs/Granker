@@ -115,6 +115,27 @@ function ProductDetailsPage({ currentUser }) {
     }
   }
 
+  async function handleRetryReviews() {
+    if (retrying) return;
+
+    try {
+      setRetrying(true);
+
+      const reviewData = await getReviewsByProductId(id, sort);
+      setReviews(reviewData);
+      setReviewsError("");
+    } catch (err) {
+      if (err.status === 404) {
+        setProductNotFound(true);
+        setReviewsError("");
+      } else {
+        setReviewsError(err.message);
+      }
+    } finally {
+      setRetrying(false);
+    }
+  }
+
   if (productLoading) {
     return (
       <main className="container">
@@ -396,6 +417,13 @@ function ProductDetailsPage({ currentUser }) {
           <div className="error-state">
             <h2>Unable to load reviews</h2>
             <p>{reviewsError}</p>
+            <button
+              type="button"
+              onClick={handleRetryReviews}
+              disabled={retrying}
+            >
+              {retrying ? "Trying again..." : "Try Again"}
+            </button>
           </div>
         ) : reviews.length === 0 ? (
           <div className="empty-state">
