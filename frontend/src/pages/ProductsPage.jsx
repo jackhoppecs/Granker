@@ -39,6 +39,8 @@ function ProductsPage() {
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  const [retrying, setRetrying] = useState(false);
+
   function updateFilter(name, value) {
     const params = new URLSearchParams(searchParams);
 
@@ -71,7 +73,7 @@ function ProductsPage() {
           selectedBrand,
           search,
           0,
-          5,
+          20,
         ),
       )
       .then((data) => {
@@ -163,6 +165,33 @@ function ProductsPage() {
 
   function handleSearch() {
     updateFilter("search", searchInput.trim());
+  }
+
+  async function handleRetryProducts() {
+    if (retrying) return;
+
+    try {
+      setRetrying(true);
+
+      const data = await getProducts(
+        sort,
+        minRating,
+        selectedCategory,
+        selectedBrand,
+        search,
+        0,
+        20,
+      );
+
+      setProducts(data.products);
+      setHasMore(data.hasMore);
+      setPage(0);
+      setError("");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setRetrying(false);
+    }
   }
 
   return (
@@ -277,6 +306,13 @@ function ProductsPage() {
         <div className="error-state">
           <h2>Unable to load products</h2>
           <p>{error}</p>
+          <button
+            type="button"
+            onClick={handleRetryProducts}
+            disabled={retrying}
+          >
+            {retrying ? "Trying again..." : "Try Again"}
+          </button>
         </div>
       ) : products.length === 0 ? (
         hasActiveFilters ? (
