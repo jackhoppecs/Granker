@@ -76,3 +76,102 @@ for term in search_terms:
     for column in df.columns:
         if term.lower() in column.lower():
             print(column)
+
+
+# How complete are the columns we're looking at. AKA how many rows contain those columns
+interesting_columns = [
+    "code",
+    "product_name_en",
+    "brands",
+    "countries_tags",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.energy-kcal.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.proteins.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.carbohydrates.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.fat.value",
+]
+
+print("\nField completeness:")
+
+for column in interesting_columns:
+    if column in df.columns:
+        populated = df[column].notna().sum()
+        percent = populated / len(df) * 100
+
+        print(f"{column}: {populated}/{len(df)} ({percent:.1f}%)")
+
+
+# What about the other nutrition fields
+nutrition_columns = [
+    "nutrition.input_sets.estimate.as_sold.100g.nutrients.energy-kcal.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.energy-kcal.value",
+    "nutrition.input_sets.packaging.as_sold.serving.nutrients.energy-kcal.value",
+
+    "nutrition.input_sets.estimate.as_sold.100g.nutrients.proteins.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.proteins.value",
+    "nutrition.input_sets.packaging.as_sold.serving.nutrients.proteins.value",
+
+    "nutrition.input_sets.estimate.as_sold.100g.nutrients.carbohydrates.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.carbohydrates.value",
+    "nutrition.input_sets.packaging.as_sold.serving.nutrients.carbohydrates.value",
+
+    "nutrition.input_sets.estimate.as_sold.100g.nutrients.fat.value",
+    "nutrition.input_sets.packaging.as_sold.100g.nutrients.fat.value",
+    "nutrition.input_sets.packaging.as_sold.serving.nutrients.fat.value",
+]
+
+for column in nutrition_columns:
+    if column in df.columns:
+        populated = df[column].notna().sum()
+        percent = populated / len(df) * 100
+        print(f"{column}: ({percent:.1f})%")
+
+
+# How many missing names
+missing_names = df[df["product_name_en"].isna()]
+
+print("Missing names:", len(missing_names))
+
+# Make output more readable
+sample = df[
+    [
+        "code",
+        "product_name_en",
+        "brands",
+        "nutrition.input_sets.packaging.as_sold.serving.nutrients.energy-kcal.value",
+        "nutrition.input_sets.packaging.as_sold.serving.nutrients.proteins.value",
+        "nutrition.input_sets.packaging.as_sold.serving.nutrients.carbohydrates.value",
+        "nutrition.input_sets.packaging.as_sold.serving.nutrients.fat.value",
+    ]
+].copy()
+
+sample.columns = [
+    "barcode",
+    "name",
+    "brand",
+    "calories",
+    "protein",
+    "carbs",
+    "fat",
+]
+
+print(sample.head(20).to_string(index=False))
+
+# What would a minimal viable product look like?
+required_columns = [
+    "code",
+    "product_name_en",
+    "brands",
+    "countries_tags",
+]
+
+valid_core = df.dropna(subset=required_columns)
+
+print("Valid core products:", len(valid_core))
+print(
+    f"Coverage: {len(valid_core) / len(df) * 100:.1f}%"
+)
+
+# Duplicate codes?
+duplicates = df[df["code"].duplicated(keep=False)]
+
+print("Duplicate barcode rows:", len(duplicates))
