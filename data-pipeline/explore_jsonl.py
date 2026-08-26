@@ -5,7 +5,8 @@ import gzip
 import json
 
 DATA_DIR = Path(__file__).parent / "data"
-FILE_PATH = DATA_DIR / "products.random-modulo-10000.jsonl.gz"
+# FILE_PATH = DATA_DIR / "products.random-modulo-10000.jsonl.gz"
+FILE_PATH = DATA_DIR / "openfoodfacts-products.jsonl.gz"
 
 # .open allows us to open a compressed file without manual extraction
 # "rt" means r = read and t = text
@@ -81,9 +82,19 @@ products = []
 with gzip.open(FILE_PATH, "rt", encoding="utf-8") as file:
     for line in file:
         product = json.loads(line)
+        countries = product.get("countries_tags", [])
+
+        if "en:united-states" not in countries:
+            continue
+
+        
         products.append(product)
 
-print("Total products:", len(products))
+        if len(products) >= 10_000:
+            break
+
+
+print("Total US products:", len(products))
 
 fields = [
     "product_name",
