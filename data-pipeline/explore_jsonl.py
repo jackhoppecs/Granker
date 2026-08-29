@@ -500,3 +500,10 @@ print(
     f"{nested_front_count}/{len(sample)} "
     f"({nested_front_count / len(sample) * 100:.1f}%)"
 )
+
+# Save a sample so we don't need to wait to process everything again
+SAMPLE_PATH = DATA_DIR / "us-random-sample-10000.jsonl"
+
+with open(SAMPLE_PATH, "w", encoding="utf-8") as file:
+    for product in sample:
+        file.write(json.dumps(product) + "\n")
