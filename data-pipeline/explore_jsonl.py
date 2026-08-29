@@ -4,6 +4,8 @@ import gzip
 # built into python and converts JSON text into normal python objects
 import json
 
+import random
+
 DATA_DIR = Path(__file__).parent / "data"
 # FILE_PATH = DATA_DIR / "products.random-modulo-10000.jsonl.gz"
 FILE_PATH = DATA_DIR / "openfoodfacts-products.jsonl.gz"
@@ -305,4 +307,196 @@ print(
     f"Products with usable front image metadata: "
     f"{front_count}/{len(products)} "
     f"({front_count / len(products) * 100:.1f}%)"
+)
+
+# Still strange image results
+# Let's use reservoir sampling
+# It let's you stream through the file once and maintain a uniformly random sample of 10,000 mathcing products without knowing in advance how many US products there are
+
+sample_size = 10_000
+sample = []
+us_product_count = 0
+
+with gzip.open(FILE_PATH, "rt", encoding="utf-8") as file:
+    for line in file:
+        product = json.loads(line)
+
+        countries = product.get("countries", [])
+
+        if "en:united-states" not in countries:
+            continue
+
+        us_product_count += 1
+
+        if len(sample) < sample_size:
+            sample.append(product)
+
+        else:
+            random_index = random.randint(0, us_product_count - 1)
+
+            if random_index < sample_size:
+                sample[random_index] = product
+
+print("Total US products encountered:", us_product_count)
+print("Random sample size:", len(sample))
+
+image_fields = [
+"selected_images",
+"image_url",
+"image_front_url",
+"image_front_small_url",
+"image_front_thumb_url",
+]
+
+for field in image_fields:
+    populated = 0
+
+    for product in sample:
+        value = product.get(field)
+
+        if value:
+            populated += 1
+
+    percent = populated / len(sample) * 100
+    print(f"{field}: {populated}/{len(sample)} ({percent:.1f}%)")
+
+
+possible_image_fields = [
+    key
+    for product in sample
+    for key in product.keys()
+    if "image" in key.lower()
+]
+
+print(sorted(set(possible_image_fields)))
+
+
+total_with_images = 0
+total_with_front_image = 0
+
+front_key_counts = {}
+
+for product in sample:
+    images = product.get("images", {})
+
+    if not isinstance(images, dict) or not images:
+        continue
+
+    total_with_images += 1
+
+    front_keys = [
+        key for key in images.keys()
+        if key.startswith("front_")
+    ]
+
+    if front_keys:
+        total_with_front_image += 1
+
+        for key in front_keys:
+            front_key_counts[key] = front_key_counts.get(key, 0) + 1
+
+print(
+    f"Products with images: "
+    f"{total_with_images}/{len(sample)} "
+    f"({total_with_images / len(sample) * 100:.1f}%)"
+)
+
+print(
+    f"Products with front_* image: "
+    f"{total_with_front_image}/{len(sample)} "
+    f"({total_with_front_image / len(sample) * 100:.1f}%)"
+)
+
+print("\nMost common front image keys:")
+
+for key, count in sorted(
+    front_key_counts.items(),
+    key=lambda item: item[1],
+    reverse=True
+)[:20]:
+    print(key, count)
+
+
+shown = 0
+
+for product in sample:
+    images = product.get("images", {})
+
+    if not images:
+        continue
+
+    print("\nName:", product.get("product_name"))
+    print("Image keys:", list(images.keys()))
+
+    shown += 1
+
+    if shown >= 10:
+        break
+
+# Images has two distinct shapes that we need to count
+def has_front_image(product):
+    images = product.get("images", {})
+
+    # If product is not a dict then it can't be a key
+    if not isinstance(images, dict):
+        return False
+
+    # Older/alternate style: front_en, front_fr, etc.
+    for key in images:
+        if key.startswith("front_"):
+            return True
+
+    # Nested style: images.selected.front
+    selected = images.get("selected", {})
+    if isinstance(selected, dict):
+        front = selected.get("front", {})
+        if isinstance(front, dict) and front:
+            return True
+
+    return False
+
+front_count = sum(
+    1 for product in sample
+    if has_front_image(product)
+)
+
+print(
+    f"Products with usable front image metadata: "
+    f"{front_count}/{len(sample)} "
+    f"({front_count / len(sample) * 100:.1f}%)"
+)
+
+
+# One last check for nested vs flat style
+# Let's decide which is more common and should be relied upon
+nested_front_count = 0
+flat_front_count = 0
+
+for product in sample:
+    images = product.get("images", {})
+
+    if not isinstance(images, dict):
+        continue
+
+    if any(key.startswith("front_") for key in images):
+        flat_front_count += 1
+
+    selected = images.get("selected", {})
+
+    if isinstance(selected, dict):
+        front = selected.get("front", {})
+
+        if isinstance(front, dict) and front:
+            nested_front_count += 1
+
+print(
+    f"Flat front_* style: "
+    f"{flat_front_count}/{len(sample)} "
+    f"({flat_front_count / len(sample) * 100:.1f}%)"
+)
+
+print(
+    f"Nested selected.front style: "
+    f"{nested_front_count}/{len(sample)} "
+    f"({nested_front_count / len(sample) * 100:.1f}%)"
 )
