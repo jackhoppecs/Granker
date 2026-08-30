@@ -4,22 +4,60 @@ from pathlib import Path
 
 
 
-def is_supported_product(product):
+# def is_supported_product(product):
+#     barcode = product.get("code")
+#     name = product.get("product_name")
+#     brand = product.get("brands")
+#     categories = product.get("categories_tags", [])
+
+#     if not barcode:
+#         return False
+
+#     if not name or not name.strip():
+#         return False
+
+#     if not brand or not brand.strip():
+#         return False
+
+#     # if not categories:
+#     #     return False
+
+#     return True
+
+
+# Record completeness helper function (AKA Need barcode, name, and brand)
+def has_required_identity(product):
+    barcode = product.get("code")
     name = product.get("product_name")
     brand = product.get("brands")
-    categories = product.get("categories_tags", [])
 
-    if not name or not brand:
-        return False
+    return (
+        bool(barcode)
+        and bool(name and name.strip())
+        and bool(brand and brand.strip())
+    )
 
-    if not categories:
+# Categories we might not want in granker
+EXCLUDED_CATEGORIES = {
+    "en:dietary-supplements",
+    "en:bodybuilding-supplements",
+}
+
+# If product is usable is it a kind of product Granker should use
+def is_allowed_product_type(product):
+    # Makes a product's category list into a set
+    # Set's are built around membership and comparison operations
+    categories = set(product.get("categories_tags", []))
+
+    # & Means intersection AKA: What appears in both sets?
+    # If there is a value that exists in both then the product is excluded
+    if categories & EXCLUDED_CATEGORIES:
         return False
 
     return True
 
-
 def transform_product(product):
-    if not is_supported_product(product):
+    if not has_required_identity(product):
         return None
     
     return {
@@ -67,7 +105,7 @@ accepted = []
 rejected = []
 
 for product in products:
-    if is_supported_product(product):
+    if has_required_identity(product):
         accepted.append(product)
     else:
         rejected.append(product)
@@ -78,6 +116,7 @@ print("Rejected:", len(rejected))
 print("\nAccepted samples:")
 for product in accepted[:50]:
     print(
+        product.get("code"), "|",
         product.get("product_name"),
         "|",
         product.get("brands"),
@@ -88,6 +127,7 @@ for product in accepted[:50]:
 print("\nRejected samples:")
 for product in rejected[:50]:
     print(
+        product.get("code"), "|",
         product.get("product_name"),
         "|",
         product.get("brands"),
@@ -95,8 +135,52 @@ for product in rejected[:50]:
         product.get("categories_tags", [])
     )
 
+
+# Why are they being rejected
+missing_barcode = 0
+missing_name = 0
+missing_brand = 0
+missing_categories = 0
+
+for product in products:
+    barcode = product.get("code")
+    name = product.get("product_name")
+    brand = product.get("brands")
+    categories = product.get("categories_tags", [])
+
+    if not barcode:
+        missing_barcode += 1
+
+    if not name or not name.strip():
+        missing_name += 1
+
+    if not brand or not brand.strip():
+        missing_brand += 1
+
+    if not categories:
+        missing_categories += 1
+
+print("Missing barcode:", missing_barcode)
+print("Missing name:", missing_name)
+print("Missing brand:", missing_brand)
+print("Missing categories:", missing_categories)
+
 # for product in products[:10]:
 #     transformed = transform_product(product)
 #     print(transformed)
 #     print()
     
+
+# Let's explore products not meeting category filter
+print("What about for category types?")
+accepted = []
+rejected = []
+
+for product in products:
+    if is_allowed_product_type(product):
+        accepted.append(product)
+    else:
+        rejected.append(product)
+
+print("Accepted:", len(accepted))
+print("Rejected:", len(rejected))
