@@ -59,6 +59,9 @@ def is_allowed_product_type(product):
 def transform_product(product):
     if not has_required_identity(product):
         return None
+
+    if not is_allowed_product_type(product):
+        return None
     
     return {
         "barcode": product.get("code"),
