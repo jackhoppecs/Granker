@@ -202,6 +202,50 @@ def is_reasonable_nutrition(nutrition):
     return True
 
 # -------------------------
+# Image Exploration
+# -------------------------
+def get_front_image_url(product):
+    images = product.get("images", {})
+    selected = images.get("selected", {})
+    front = selected.get("front", {})
+
+    if not isinstance(front, dict) or not front:
+        return None
+
+    # Prefer English
+    if "en" in front:
+        language = "en"
+    else:
+        # Otherwise use the first available front image
+        language = next(iter(front))
+
+    image = front[language]
+
+    rev = image.get("rev")
+    code = product.get("code")
+
+    if not rev or not code:
+        return None
+
+    code = str(code)
+
+    # OFF expects short barcodes padded to 13 digits
+    if len(code) < 13:
+        code = code.zfill(13)
+
+    # Build OFF image directory
+    if len(code) > 8:
+        folder = f"{code[0:3]}/{code[3:6]}/{code[6:9]}/{code[9:]}"
+    else:
+        folder = code
+
+    return (
+        "https://images.openfoodfacts.org/images/products/"
+        f"{folder}/front_{language}.{rev}.400.jpg"
+    )
+
+
+# -------------------------
 # Transformation
 # -------------------------
 
@@ -215,14 +259,16 @@ def transform_product(product):
     nutrition = get_nutrition_per_100g(product)
 
     if not is_reasonable_nutrition(nutrition):
-        return None
+        nutrition = None
+
+    image_url = get_front_image_url(product)
 
     return {
         "name": product.get("product_name").strip(),
         "brand": product.get("brands").strip(),
         "description": None,
         "category": None,
-        "imageUrl": None,
+        "imageUrl": image_url,
 
         "calories": (
             round(nutrition["calories"])
@@ -350,6 +396,46 @@ def inspect_invalid_nutrition(products, limit=50):
         if shown >= limit:
             break
 
+def inspect_images(products, limit=5):
+    shown = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        images = product.get("images", {})
+
+        if not images:
+            continue
+
+        print("\nPRODUCT:", product.get("product_name"))
+        print("BARCODE:", product.get("code"))
+        print("IMAGES:")
+        print(json.dumps(images, indent=2))
+
+        shown += 1
+
+        if shown >= limit:
+            break
+
+def inspect_image_fields(products, limit=10):
+    shown = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        print("\nPRODUCT:", product.get("product_name"))
+        print("image_url:", product.get("image_url"))
+        print("image_front_url:", product.get("image_front_url"))
+        print("image_front_small_url:", product.get("image_front_small_url"))
+        print("image_front_thumb_url:", product.get("image_front_thumb_url"))
+
+        shown += 1
+
+        if shown >= limit:
+            break
+
 # -------------------------
 # Load development sample
 # -------------------------
@@ -409,6 +495,15 @@ inspect_missing_nutrition(
 
 print("\nSample products excluded by nutrition:")
 inspect_invalid_nutrition(
+    products,
+)
+
+print("\nInspect images:")
+inspect_images(
+    products,
+)
+print("\nInspect image fields:")
+inspect_image_fields(
     products,
 )
 
