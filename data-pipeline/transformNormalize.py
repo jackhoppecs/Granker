@@ -73,59 +73,59 @@ def get_numeric_value(data, key):
     except (TypeError, ValueError):
         return None
 
-def get_nutrition_per_100g(product):
-    nutriments = product.get("nutriments", {})
+# def get_nutrition_per_100g(product):
+#     nutriments = product.get("nutriments", {})
 
-    calories = nutriments.get("energy-kcal_100g")
-    protein = nutriments.get("proteins_100g")
-    carbs = nutriments.get("carbohydrates_100g")
-    fat = nutriments.get("fat_100g")
+#     calories = nutriments.get("energy-kcal_100g")
+#     protein = nutriments.get("proteins_100g")
+#     carbs = nutriments.get("carbohydrates_100g")
+#     fat = nutriments.get("fat_100g")
 
-    if all(
-        value is not None
-        for value in [calories, protein, carbs, fat]
-    ):
-        return {
-            "calories": calories,
-            "protein": protein,
-            "carbs": carbs,
-            "fat": fat,
-        }
+#     if all(
+#         value is not None
+#         for value in [calories, protein, carbs, fat]
+#     ):
+#         return {
+#             "calories": calories,
+#             "protein": protein,
+#             "carbs": carbs,
+#             "fat": fat,
+#         }
 
-    nutrition = product.get("nutrition", {})
-    input_sets = nutrition.get("input_sets", [])
+#     nutrition = product.get("nutrition", {})
+#     input_sets = nutrition.get("input_sets", [])
 
-    for input_set in input_sets:
-        if input_set.get("per") != "100g":
-            continue
+#     for input_set in input_sets:
+#         if input_set.get("per") != "100g":
+#             continue
 
-        if input_set.get("preparation") != "as_sold":
-            continue
+#         if input_set.get("preparation") != "as_sold":
+#             continue
 
-        nutrients = input_set.get("nutrients", {})
+#         nutrients = input_set.get("nutrients", {})
 
-        calories_data = nutrients.get("energy-kcal", {})
-        protein_data = nutrients.get("proteins", {})
-        carbs_data = nutrients.get("carbohydrates", {})
-        fat_data = nutrients.get("fat", {})
+#         calories_data = nutrients.get("energy-kcal", {})
+#         protein_data = nutrients.get("proteins", {})
+#         carbs_data = nutrients.get("carbohydrates", {})
+#         fat_data = nutrients.get("fat", {})
 
-        calories = calories_data.get("value")
-        protein = protein_data.get("value")
-        carbs = carbs_data.get("value")
-        fat = fat_data.get("value")
+#         calories = calories_data.get("value")
+#         protein = protein_data.get("value")
+#         carbs = carbs_data.get("value")
+#         fat = fat_data.get("value")
 
-        if all(
-            value is not None
-            for value in [calories, protein, carbs, fat]
-        ):
-            return {
-                "calories": calories,
-                "protein": protein,
-                "carbs": carbs,
-                "fat": fat,
-            }
+#         if all(
+#             value is not None
+#             for value in [calories, protein, carbs, fat]
+#         ):
+#             return {
+#                 "calories": calories,
+#                 "protein": protein,
+#                 "carbs": carbs,
+#                 "fat": fat,
+#             }
 
-    return None
+#     return None
 
 def get_nutrition_per_100g(product):
     nutrition = product.get("nutrition", {})
@@ -174,6 +174,33 @@ def get_nutrition_per_100g(product):
 
     return None
 
+def is_reasonable_nutrition(nutrition):
+    if nutrition is None:
+        return False
+
+    calories = nutrition.get("calories")
+    protein = nutrition.get("protein")
+    carbs = nutrition.get("carbs")
+    fat = nutrition.get("fat")
+
+    values = [calories, protein, carbs, fat]
+
+
+    # Checking for negative values or crazy high numbers
+    if any(value is None for value in values):
+        return False
+
+    if any(value < 0 for value in values):
+        return False
+
+    if protein > 100 or carbs > 100 or fat > 100:
+        return False
+
+    if protein + carbs + fat > 105:
+        return False
+
+    return True
+
 # -------------------------
 # Transformation
 # -------------------------
@@ -187,6 +214,9 @@ def transform_product(product):
 
     nutrition = get_nutrition_per_100g(product)
 
+    if not is_reasonable_nutrition(nutrition):
+        return None
+
     return {
         "name": product.get("product_name").strip(),
         "brand": product.get("brands").strip(),
@@ -196,22 +226,22 @@ def transform_product(product):
 
         "calories": (
             round(nutrition["calories"])
-            if nutrition is not None
+            if nutrition
             else None
         ),
         "proteinGrams": (
-            nutrition["protein"]
-            if nutrition is not None
+            round(nutrition["protein"], 1)
+            if nutrition
             else None
         ),
         "carbGrams": (
-            nutrition["carbs"]
-            if nutrition is not None
+            round(nutrition["carbs"], 1)
+            if nutrition
             else None
         ),
         "fatGrams": (
-            nutrition["fat"]
-            if nutrition is not None
+            round(nutrition["fat"], 1)
+            if nutrition
             else None
         ),
 
