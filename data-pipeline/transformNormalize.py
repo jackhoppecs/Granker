@@ -436,6 +436,25 @@ def inspect_image_fields(products, limit=10):
         if shown >= limit:
             break
 
+def inspect_missing_images(products, limit=20):
+    shown = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        if not is_allowed_product_type(product):
+            continue
+
+        if get_front_image_url(product):
+            continue
+
+        print_product(product)
+        shown += 1
+
+        if shown >= limit:
+            break
+
 # -------------------------
 # Load development sample
 # -------------------------
@@ -670,47 +689,6 @@ for product in products:
 #     print(f"{count:>5}  {key}")
 
 
-
-
-
-
-
-def has_required_nutrition(product):
-    nutriments = product.get("nutriments", {})
-
-    required = [
-        "energy-kcal_100g",
-        "proteins_100g",
-        "carbohydrates_100g",
-        "fat_100g",
-    ]
-
-    return all(
-        nutriments.get(field) is not None
-        for field in required
-    )
-
-
-def inspect_missing_nutrition(products, limit=50):
-    shown = 0
-
-    for product in products:
-        if not has_required_identity(product):
-            continue
-
-        if not is_allowed_product_type(product):
-            continue
-
-        if has_required_nutrition(product):
-            continue
-
-        print_product(product)
-
-        shown += 1
-
-        if shown >= limit:
-            break
-
 missing_nutrition = 0
 invalid_nutrition = 0
 usable_nutrition = 0
@@ -748,6 +726,76 @@ print(
     f"{usable_nutrition / total * 100:.1f}%"
 )
 
+def report_image_coverage(products):
+    accepted = 0
+    with_image = 0
+    without_image = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        if not is_allowed_product_type(product):
+            continue
+
+        accepted += 1
+
+        image_url = get_front_image_url(product)
+
+        if image_url:
+            with_image += 1
+        else:
+            without_image += 1
+
+    print("Image quality:")
+    print("Accepted products:", accepted)
+    print("With image:", with_image)
+    print("Without image:", without_image)
+
+    if accepted:
+        print(
+            "Image coverage:",
+            f"{with_image / accepted * 100:.1f}%"
+        )
+
+report_image_coverage(products)
+
+
+
+def inspect_missing_image_details(products, limit=20):
+    shown = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        if not is_allowed_product_type(product):
+            continue
+
+        if get_front_image_url(product):
+            continue
+
+        images = product.get("images", {})
+
+        print("\nPRODUCT:", product.get("product_name"))
+        print("BARCODE:", product.get("code"))
+        print("SELECTED FRONT:")
+        print(
+            json.dumps(
+                images.get("selected", {}).get("front", {}),
+                indent=2
+            )
+        )
+
+        print("UPLOADED IMAGE IDS:")
+        print(list(images.get("uploaded", {}).keys()))
+
+        shown += 1
+
+        if shown >= limit:
+            break
+
+inspect_missing_image_details(products)
 # print("\n Missing Nutrition:")
 # inspect_missing_nutrition(products)
 
