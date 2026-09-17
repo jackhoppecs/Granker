@@ -298,6 +298,58 @@ def inspect_rejected_products(products, limit=50):
             if shown >= limit:
                 break
 
+def inspect_missing_nutrition(products, limit=50):
+    shown = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        if not is_allowed_product_type(product):
+            continue
+
+        nutrition = get_nutrition_per_100g(product)
+
+        if nutrition is not None:
+            continue
+
+        print_product(product)
+        shown += 1
+
+        if shown >= limit:
+            break
+
+def inspect_invalid_nutrition(products, limit=50):
+    shown = 0
+
+    for product in products:
+        if not has_required_identity(product):
+            continue
+
+        if not is_allowed_product_type(product):
+            continue
+
+        nutrition = get_nutrition_per_100g(product)
+
+        if nutrition is None:
+            continue
+
+        if is_reasonable_nutrition(nutrition):
+            continue
+
+        print(
+            product.get("product_name"),
+            "|",
+            product.get("brands"),
+            "|",
+            nutrition,
+        )
+
+        shown += 1
+
+        if shown >= limit:
+            break
+
 # -------------------------
 # Load development sample
 # -------------------------
@@ -349,6 +401,17 @@ inspect_excluded_products(
 
 print("\nProducts actually rejected by product type:")
 inspect_rejected_products(products)
+
+print("\nSample products excluded by MISSING nutrition:")
+inspect_missing_nutrition(
+    products,
+)
+
+print("\nSample products excluded by nutrition:")
+inspect_invalid_nutrition(
+    products,
+)
+
 
 
 # -------------------------
@@ -552,6 +615,43 @@ def inspect_missing_nutrition(products, limit=50):
 
         if shown >= limit:
             break
+
+missing_nutrition = 0
+invalid_nutrition = 0
+usable_nutrition = 0
+
+for product in products:
+    if not has_required_identity(product):
+        continue
+
+    if not is_allowed_product_type(product):
+        continue
+
+    nutrition = get_nutrition_per_100g(product)
+
+    if nutrition is None:
+        missing_nutrition += 1
+        continue
+
+    if not is_reasonable_nutrition(nutrition):
+        invalid_nutrition += 1
+        continue
+
+    usable_nutrition += 1
+
+
+total = missing_nutrition + invalid_nutrition + usable_nutrition
+
+print("\nNutrition quality:")
+print("Accepted products:", total)
+print("Missing nutrition:", missing_nutrition)
+print("Invalid nutrition:", invalid_nutrition)
+print("Usable nutrition:", usable_nutrition)
+
+print(
+    "Usable coverage:",
+    f"{usable_nutrition / total * 100:.1f}%"
+)
 
 # print("\n Missing Nutrition:")
 # inspect_missing_nutrition(products)
