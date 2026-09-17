@@ -878,3 +878,37 @@ inspect_missing_image_details(products)
 #             }
 
 #     return None
+
+
+def find_image_urls(value, prefix=""):
+    results = []
+
+    if isinstance(value, dict):
+        for key, nested_value in value.items():
+            path = f"{prefix}.{key}" if prefix else key
+            results.extend(find_image_urls(nested_value, path))
+
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            path = f"{prefix}[{index}]"
+            results.extend(find_image_urls(item, path))
+
+    elif isinstance(value, str):
+        if (
+            "images.openfoodfacts.org" in value
+            or value.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))
+        ):
+            results.append((prefix, value))
+
+    return results
+
+TARGET_BARCODE = "0020601414990"
+
+for product in products:
+    if product.get("code") != TARGET_BARCODE:
+        continue
+
+    print("\nIMAGE URL MATCHES:")
+
+    for path, url in find_image_urls(product):
+        print(path, "->", url)
