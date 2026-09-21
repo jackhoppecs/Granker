@@ -912,3 +912,364 @@ for product in products:
 
     for path, url in find_image_urls(product):
         print(path, "->", url)
+
+
+#####
+# Category Normalization
+#####
+
+CATEGORY_RULES = [
+    ("Beverages", {
+        "en:beverages",
+        "en:sodas",
+        "en:juices-and-nectars",
+        "en:waters",
+        "en:teas",
+        "en:coffees",
+        "en:herbal-teas",
+        "en:fruit-drink",
+        "en:juice",
+        "en:soft-drink",
+        "en:drink-mix",
+        "en:powdered-drink-mix",
+        "en:instant-beverages",
+    }),
+
+    ("Snacks", {
+        "en:snacks",
+        "en:salty-snacks",
+        "en:chips-and-fries",
+        "en:crisps",
+        "en:crackers",
+        "en:snack-bar",
+    }),
+
+    ("Dairy", {
+        "en:dairies",
+        "en:cheeses",
+        "en:milks",
+        "en:yogurts",
+    }),
+
+    ("Condiments & Sauces", {
+        "en:condiments",
+        "en:sauces",
+        "en:hot-sauces",
+        "en:vinegars",
+    }),
+
+    ("Baby Food", {
+        "en:baby-foods",
+    }),
+
+    ("Breakfast", {
+        "en:breakfasts",
+        "en:breakfast-cereals",
+    }),
+
+    ("Meat & Seafood", {
+        "en:meats-and-their-products",
+        "en:meats",
+        "en:prepared-meats",
+        "en:seafood",
+        "en:chicken-and-its-products",
+    }),
+
+    ("Frozen Foods", {
+        "en:frozen-foods",
+    }),
+
+    ("Desserts & Sweets", {
+        "en:desserts",
+        "en:frozen-desserts",
+        "en:ice-creams-and-sorbets",
+        "en:ice-creams",
+    }),
+
+    ("Bakery", {
+        "en:breads",
+    }),
+
+    ("Prepared Meals", {
+        "en:meals",
+    }),
+
+    ("Pantry", {
+        "en:pastas",
+        "en:canned-foods",
+        "en:cooking-helpers",
+        "en:sweeteners",
+        "en:vegetable-oils",
+    }),
+
+    ("Produce", {
+        "en:fruits",
+        "en:vegetables",
+        "en:fruits-based-foods",
+        "en:vegetables-based-foods",
+    }),
+
+    ("Nuts, Seeds & Legumes", {
+        "en:nuts",
+        "en:nuts-and-their-products",
+        "en:seeds",
+        "en:legumes",
+        "en:legumes-and-their-products",
+        "en:pulses",
+        "en:legume-seeds",
+    }),
+
+    ("Spreads", {
+        "en:spreads",
+        "en:plant-based-spreads",
+        "en:nut-butters",
+        "en:peanut-butters",
+        "en:legume-butters",
+        "en:oilseed-purees",
+    }),
+
+    ("Dried Foods", {
+        "en:dried-products",
+        "en:dried-plant-based-foods",
+        "en:dried-fruits",
+    }),
+
+    ("Sandwiches", {
+        "en:sandwiches",
+    }),
+
+    ("Eggs", {
+        "en:eggs",
+    }),
+
+    ("Fruit Snacks", {
+        "en:fruit-snack",
+        "en:fruit-puree",
+    }),
+
+    ("Sports & Protein", {
+        "en:protein-bars",
+        "en:protein-shakes",
+        "en:protein-drink",
+        "en:sports-drink",
+        "en:electrolyte-drink",
+    }),
+
+    ("Candy", {
+        "en:gummy-candies",
+        "en:gummies",
+    })
+]
+
+def normalize_category(product):
+    categories = set(product.get("categories_tags", []))
+
+    for granker_category, off_categories in CATEGORY_RULES:
+        if categories & off_categories:
+            return granker_category
+
+    return "Other"
+
+category_counts = Counter()
+
+for product in products:
+    if not has_required_identity(product):
+        continue
+
+    if not is_allowed_product_type(product):
+        continue
+    
+
+    category = normalize_category(product)
+    category_counts[category] += 1
+
+print(category_counts)
+
+# What products are in the other category
+other_category_counts = Counter()
+
+for product in products:
+    if not has_required_identity(product):
+        continue
+
+    if not is_allowed_product_type(product):
+        continue
+
+    if normalize_category(product) != "Other":
+        continue
+
+    for category in product.get("categories_tags", []):
+        other_category_counts[category] += 1
+
+for category, count in other_category_counts.most_common(50):
+    print(category, count)
+
+# What about rule priority?
+# What if we prefered frozen foods over meat and seafood? Then we'd have to reorder how our categories are considered
+
+
+
+# Are there products with no categoiries
+other_with_no_categories = 0
+other_with_categories = 0
+
+for product in products:
+    if not has_required_identity(product):
+        continue
+
+    if not is_allowed_product_type(product):
+        continue
+
+    if normalize_category(product) != "Other":
+        continue
+
+    categories = product.get("categories_tags", [])
+
+    if categories:
+        other_with_categories += 1
+    else:
+        other_with_no_categories += 1
+
+print("Other with categories:", other_with_categories)
+print("Other with NO categories:", other_with_no_categories)
+
+# How many unqiue unmatched OFF tags
+unmatched_tags = set()
+
+for product in products:
+    if not has_required_identity(product):
+        continue
+
+    if not is_allowed_product_type(product):
+        continue
+
+    if normalize_category(product) != "Other":
+        continue
+
+    unmatched_tags.update(
+        product.get("categories_tags", [])
+    )
+
+print("Unique unmatched tags:", len(unmatched_tags))
+
+# Large number of no categories under products. Let's explore those products
+
+
+# def inspect_no_category_products(products, limit=20):
+#     shown = 0
+
+#     for product in products:
+#         if not has_required_identity(product):
+#             continue
+
+#         if not is_allowed_product_type(product):
+#             continue
+
+#         if normalize_category(product) != "Other":
+#             continue
+
+#         if product.get("categories_tags", []):
+#             continue
+
+#         print("\nPRODUCT:", product.get("product_name"))
+#         print("BRAND:", product.get("brands"))
+#         print("BARCODE:", product.get("code"))
+
+#         print("categories:", product.get("categories"))
+#         print("categories_tags:", product.get("categories_tags"))
+#         print("categories_hierarchy:", product.get("categories_hierarchy"))
+#         print("main_category:", product.get("main_category"))
+#         print("main_category_en:", product.get("main_category_en"))
+
+#         shown += 1
+
+#         if shown >= limit:
+#             break
+
+# inspect_no_category_products(products)
+
+# no_category_data = 0
+# unmatched_category = 0
+# normalized = 0
+
+# for product in products:
+#     if not has_required_identity(product):
+#         continue
+
+#     if not is_allowed_product_type(product):
+#         continue
+
+#     categories = product.get("categories_tags") or []
+
+#     category = normalize_category(product)
+
+#     if category != "Other":
+#         normalized += 1
+#     elif not categories:
+#         no_category_data += 1
+#     else:
+#         unmatched_category += 1
+
+# print("Normalized:", normalized)
+# print("No category data:", no_category_data)
+# print("Unmatched category data:", unmatched_category)
+
+# # Let's explore for more category fields
+# def find_classification_fields(value, prefix=""):
+#     results = []
+
+#     keywords = (
+#         "category",
+#         "categories",
+#         "taxonomy",
+#         "group",
+#         "type",
+#         "class",
+#         "food",
+#     )
+
+#     if isinstance(value, dict):
+#         for key, nested_value in value.items():
+#             path = f"{prefix}.{key}" if prefix else key
+
+#             if any(keyword in key.lower() for keyword in keywords):
+#                 results.append((path, nested_value))
+
+#             results.extend(
+#                 find_classification_fields(nested_value, path)
+#             )
+
+#     elif isinstance(value, list):
+#         for index, item in enumerate(value):
+#             path = f"{prefix}[{index}]"
+
+#             results.extend(
+#                 find_classification_fields(item, path)
+#             )
+
+#     return results
+
+# TARGET_BARCODES = {
+#     "0021000042685",  # Kraft Chunky Blue Cheese
+#     "0810122081074",  # Hippeas
+#     "0237719017733",  # Kirkland Chicken Salad
+# }
+
+# for product in products:
+#     if product.get("code") not in TARGET_BARCODES:
+#         continue
+
+#     print("\n" + "=" * 80)
+#     print("PRODUCT:", product.get("product_name"))
+#     print("BARCODE:", product.get("code"))
+
+#     matches = find_classification_fields(product)
+
+#     for path, value in matches:
+#         print("\nPATH:", path)
+#         print(json.dumps(value, indent=2))
+
+
+# our conclusion is that basically a significant portions of the products truly don't have fitting categories
+# we recursively explored for fields and found very little.
+
