@@ -528,6 +528,9 @@ def normalize_category(product):
 
     return "Other"
 
+# -------------------------
+# Source URL
+# -------------------------
 
 def get_source_url(product):
     code = product.get("code")
@@ -587,7 +590,7 @@ def transform_product(product):
         ),
 
         "sourceName": "OpenFoodFacts",
-        "sourceUrl": None,
+        "sourceUrl": get_source_url(product),
         "externalId": product.get("code"),
     }
 
