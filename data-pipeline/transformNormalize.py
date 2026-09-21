@@ -45,6 +45,29 @@ HARD_EXCLUDED_CATEGORIES.update({
     "en:fabric-softener",
     "en:wet-wipes",
     "en:hair-oil",
+    "en:electrolyte-supplement",
+    "en:multivitamin-gummies",
+    "en:vitamin-gummies",
+    "en:herbal-supplement",
+    "en:hair-mask",
+    "en:hair-conditioner",
+    "en:cologne",
+    "en:diaper-rash-cream",
+    "en:diaper-rash-treatment",
+    "en:dog-biscuits",
+    "en:cough-drops",
+    "en:supplement",
+    "en:bath-salts",
+    "en:hair-detangler",
+    "en:facial-mask",
+    "en:baby-powder",
+    "en:deodorant",
+    "en:vitamin-supplements",
+    "en:liquid-soap",
+    "en:medical-food",
+    "en:lip-balm",
+    "en:dog-treats",
+    "en:collagen-supplement",
 })
 
 FOOD_LIKE_CATEGORIES = {
@@ -70,15 +93,19 @@ def has_required_identity(product):
 
 
 def is_allowed_product_type(product):
-    categories = set(product.get("categories_tags", []))
+    categories = set(product.get("categories_tags") or [])
+    product_type = product.get("product_type")
 
-    # Explicitly allow food-like products even if OFF also
-    # classifies them as supplements.
+    # Explicitly allow known food-like exceptions
     if categories & FOOD_LIKE_CATEGORIES:
         return True
 
-    # Otherwise reject known unsupported categories.
+    # Reject known non-food / unsupported categories
     if categories & HARD_EXCLUDED_CATEGORIES:
+        return False
+
+    # If OFF explicitly says this is not food, reject it
+    if product_type is not None and product_type != "food":
         return False
 
     return True
@@ -269,6 +296,248 @@ def get_front_image_url(product):
     )
 
 
+
+# -------------------------
+# Category normalization
+# -------------------------
+
+CATEGORY_RULES = [
+    ("Beverages", {
+        "en:beverages",
+        "en:sodas",
+        "en:juices-and-nectars",
+        "en:waters",
+        "en:teas",
+        "en:coffees",
+        "en:herbal-teas",
+        "en:fruit-drink",
+        "en:juice",
+        "en:soft-drink",
+        "en:drink-mix",
+        "en:powdered-drink-mix",
+        "en:instant-beverages",
+        "en:soft-drinks",
+        "en:flavored-and-enhanced-water-drink-mix",
+    }),
+
+    ("Snacks", {
+        "en:snacks",
+        "en:salty-snacks",
+        "en:chips-and-fries",
+        "en:crisps",
+        "en:crackers",
+        "en:snack-bar",
+        "en:meat-snack",
+        "en:meat-snacks",
+        "en:trail-mix",
+        "en:breakfast-bar",
+        "en:puffed-snacks",
+        "en:puffed-snack",
+        "en:cheese-puffs",
+        "en:fruit-crisps",
+        "en:chips",
+        "en:energy-balls",
+        "en:snack-mix",
+        "en:cereal-snack",
+        "en:corn-snacks",
+        "en:corn-snack",
+        "en:fruit-chips",
+        "en:rice-cakes",
+        "en:vegetable-chips",
+        "en:fruit-bar",
+    }),
+
+    ("Dairy", {
+        "en:dairies",
+        "en:cheeses",
+        "en:milks",
+        "en:yogurts",
+        "en:dairy-substitutes",
+        "en:milk-substitutes",
+        "en:creamer",
+        "en:yogurt-snack",
+    }),
+
+    ("Condiments & Sauces", {
+        "en:condiments",
+        "en:sauces",
+        "en:hot-sauces",
+        "en:vinegars",
+        "en:salsa",
+        "en:pickles",
+        "en:fruit-spread",
+        "en:pickled-jalapeno",
+    }),
+
+    ("Baby Food", {
+        "en:baby-foods",
+        "en:baby-formula",
+        "en:baby-food-puree",
+        "en:baby-cereal",
+        "en:fruit-and-vegetable-puree",
+        "en:fruit-pouch",
+    }),
+
+    ("Breakfast", {
+        "en:breakfasts",
+        "en:breakfast-cereals",
+    }),
+
+    ("Meat & Seafood", {
+        "en:meats-and-their-products",
+        "en:meats",
+        "en:prepared-meats",
+        "en:seafood",
+        "en:chicken-and-its-products",
+        "en:meat-alternatives",
+        "en:meat-analogues",
+        "en:chicken-fillets",
+        "en:prepared-chicken",
+        "en:hot-dogs",
+        "en:meatballs",
+    }),
+
+    ("Frozen Foods", {
+        "en:frozen-foods",
+    }),
+
+    ("Desserts & Sweets", {
+        "en:desserts",
+        "en:frozen-desserts",
+        "en:ice-creams-and-sorbets",
+        "en:ice-creams",
+        "en:chocolate-confection",
+        "en:chocolate-confectionery",
+        "en:chocolate-cluster",
+        "en:pies",
+        "en:cookie-dough",
+    }),
+
+    ("Bakery", {
+        "en:breads",
+        "en:biscotti",
+        "en:sandwich-rolls",
+        "en:tortillas",
+        "en:corn-tortillas",
+    }),
+
+    ("Prepared Meals", {
+        "en:meals",
+    }),
+
+    ("Pantry", {
+        "en:pastas",
+        "en:canned-foods",
+        "en:cooking-helpers",
+        "en:sweeteners",
+        "en:vegetable-oils",
+        "en:syrups",
+        "en:flours",
+        "en:cooking-oil",
+        "en:seasoning-mix",
+        "en:broths",
+        "en:chocolate-chips",
+        "en:frosting",
+        "en:coffee-pods",
+        "en:canned-pasta",
+        "en:bone-broth",
+        "en:cooking-spray",
+        "en:hot-chocolate",
+        "en:cocoa-and-its-products",
+        "en:cocoa-and-chocolate-powders",
+        "en:cocoa-powders",
+    }),
+
+    ("Produce", {
+        "en:fruits",
+        "en:vegetables",
+        "en:fruits-based-foods",
+        "en:vegetables-based-foods",
+        "en:potatoes",
+        "en:potatoes-and-their-products",
+        "en:salad",
+    }),
+
+    ("Nuts, Seeds & Legumes", {
+        "en:nuts",
+        "en:nuts-and-their-products",
+        "en:seeds",
+        "en:legumes",
+        "en:legumes-and-their-products",
+        "en:pulses",
+        "en:legume-seeds",
+        "en:nuts-and-seeds",
+    }),
+
+    ("Spreads", {
+        "en:spreads",
+        "en:plant-based-spreads",
+        "en:nut-butters",
+        "en:peanut-butters",
+        "en:legume-butters",
+        "en:oilseed-purees",
+    }),
+
+    ("Dried Foods", {
+        "en:dried-products",
+        "en:dried-plant-based-foods",
+        "en:dried-fruits",
+    }),
+
+    ("Sandwiches", {
+        "en:sandwiches",
+    }),
+
+    ("Eggs", {
+        "en:eggs",
+    }),
+
+    ("Fruit Snacks", {
+        "en:fruit-snack",
+        "en:fruit-puree",
+    }),
+
+    ("Sports & Protein", {
+        "en:protein-bars",
+        "en:protein-shakes",
+        "en:protein-drink",
+        "en:sports-drink",
+        "en:electrolyte-drink",
+        "en:sports-nutrition",
+        "en:electrolyte-drink-mix",
+        "en:nutritional-shake",
+        "en:meal-replacement-shake",
+        "en:whey-protein",
+    }),
+
+    ("Candy", {
+        "en:gummy-candies",
+        "en:gummies",
+    })
+]
+
+def normalize_category(product):
+    categories = set(product.get("categories_tags") or [])
+
+    if not categories:
+        return "Uncategorized"
+
+    for granker_category, off_categories in CATEGORY_RULES:
+        if categories & off_categories:
+            return granker_category
+
+    return "Other"
+
+
+def get_source_url(product):
+    code = product.get("code")
+
+    if not code:
+        return None
+
+    return f"https://world.openfoodfacts.org/product/{code}"
+
+
 # -------------------------
 # Transformation
 # -------------------------
@@ -287,11 +556,13 @@ def transform_product(product):
 
     image_url = get_front_image_url(product)
 
+    category = normalize_category(product)
+
     return {
         "name": product.get("product_name").strip(),
         "brand": product.get("brands").strip(),
         "description": None,
-        "category": None,
+        "category": category,
         "imageUrl": image_url,
 
         "calories": (
@@ -942,191 +1213,232 @@ for product in products:
 # Category Normalization
 #####
 
-CATEGORY_RULES = [
-    ("Beverages", {
-        "en:beverages",
-        "en:sodas",
-        "en:juices-and-nectars",
-        "en:waters",
-        "en:teas",
-        "en:coffees",
-        "en:herbal-teas",
-        "en:fruit-drink",
-        "en:juice",
-        "en:soft-drink",
-        "en:drink-mix",
-        "en:powdered-drink-mix",
-        "en:instant-beverages",
-    }),
+# CATEGORY_RULES = [
+#     ("Beverages", {
+#         "en:beverages",
+#         "en:sodas",
+#         "en:juices-and-nectars",
+#         "en:waters",
+#         "en:teas",
+#         "en:coffees",
+#         "en:herbal-teas",
+#         "en:fruit-drink",
+#         "en:juice",
+#         "en:soft-drink",
+#         "en:drink-mix",
+#         "en:powdered-drink-mix",
+#         "en:instant-beverages",
+#         "en:soft-drinks",
+#         "en:flavored-and-enhanced-water-drink-mix",
+#     }),
 
-    ("Snacks", {
-        "en:snacks",
-        "en:salty-snacks",
-        "en:chips-and-fries",
-        "en:crisps",
-        "en:crackers",
-        "en:snack-bar",
-        "en:meat-snack",
-        "en:meat-snacks",
-        "en:trail-mix",
-        "en:breakfast-bar",
-        "en:puffed-snacks",
-        "en:puffed-snack",
-        "en:cheese-puffs",
-        "en:fruit-crisps",
-        "en:chips",
-    }),
+#     ("Snacks", {
+#         "en:snacks",
+#         "en:salty-snacks",
+#         "en:chips-and-fries",
+#         "en:crisps",
+#         "en:crackers",
+#         "en:snack-bar",
+#         "en:meat-snack",
+#         "en:meat-snacks",
+#         "en:trail-mix",
+#         "en:breakfast-bar",
+#         "en:puffed-snacks",
+#         "en:puffed-snack",
+#         "en:cheese-puffs",
+#         "en:fruit-crisps",
+#         "en:chips",
+#         "en:energy-balls",
+#         "en:snack-mix",
+#         "en:cereal-snack",
+#         "en:corn-snacks",
+#         "en:corn-snack",
+#         "en:fruit-chips",
+#         "en:rice-cakes",
+#         "en:vegetable-chips",
+#         "en:fruit-bar",
+#     }),
 
-    ("Dairy", {
-        "en:dairies",
-        "en:cheeses",
-        "en:milks",
-        "en:yogurts",
-        "en:dairy-substitutes",
-        "en:milk-substitutes",
-        "en:creamer",
-        "en:yogurt-snack",
-    }),
+#     ("Dairy", {
+#         "en:dairies",
+#         "en:cheeses",
+#         "en:milks",
+#         "en:yogurts",
+#         "en:dairy-substitutes",
+#         "en:milk-substitutes",
+#         "en:creamer",
+#         "en:yogurt-snack",
+#     }),
 
-    ("Condiments & Sauces", {
-        "en:condiments",
-        "en:sauces",
-        "en:hot-sauces",
-        "en:vinegars",
-        "en:salsa",
-        "en:pickles",
-        "en:fruit-spread",
-    }),
+#     ("Condiments & Sauces", {
+#         "en:condiments",
+#         "en:sauces",
+#         "en:hot-sauces",
+#         "en:vinegars",
+#         "en:salsa",
+#         "en:pickles",
+#         "en:fruit-spread",
+#         "en:pickled-jalapeno",
+#     }),
 
-    ("Baby Food", {
-        "en:baby-foods",
-        "en:baby-formula",
-        "en:baby-food-puree",
-        "en:baby-cereal",
-        "en:fruit-and-vegetable-puree",
-    }),
+#     ("Baby Food", {
+#         "en:baby-foods",
+#         "en:baby-formula",
+#         "en:baby-food-puree",
+#         "en:baby-cereal",
+#         "en:fruit-and-vegetable-puree",
+#         "en:fruit-pouch",
+#     }),
 
-    ("Breakfast", {
-        "en:breakfasts",
-        "en:breakfast-cereals",
-    }),
+#     ("Breakfast", {
+#         "en:breakfasts",
+#         "en:breakfast-cereals",
+#     }),
 
-    ("Meat & Seafood", {
-        "en:meats-and-their-products",
-        "en:meats",
-        "en:prepared-meats",
-        "en:seafood",
-        "en:chicken-and-its-products",
-        "en:meat-alternatives",
-        "en:meat-analogues",
-    }),
+#     ("Meat & Seafood", {
+#         "en:meats-and-their-products",
+#         "en:meats",
+#         "en:prepared-meats",
+#         "en:seafood",
+#         "en:chicken-and-its-products",
+#         "en:meat-alternatives",
+#         "en:meat-analogues",
+#         "en:chicken-fillets",
+#         "en:prepared-chicken",
+#         "en:hot-dogs",
+#         "en:meatballs",
+#     }),
 
-    ("Frozen Foods", {
-        "en:frozen-foods",
-    }),
+#     ("Frozen Foods", {
+#         "en:frozen-foods",
+#     }),
 
-    ("Desserts & Sweets", {
-        "en:desserts",
-        "en:frozen-desserts",
-        "en:ice-creams-and-sorbets",
-        "en:ice-creams",
-    }),
+#     ("Desserts & Sweets", {
+#         "en:desserts",
+#         "en:frozen-desserts",
+#         "en:ice-creams-and-sorbets",
+#         "en:ice-creams",
+#         "en:chocolate-confection",
+#         "en:chocolate-confectionery",
+#         "en:chocolate-cluster",
+#         "en:pies",
+#         "en:cookie-dough",
+#     }),
 
-    ("Bakery", {
-        "en:breads",
-    }),
+#     ("Bakery", {
+#         "en:breads",
+#         "en:biscotti",
+#         "en:sandwich-rolls",
+#         "en:tortillas",
+#         "en:corn-tortillas",
+#     }),
 
-    ("Prepared Meals", {
-        "en:meals",
-    }),
+#     ("Prepared Meals", {
+#         "en:meals",
+#     }),
 
-    ("Pantry", {
-        "en:pastas",
-        "en:canned-foods",
-        "en:cooking-helpers",
-        "en:sweeteners",
-        "en:vegetable-oils",
-        "en:syrups",
-        "en:flours",
-        "en:cooking-oil",
-        "en:seasoning-mix",
-        "en:broths",
-        "en:chocolate-chips",
-        "en:frosting",
-    }),
+#     ("Pantry", {
+#         "en:pastas",
+#         "en:canned-foods",
+#         "en:cooking-helpers",
+#         "en:sweeteners",
+#         "en:vegetable-oils",
+#         "en:syrups",
+#         "en:flours",
+#         "en:cooking-oil",
+#         "en:seasoning-mix",
+#         "en:broths",
+#         "en:chocolate-chips",
+#         "en:frosting",
+#         "en:coffee-pods",
+#         "en:canned-pasta",
+#         "en:bone-broth",
+#         "en:cooking-spray",
+#         "en:hot-chocolate",
+#         "en:cocoa-and-its-products",
+#         "en:cocoa-and-chocolate-powders",
+#         "en:cocoa-powders",
+#     }),
 
-    ("Produce", {
-        "en:fruits",
-        "en:vegetables",
-        "en:fruits-based-foods",
-        "en:vegetables-based-foods",
-    }),
+#     ("Produce", {
+#         "en:fruits",
+#         "en:vegetables",
+#         "en:fruits-based-foods",
+#         "en:vegetables-based-foods",
+#         "en:potatoes",
+#         "en:potatoes-and-their-products",
+#         "en:salad",
+#     }),
 
-    ("Nuts, Seeds & Legumes", {
-        "en:nuts",
-        "en:nuts-and-their-products",
-        "en:seeds",
-        "en:legumes",
-        "en:legumes-and-their-products",
-        "en:pulses",
-        "en:legume-seeds",
-    }),
+#     ("Nuts, Seeds & Legumes", {
+#         "en:nuts",
+#         "en:nuts-and-their-products",
+#         "en:seeds",
+#         "en:legumes",
+#         "en:legumes-and-their-products",
+#         "en:pulses",
+#         "en:legume-seeds",
+#         "en:nuts-and-seeds",
+#     }),
 
-    ("Spreads", {
-        "en:spreads",
-        "en:plant-based-spreads",
-        "en:nut-butters",
-        "en:peanut-butters",
-        "en:legume-butters",
-        "en:oilseed-purees",
-    }),
+#     ("Spreads", {
+#         "en:spreads",
+#         "en:plant-based-spreads",
+#         "en:nut-butters",
+#         "en:peanut-butters",
+#         "en:legume-butters",
+#         "en:oilseed-purees",
+#     }),
 
-    ("Dried Foods", {
-        "en:dried-products",
-        "en:dried-plant-based-foods",
-        "en:dried-fruits",
-    }),
+#     ("Dried Foods", {
+#         "en:dried-products",
+#         "en:dried-plant-based-foods",
+#         "en:dried-fruits",
+#     }),
 
-    ("Sandwiches", {
-        "en:sandwiches",
-    }),
+#     ("Sandwiches", {
+#         "en:sandwiches",
+#     }),
 
-    ("Eggs", {
-        "en:eggs",
-    }),
+#     ("Eggs", {
+#         "en:eggs",
+#     }),
 
-    ("Fruit Snacks", {
-        "en:fruit-snack",
-        "en:fruit-puree",
-    }),
+#     ("Fruit Snacks", {
+#         "en:fruit-snack",
+#         "en:fruit-puree",
+#     }),
 
-    ("Sports & Protein", {
-        "en:protein-bars",
-        "en:protein-shakes",
-        "en:protein-drink",
-        "en:sports-drink",
-        "en:electrolyte-drink",
-        "en:sports-nutrition",
-        "en:electrolyte-drink-mix",
-        "en:nutritional-shake",
-        "en:meal-replacement-shake",
-        "en:whey-protein",
-    }),
+#     ("Sports & Protein", {
+#         "en:protein-bars",
+#         "en:protein-shakes",
+#         "en:protein-drink",
+#         "en:sports-drink",
+#         "en:electrolyte-drink",
+#         "en:sports-nutrition",
+#         "en:electrolyte-drink-mix",
+#         "en:nutritional-shake",
+#         "en:meal-replacement-shake",
+#         "en:whey-protein",
+#     }),
 
-    ("Candy", {
-        "en:gummy-candies",
-        "en:gummies",
-    })
-]
+#     ("Candy", {
+#         "en:gummy-candies",
+#         "en:gummies",
+#     })
+# ]
 
-def normalize_category(product):
-    categories = set(product.get("categories_tags", []))
+# def normalize_category(product):
+#     categories = set(product.get("categories_tags", []))
 
-    for granker_category, off_categories in CATEGORY_RULES:
-        if categories & off_categories:
-            return granker_category
+#     if not categories:
+#         return "Uncategorized"
 
-    return "Other"
+#     for granker_category, off_categories in CATEGORY_RULES:
+#         if categories & off_categories:
+#             return granker_category
+
+#     return "Other"
 
 category_counts = Counter()
 
