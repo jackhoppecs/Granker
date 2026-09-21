@@ -23,6 +23,30 @@ HARD_EXCLUDED_CATEGORIES = {
     "en:open-pet-food-facts",
 }
 
+HARD_EXCLUDED_CATEGORIES.update({
+    "en:sunscreen",
+    "en:multivitamin",
+    "en:vitamin-supplement",
+    "en:protein-supplement",
+    "en:nutritional-supplement",
+    "en:baby-wipes",
+    "en:laundry-detergent",
+    "en:dog-food",
+    "en:hair-spray",
+    "en:essential-oil",
+    "en:body-lotion",
+    "en:hand-soap",
+    "en:antiperspirant",
+    "en:body-oil",
+    "en:dishwashing-liquid",
+    "en:facial-cleanser",
+    "en:nicotine-pouch",
+    "en:baby-lotion",
+    "en:fabric-softener",
+    "en:wet-wipes",
+    "en:hair-oil",
+})
+
 FOOD_LIKE_CATEGORIES = {
     "en:protein-bars",
     "en:energy-bars",
@@ -942,6 +966,15 @@ CATEGORY_RULES = [
         "en:crisps",
         "en:crackers",
         "en:snack-bar",
+        "en:meat-snack",
+        "en:meat-snacks",
+        "en:trail-mix",
+        "en:breakfast-bar",
+        "en:puffed-snacks",
+        "en:puffed-snack",
+        "en:cheese-puffs",
+        "en:fruit-crisps",
+        "en:chips",
     }),
 
     ("Dairy", {
@@ -949,6 +982,10 @@ CATEGORY_RULES = [
         "en:cheeses",
         "en:milks",
         "en:yogurts",
+        "en:dairy-substitutes",
+        "en:milk-substitutes",
+        "en:creamer",
+        "en:yogurt-snack",
     }),
 
     ("Condiments & Sauces", {
@@ -956,10 +993,17 @@ CATEGORY_RULES = [
         "en:sauces",
         "en:hot-sauces",
         "en:vinegars",
+        "en:salsa",
+        "en:pickles",
+        "en:fruit-spread",
     }),
 
     ("Baby Food", {
         "en:baby-foods",
+        "en:baby-formula",
+        "en:baby-food-puree",
+        "en:baby-cereal",
+        "en:fruit-and-vegetable-puree",
     }),
 
     ("Breakfast", {
@@ -973,6 +1017,8 @@ CATEGORY_RULES = [
         "en:prepared-meats",
         "en:seafood",
         "en:chicken-and-its-products",
+        "en:meat-alternatives",
+        "en:meat-analogues",
     }),
 
     ("Frozen Foods", {
@@ -1000,6 +1046,13 @@ CATEGORY_RULES = [
         "en:cooking-helpers",
         "en:sweeteners",
         "en:vegetable-oils",
+        "en:syrups",
+        "en:flours",
+        "en:cooking-oil",
+        "en:seasoning-mix",
+        "en:broths",
+        "en:chocolate-chips",
+        "en:frosting",
     }),
 
     ("Produce", {
@@ -1053,6 +1106,11 @@ CATEGORY_RULES = [
         "en:protein-drink",
         "en:sports-drink",
         "en:electrolyte-drink",
+        "en:sports-nutrition",
+        "en:electrolyte-drink-mix",
+        "en:nutritional-shake",
+        "en:meal-replacement-shake",
+        "en:whey-protein",
     }),
 
     ("Candy", {
