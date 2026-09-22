@@ -63,7 +63,123 @@ FOOD_LIKE_CATEGORIES = {
     "en:protein-shakes",
 }
 
+# More specific products should be listed first
 CATEGORY_RULES = [
+
+    ("Baby Food", {
+        "en:baby-foods",
+        "en:baby-formula",
+        "en:baby-food-puree",
+        "en:baby-cereal",
+        "en:fruit-and-vegetable-puree",
+        "en:fruit-pouch",
+    }),
+
+    ("Sports & Protein", {
+        "en:protein-bars",
+        "en:protein-shakes",
+        "en:protein-drink",
+        "en:sports-drink",
+        "en:electrolyte-drink",
+        "en:sports-nutrition",
+        "en:electrolyte-drink-mix",
+        "en:nutritional-shake",
+        "en:meal-replacement-shake",
+        "en:whey-protein",
+    }),
+
+    ("Fruit Snacks", {
+        "en:fruit-snack",
+        "en:fruit-puree",
+    }),
+
+    ("Candy", {
+        "en:gummy-candies",
+        "en:gummies",
+    })
+
+    ("Desserts & Sweets", {
+        "en:desserts",
+        "en:frozen-desserts",
+        "en:ice-creams-and-sorbets",
+        "en:ice-creams",
+        "en:chocolate-confection",
+        "en:chocolate-confectionery",
+        "en:chocolate-cluster",
+        "en:pies",
+        "en:cookie-dough",
+    }),
+
+    ("Spreads", {
+        "en:spreads",
+        "en:plant-based-spreads",
+        "en:nut-butters",
+        "en:peanut-butters",
+        "en:legume-butters",
+        "en:oilseed-purees",
+    }),
+
+    ("Sandwiches", {
+        "en:sandwiches",
+    }),
+
+    ("Breakfast", {
+        "en:breakfasts",
+        "en:breakfast-cereals",
+    }),
+
+    ("Eggs", {
+        "en:eggs",
+    }),
+
+    ("Bakery", {
+        "en:breads",
+        "en:biscotti",
+        "en:sandwich-rolls",
+        "en:tortillas",
+        "en:corn-tortillas",
+    }),
+
+    ("Prepared Meals", {
+        "en:meals",
+    }),
+
+    ("Meat & Seafood", {
+        "en:meats-and-their-products",
+        "en:meats",
+        "en:prepared-meats",
+        "en:seafood",
+        "en:chicken-and-its-products",
+        "en:meat-alternatives",
+        "en:meat-analogues",
+        "en:chicken-fillets",
+        "en:prepared-chicken",
+        "en:hot-dogs",
+        "en:meatballs",
+    }),
+
+    ("Dairy", {
+        "en:dairies",
+        "en:cheeses",
+        "en:milks",
+        "en:yogurts",
+        "en:dairy-substitutes",
+        "en:milk-substitutes",
+        "en:creamer",
+        "en:yogurt-snack",
+    }),
+
+    ("Condiments & Sauces", {
+        "en:condiments",
+        "en:sauces",
+        "en:hot-sauces",
+        "en:vinegars",
+        "en:salsa",
+        "en:pickles",
+        "en:fruit-spread",
+        "en:pickled-jalapeno",
+    }),
+
     ("Beverages", {
         "en:beverages",
         "en:sodas",
@@ -110,82 +226,35 @@ CATEGORY_RULES = [
         "en:chips-and-crisps"
     }),
 
-    ("Dairy", {
-        "en:dairies",
-        "en:cheeses",
-        "en:milks",
-        "en:yogurts",
-        "en:dairy-substitutes",
-        "en:milk-substitutes",
-        "en:creamer",
-        "en:yogurt-snack",
-    }),
-
-    ("Condiments & Sauces", {
-        "en:condiments",
-        "en:sauces",
-        "en:hot-sauces",
-        "en:vinegars",
-        "en:salsa",
-        "en:pickles",
-        "en:fruit-spread",
-        "en:pickled-jalapeno",
-    }),
-
-    ("Baby Food", {
-        "en:baby-foods",
-        "en:baby-formula",
-        "en:baby-food-puree",
-        "en:baby-cereal",
-        "en:fruit-and-vegetable-puree",
-        "en:fruit-pouch",
-    }),
-
-    ("Breakfast", {
-        "en:breakfasts",
-        "en:breakfast-cereals",
-    }),
-
-    ("Meat & Seafood", {
-        "en:meats-and-their-products",
-        "en:meats",
-        "en:prepared-meats",
-        "en:seafood",
-        "en:chicken-and-its-products",
-        "en:meat-alternatives",
-        "en:meat-analogues",
-        "en:chicken-fillets",
-        "en:prepared-chicken",
-        "en:hot-dogs",
-        "en:meatballs",
-    }),
-
     ("Frozen Foods", {
         "en:frozen-foods",
     }),
 
-    ("Desserts & Sweets", {
-        "en:desserts",
-        "en:frozen-desserts",
-        "en:ice-creams-and-sorbets",
-        "en:ice-creams",
-        "en:chocolate-confection",
-        "en:chocolate-confectionery",
-        "en:chocolate-cluster",
-        "en:pies",
-        "en:cookie-dough",
+    ("Produce", {
+        "en:fruits",
+        "en:vegetables",
+        "en:fruits-based-foods",
+        "en:vegetables-based-foods",
+        "en:potatoes",
+        "en:potatoes-and-their-products",
+        "en:salad",
     }),
 
-    ("Bakery", {
-        "en:breads",
-        "en:biscotti",
-        "en:sandwich-rolls",
-        "en:tortillas",
-        "en:corn-tortillas",
+    ("Nuts, Seeds & Legumes", {
+        "en:nuts",
+        "en:nuts-and-their-products",
+        "en:seeds",
+        "en:legumes",
+        "en:legumes-and-their-products",
+        "en:pulses",
+        "en:legume-seeds",
+        "en:nuts-and-seeds",
     }),
 
-    ("Prepared Meals", {
-        "en:meals",
+    ("Dried Foods", {
+        "en:dried-products",
+        "en:dried-plant-based-foods",
+        "en:dried-fruits",
     }),
 
     ("Pantry", {
@@ -210,71 +279,4 @@ CATEGORY_RULES = [
         "en:cocoa-and-chocolate-powders",
         "en:cocoa-powders",
     }),
-
-    ("Produce", {
-        "en:fruits",
-        "en:vegetables",
-        "en:fruits-based-foods",
-        "en:vegetables-based-foods",
-        "en:potatoes",
-        "en:potatoes-and-their-products",
-        "en:salad",
-    }),
-
-    ("Nuts, Seeds & Legumes", {
-        "en:nuts",
-        "en:nuts-and-their-products",
-        "en:seeds",
-        "en:legumes",
-        "en:legumes-and-their-products",
-        "en:pulses",
-        "en:legume-seeds",
-        "en:nuts-and-seeds",
-    }),
-
-    ("Spreads", {
-        "en:spreads",
-        "en:plant-based-spreads",
-        "en:nut-butters",
-        "en:peanut-butters",
-        "en:legume-butters",
-        "en:oilseed-purees",
-    }),
-
-    ("Dried Foods", {
-        "en:dried-products",
-        "en:dried-plant-based-foods",
-        "en:dried-fruits",
-    }),
-
-    ("Sandwiches", {
-        "en:sandwiches",
-    }),
-
-    ("Eggs", {
-        "en:eggs",
-    }),
-
-    ("Fruit Snacks", {
-        "en:fruit-snack",
-        "en:fruit-puree",
-    }),
-
-    ("Sports & Protein", {
-        "en:protein-bars",
-        "en:protein-shakes",
-        "en:protein-drink",
-        "en:sports-drink",
-        "en:electrolyte-drink",
-        "en:sports-nutrition",
-        "en:electrolyte-drink-mix",
-        "en:nutritional-shake",
-        "en:meal-replacement-shake",
-        "en:whey-protein",
-    }),
-
-    ("Candy", {
-        "en:gummy-candies",
-        "en:gummies",
-    })
 ]
