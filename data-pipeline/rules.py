@@ -55,6 +55,9 @@ HARD_EXCLUDED_CATEGORIES.update({
     "en:lip-balm",
     "en:dog-treats",
     "en:collagen-supplement",
+    "en:cough-syrup",
+    "en:medication",
+    "en:cough-drop",
 })
 
 FOOD_LIKE_CATEGORIES = {
@@ -96,7 +99,7 @@ CATEGORY_RULES = [
     ("Candy", {
         "en:gummy-candies",
         "en:gummies",
-    })
+    }),
 
     ("Desserts & Sweets", {
         "en:desserts",
@@ -138,6 +141,8 @@ CATEGORY_RULES = [
         "en:sandwich-rolls",
         "en:tortillas",
         "en:corn-tortillas",
+        "en:breakfast-pastries",
+        "en:tortilla",
     }),
 
     ("Prepared Meals", {
@@ -200,6 +205,7 @@ CATEGORY_RULES = [
 
     ("Snacks", {
         "en:snacks",
+        "en:salted-snacks",
         "en:salty-snacks",
         "en:chips-and-fries",
         "en:crisps",

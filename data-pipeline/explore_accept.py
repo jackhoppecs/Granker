@@ -87,7 +87,7 @@ print("\nRandom accepted products:")
 
 for product in random.sample(
     accepted,
-    min(25, len(accepted))
+    min(100, len(accepted))
 ):
     print(
         product["name"],
@@ -96,3 +96,25 @@ for product in random.sample(
         "|",
         product["category"]
     )
+
+
+
+reason_counts = Counter(
+    item["reason"]
+    for item in review
+)
+
+print(reason_counts)
+
+
+unmapped_tags = Counter()
+
+for item in review:
+    if item["reason"] != "unmapped_category":
+        continue
+
+    for tag in item["categoriesTags"]:
+        unmapped_tags[tag] += 1
+
+for tag, count in unmapped_tags.most_common(50):
+    print(f"{count:>4} {tag}")
