@@ -1,3 +1,4 @@
+import gzip
 import json
 from pathlib import Path
 
@@ -10,10 +11,11 @@ from rules import (
 
 DATA_DIR = Path(__file__).parent / "data"
 
-INPUT_PATH = DATA_DIR / "us-random-sample-10000.jsonl"
-OUTPUT_PATH = DATA_DIR / "granker-products-sample.jsonl"
-REVIEW_PATH = DATA_DIR / "granker-products-review.jsonl"
-REJECTED_PATH = DATA_DIR / "granker-products-rejected.jsonl"
+INPUT_PATH = DATA_DIR / "openfoodfacts-products.jsonl.gz"
+
+ACCEPTED_PATH = DATA_DIR / "granker-products-accepted-full.jsonl"
+REVIEW_PATH = DATA_DIR / "granker-products-review-full.jsonl"
+REJECTED_PATH = DATA_DIR / "granker-products-rejected-full.jsonl"
 
 
 # -------------------------
@@ -226,25 +228,38 @@ def transform_product(product):
 # Pipeline
 # -------------------------
 
-REVIEW_PATH = DATA_DIR / "granker-products-review.jsonl"
+#REVIEW_PATH = DATA_DIR / "granker-products-review.jsonl"
 
 
 def run_pipeline():
     total = 0
+    us_products = 0
     accepted = 0
     review = 0
     rejected = 0
 
     with (
-        open(INPUT_PATH, "r", encoding="utf-8") as source,
-        open(OUTPUT_PATH, "w", encoding="utf-8") as accepted_file,
+        gzip.open(INPUT_PATH, "rt", encoding="utf-8") as source,
+        open(ACCEPTED_PATH, "w", encoding="utf-8") as accepted_file,
         open(REVIEW_PATH, "w", encoding="utf-8") as review_file,
         open(REJECTED_PATH, "w", encoding="utf-8") as rejected_file,
     ):
         for line in source:
             total += 1
+
+            if total % 100000 == 0:
+                print(f"Processed {total:,} raw OFF records...")
+
             product = json.loads(line)
 
+            # Only keep U.S. products
+            countries = set(product.get("countries_tags") or [])
+
+            if "en:united-states" not in countries:
+                continue
+
+            us_products += 1
+                
             status, reason = classify_product(product)
 
             if status == "rejected":
@@ -296,11 +311,14 @@ def run_pipeline():
 
             accepted += 1
 
-    print(f"Processed: {total}")
-    print(f"Accepted: {accepted}")
-    print(f"Review: {review}")
-    print(f"Rejected: {rejected}")
-    print(f"Accepted output: {OUTPUT_PATH}")
+    print()
+    print(f"Raw OFF records scanned: {total:,}")
+    print(f"U.S. products found: {us_products:,}")
+    print(f"Accepted: {accepted:,}")
+    print(f"Review: {review:,}")
+    print(f"Rejected: {rejected:,}")
+
+    print(f"\nAccepted output: {ACCEPTED_PATH}")
     print(f"Review output: {REVIEW_PATH}")
     print(f"Rejected output: {REJECTED_PATH}")
 
